@@ -12,7 +12,7 @@ $(document).ready(function () {
               if(data.code == 0){
                    location.href = "./index.html";
               }else{
-                  alert("登陆失败");
+                   alert("登陆失败");
               }
           }
       })
