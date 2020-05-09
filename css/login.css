@@ -52,7 +52,7 @@ html,body{
     width: 30%;
     height: 10%;
     background: url(../img/login__13.png) no-repeat;
-    background-size: auto;
+    background-size:68% 60%;
     position: absolute;
     top:34%;
     left:56%;
@@ -61,7 +61,7 @@ html,body{
     width: 30%;
     height: 10%;
     background: url(../img/login__13.png) no-repeat;
-    background-size: auto;
+    background-size:68% 60%;
     position: absolute;
     top:44%;
     left:56%;
