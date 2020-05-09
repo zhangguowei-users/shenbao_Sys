@@ -3,6 +3,8 @@
     margin: 0;
     border: 0;
     outline: none;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 html,body{
     height:100%;
