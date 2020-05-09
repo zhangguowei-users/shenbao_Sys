@@ -89,6 +89,7 @@ html,body{
     background:transparent;
     height:50%;
     width: 58%;
+    font-weight: initial;
 }
 .img-password{
     height:55%;
@@ -98,6 +99,7 @@ html,body{
     position: absolute;
     top:2%;
     font-size: larger;
+    font-weight: initial;
     background: transparent;
     height:50%;
     width: 58%;
