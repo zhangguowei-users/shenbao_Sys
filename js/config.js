@@ -1,4 +1,4 @@
 var config = {
-    url:"localhost:",
+    url:"http://localhost:",
     port:"5010"
 }
