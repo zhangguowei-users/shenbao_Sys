@@ -2,7 +2,6 @@ $(document).ready(function () {
     $(".login").click(function(){
       var name = $("#name").val();
       var password = $("#password").val();
-      
       $.ajax({
           url:config.url + config.port + "/auth/Login/LoginCheck",
           type: 'POST',
