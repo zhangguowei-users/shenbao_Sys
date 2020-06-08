@@ -13,8 +13,18 @@ a{
 }
 select,input,button{
     outline: none;
+    cursor: pointer;
 }
 button{
     background-color: transparent;
     cursor: pointer;
+}
+table{
+    border-collapse:collapse;
+}
+thead,tbody,tr,td,th{
+    border: 1rem solid #000;
+}
+li{
+    list-style: none;
 }
