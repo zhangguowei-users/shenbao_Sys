@@ -6,11 +6,14 @@ $(document).ready(function () {
           url:config.url + config.port + "/auth/Login/LoginCheck",
           type: 'POST',
           async: false,
-          xhrFields:{withCredentials:true},
           data:{username:name,password:password},
           success:function(data){
               if(data.code == 0){
-                   location.href = "./index.html";
+                var storage=window.localStorage;
+                var data ='bearer '+data.data.TokenValue;
+                storage['admin'] = JSON.stringify(data);
+                console.log(typeof storage['admin'])
+                location.href = "./index.html";
               }else{
                    alert("登陆失败");
               }

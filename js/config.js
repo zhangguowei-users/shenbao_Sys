@@ -1,4 +1,4 @@
 var config = {
-    url:"http://localhost:",
-    port:"5010"
+    url:"http://192.168.1.107",
+    port:":5000"
 }
