@@ -1,0 +1,20 @@
+body > *:not(script){
+    display: inline-block;
+    border:0;
+    margin: 0;
+    padding: 0;
+}
+html{
+    font-size:0.052083333333333336vw;
+}
+a{
+    text-decoration:none;
+    color: #000;
+}
+select,input,button{
+    outline: none;
+}
+button{
+    background-color: transparent;
+    cursor: pointer;
+}
