@@ -1,11 +1,19 @@
+html{
+    font-size:0.052083333333333336vw;
+    height: 100%;
+}
+body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    user-select: none;
+}
 body > *:not(script){
     display: inline-block;
     border:0;
     margin: 0;
     padding: 0;
-}
-html{
-    font-size:0.052083333333333336vw;
+    vertical-align: top;
 }
 a{
     text-decoration:none;
@@ -17,7 +25,6 @@ select,input,button{
 }
 button{
     background-color: transparent;
-    cursor: pointer;
 }
 table{
     border-collapse:collapse;
@@ -27,4 +34,9 @@ thead,tbody,tr,td,th{
 }
 li{
     list-style: none;
+}
+hr{
+    width: 100%;
+    height: 1rem;
+    background-color: #000;
 }
