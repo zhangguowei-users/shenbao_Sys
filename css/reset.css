@@ -7,10 +7,15 @@ body{
     user-select: none;
 }
 body > *:not(script){
-    display: inline-block;
     border:0;
     margin: 0;
     padding: 0;
+}
+div,h1,h2,h3,h4,h5,h6,p,pre,ul,ol,li,form,table,label{
+    display: inline-block;
+}
+a,img,span，i,em,sub,sup{
+    display: inline-block;
 }
 a{
     text-decoration:none;
