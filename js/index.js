@@ -1,1 +1,3 @@
-console.log($(".bottom_space").css("display"))
+$(document).ready(function(){
+    
+});
