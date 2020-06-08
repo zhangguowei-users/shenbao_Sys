@@ -13,7 +13,6 @@ body > *:not(script){
     border:0;
     margin: 0;
     padding: 0;
-    vertical-align: top;
 }
 a{
     text-decoration:none;
