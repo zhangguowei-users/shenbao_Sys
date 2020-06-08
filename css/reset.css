@@ -1,13 +1,10 @@
 html{
     font-size:0.052083333333333336vw;
-    height: 100%;
 }
 body{
     margin: 0;
     padding: 0;
-    height: 100%;
     user-select: none;
-    overflow: auto;
 }
 body > *:not(script){
     display: inline-block;
