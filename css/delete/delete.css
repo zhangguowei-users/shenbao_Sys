@@ -54,6 +54,7 @@ body{
     position: absolute;
     left: 312rem;
     top:103rem;
+    cursor: pointer;
 }
 #yes{
     width:60rem;
@@ -69,4 +70,5 @@ body{
     position: absolute;
     left: 386rem;
     top:102rem;
+    cursor: pointer;
 }
