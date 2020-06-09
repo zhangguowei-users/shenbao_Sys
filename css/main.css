@@ -4,3 +4,17 @@ html{
 body{
     height: 100%;
 }
+.top-logo{
+    height:70.6%;
+    width:3.3%;
+    position: absolute;
+    left: 1.7%;
+    top:9.7%;
+}
+.top-text{
+    height:58.6%;
+    width: 21.8%;
+    position: absolute;
+    left:6.4%;
+    top:10.8%;
+}
