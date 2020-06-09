@@ -18,3 +18,75 @@ body{
     left:6.4%;
     top:10.8%;
 }
+.middle_bac{
+    height: 31%;
+    width: 100%;
+    position: absolute;
+    top:0%;
+}
+.head{
+    height: 10.9%;
+    width: 35.6%;
+    position: absolute;
+    top:4.1%;
+    left:29.3%;
+}
+.red{
+    position: absolute;
+    height: 2.5%;
+    width:8.3%;
+    top: 12.5%;
+    left:53.6%;
+}
+#caidan{
+    height: 68.9%;
+    width: 100%;
+    position:absolute;
+    top:31%;
+    overflow-y: auto;
+}
+.first{
+    height: 7.8%;
+    width: 100%;
+    background: linear-gradient(to right,#8EE8FF,#477BFF);
+    text-align: center;
+}
+.first_text{
+    color: #FFF;
+    position: relative;
+    top:26.4%;
+}
+.first_ch{
+    width: 100%;
+}
+.first_children{
+    width: 100%;
+    background:#E0F4FD;
+    text-align: center; 
+}
+.first_children_text{
+    color: #787878;
+    margin-top:5.1% ;
+    margin-bottom: 5.1%;
+}
+.cloth{
+    width: 1.5%;
+    height: 26%;
+    position: absolute;
+    left: 92.6%;
+    bottom:59.7%;
+}
+.notice{
+    width: 1.9%;
+    height: 26%;
+    position: absolute;
+    bottom:59.7%;
+    left: 94.7%;
+}
+.setting{
+    width: 1.4%;
+    height: 28%;
+    position: absolute;
+    bottom:59.7%;
+    left: 96.9%;
+}
