@@ -13,10 +13,10 @@ $(document).ready(function () {
                 var data ='bearer '+data.data.TokenValue;
                 storage['admin'] = JSON.stringify(data);
                 console.log(typeof storage['admin'])
-                location.href = "./index.html";
+                location.href = "./main.html";
               }else{
-                   alert("登陆失败");
-              }
+                 alert("登陆失败");
+              };
           }
       })
     });
