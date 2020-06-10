@@ -66,8 +66,8 @@ body{
 }
 .first_children_text{
     color: #787878;
-    margin-top:5.1% ;
-    margin-bottom: 5.1%;
+    margin-top:3.9% ;
+    margin-bottom:3.9%;
 }
 .cloth{
     width: 1.5%;
@@ -89,4 +89,56 @@ body{
     position: absolute;
     bottom:59.7%;
     left: 96.9%;
+}
+.top-home{
+    width: 7.3%;
+    height: 46.7%;
+    position: absolute;
+    left:38.6%;
+    bottom:0;
+    background-color: #218CF2;
+    cursor: pointer;
+}
+.home-img{
+    width: 12.7%;
+    height: 39.5%;
+    position: absolute;
+    left: 19.8%;
+    bottom:30.2%;
+}
+.home-text{
+    position: absolute;
+    left: 48.2%;
+    bottom: 30.2%;
+    font-size: 39.5%;
+    color: #FFFFFF;
+    font-family:Adobe Heiti Std;
+    font-weight:bold;
+}
+#xuanxiangka{
+    width:53.9%;
+    height:46.7%;
+    position: absolute;
+    left: 46%;
+    bottom: 0;
+}
+.top_xuanxiangka{
+    width: 15.8%;
+    height:100%;
+    background-color:#66B0FD;
+    margin-left: 1.4%;
+}
+.top_xuanxiangka-text{
+    font-size: 37.2%;
+    color: #FFFFFF;
+    font-family:Adobe Heiti Std;
+    font-weight:bold;
+    height: 44%;
+    width: 60%;
+    position: relative;
+    top:23%;
+    left:20%;
+    overflow: hidden;
+    text-overflow:ellipsis;    
+    white-space: nowrap;
 }
