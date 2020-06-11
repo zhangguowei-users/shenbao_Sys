@@ -74,6 +74,7 @@ html,body{
     position: absolute;
     top:54%;
     left:56%;
+    cursor: pointer;
 }
 .bottom-zc{
     position: absolute;
@@ -82,6 +83,7 @@ html,body{
 }
 #zc{
     color: #5a65ca;
+    cursor: pointer;
 }
 .img-name{
     height:55%;

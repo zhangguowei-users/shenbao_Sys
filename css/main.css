@@ -50,6 +50,7 @@ body{
     width: 100%;
     background: linear-gradient(to right,#8EE8FF,#477BFF);
     text-align: center;
+    cursor: pointer;
 }
 .first_text{
     color: #FFF;
@@ -62,7 +63,8 @@ body{
 .first_children{
     width: 100%;
     background:#E0F4FD;
-    text-align: center; 
+    text-align: center;
+    cursor: pointer; 
 }
 .first_children_text{
     color: #787878;
@@ -127,6 +129,7 @@ body{
     height:100%;
     background-color:#66B0FD;
     margin-left: 1.4%;
+    cursor: pointer;
 }
 .top_xuanxiangka-text{
     font-size: 37.2%;
