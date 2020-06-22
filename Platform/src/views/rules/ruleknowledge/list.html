@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>规则知识库</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+	<style>
+		.wrap {
+			font-size: 0px;
+			/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+			padding: 10px;
+			box-sizing: content-box;
+			/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+		}
+
+		.left {
+			box-sizing: border-box;
+			display: inline-block;
+			/*两个子元素都设置为inline-block*/
+			vertical-align: top;
+			/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+			width: 200px;
+			/*height: 750px;*/
+		}
+
+		.right {
+			box-sizing: border-box;
+			display: inline-block;
+			vertical-align: top;
+			width: -webkit-calc(100% - 200px);
+			width: calc(100% - 200px);
+			/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+			/*height: 750px;*/
+		}
+
+		/* .test-1::-webkit-scrollbar { */
+		/*滚动条整体样式*/
+		/* width: 7px; */
+		/*高宽分别对应横竖滚动条的尺寸*/
+		/* height: 1px; */
+		/* } */
+
+		/* .test-1::-webkit-scrollbar-thumb { */
+		/*滚动条里面小方块*/
+		/* border-radius: 7px; */
+		/* -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); */
+		/* background: #009688; */
+		/* } */
+
+		/* .test-1::-webkit-scrollbar-track { */
+		/*滚动条里面轨道*/
+		/* -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); */
+		/* border-radius: 7px; */
+		/* background: #EDEDED; */
+		/* } */
+		#left .layui-form {
+			height: 500px;
+			overflow-y: auto;
+			font-size: 14px;
+		}
+
+		#left .layui-form::-webkit-scrollbar {
+			/*滚动条整体样式*/
+			width: 7px;
+			/*高宽分别对应横竖滚动条的尺寸*/
+			height: 1px;
+		}
+
+		#left .layui-form::-webkit-scrollbar-thumb {
+			/*滚动条里面小方块*/
+			border-radius: 7px;
+			-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+			background: #009688;
+		}
+
+		#left .layui-form::-webkit-scrollbar-track {
+			/*滚动条里面轨道*/
+			-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+			border-radius: 7px;
+			background: #EDEDED;
+		}
+
+		#treesearchbox {
+			font-size: 12px;
+			position: relative
+		}
+
+		#treesearchbox input {
+			padding-right: 86px;
+			box-sizing: border-box;
+		}
+
+		#treesearchbox .btn-warp {
+			position: absolute;
+			right: 4px;
+			top: 6px;
+			text-align: center;
+		}
+
+		#treesearchbox .btn-warp button {
+			margin: 1px;
+		}
+
+		.tree-empty {
+			font-size: 12px;
+			display: none;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div class="wrap">
+		<div class="left test-1" id="left">
+			<form class="layui-form" style="height: 46px;overflow:visible;">
+				<label class="layui-form-label" style="width: 50px;font-size: 12px;">选择年份</label>
+				<div class="layui-input-block" style="margin-left:80px;height:20px;">
+					<select name="year" lay-filter="selectYear">
+					</select>
+				</div>
+			</form>
+			<div id="treesearchbox">
+				<input type="text" autocomplete="off" id="treesearch" name="treesearch" placeholder="输入查询规则关键字"
+					class="layui-input">
+				<div class="btn-warp">
+					<button type="button" class="search-reset layui-btn layui-btn-xs">
+						<i class="layui-icon layui-icon-close"></i>
+					</button>
+					<button type="button" class="search-btn layui-btn layui-btn-xs">搜索</button>
+				</div>
+			</div>
+			<hr />
+			<form class="layui-form">
+				<div class="tree-empty">
+					未找到对应的项目
+				</div>
+				<div class="treeClass">
+					<ul id="treeDemo" class="ztree"></ul>
+				</div>
+			</form>
+		</div>
+		<div class="right" id="right">
+			<iframe id="knowledge" name="knowledge" src="norationalhos/list.html" height="650" width="990"
+				frameborder="no" width="100%"></iframe>
+
+		</div>
+	</div>
+</body>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<link rel="stylesheet" href="../../../layuiadmin/style/extend/zTree_v3/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="./rules.js"></script>
+<script>
+	layui.config({
+		base: '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		index: 'lib/index' //主入口模块
+	}).use(['index', 'admin', 'tree', 'setter','form'], function () {
+		var $ = layui.$,
+			admin = layui.admin,
+			view = layui.view,
+			setter = layui.setter,
+			form = layui.form;
+		var isTreeInit = false;
+		var setting = {
+			data: {
+				key: {
+					name: "NAME"
+				},
+				simpleData: {
+					enable: true,
+					idKey: "ID",
+					pIdKey: "PID",
+					rootPId: 0
+				}
+			},
+			callback: {
+				onClick: onClick
+			}
+		};
+		var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+
+		// 起始年份
+		var startYear = 2019;
+		var nowYear = (new Date()).getFullYear();
+		var beforeSelectYear = nowYear
+		var selectYear = nowYear;
+		if (nowYear - 2019 < 0) {
+			selectYear = 2019;
+		}
+
+		// 设置选择年份选项
+		function initYearOptions(nowYear) {
+			if (nowYear <= 2019) {
+				return ['<option value="2019">2019</option>'].join('');
+			} else {
+				var options = [];
+				for (var k = nowYear; k >= 2019; k--) {
+					options.push(
+						'<option value="' + k + '">' + k + '</option>'
+					)
+				}
+				return options.join('')
+			}
+		}
+
+		// 设置选项
+		$('select[name=year]').html(
+			initYearOptions(nowYear)
+		);
+		form.render("select");
+		// 选中
+		form.on('select(selectYear)', function (data) {
+			selectYear = data.value;
+			getdata();
+		})
+
+		$('#treesearch').keydown(function (event) {
+			if (event.keyCode == 13) {
+				$('.search-btn').click();
+			}
+		});
+
+		$('.search-reset').click(function () {
+			$('#treesearch').val('');
+			getdata();
+
+		})
+		$('.search-btn').click(function () {
+			getdata();
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			treeObj.expandAll(true);
+		})
+		getdata();
+
+
+		function getdata() {
+			admin.req({
+				url: layui.setter.base_url + "znsh/RulesMain/GetTreeByRulesMain",
+				type: "get",
+				data: {
+					condition: $('#treesearch').val().trim(),
+					year: selectYear
+				},
+				dataType: "json",
+				async: false,
+				success: function (result) {
+					if (result.count > 0) {
+						$('.tree-empty').hide();
+					} else {
+						$('.tree-empty').show();
+					}
+					$.fn.zTree.init($("#treeDemo"), setting, result.data);
+					var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+					if (!isTreeInit || beforeSelectYear != selectYear) {
+						isTreeInit = true;
+						beforeSelectYear = selectYear;
+
+						nNodes = treeObj.getNodes();
+						if (nNodes.length > 0) {
+							var treeNode = nNodes[0].children[0];
+							treeObj.selectNode(treeNode);
+							var links = filterCode(treeNode.ID);
+							if (links) {
+								$('#knowledge').attr('src', links);
+							}
+						}
+					}
+				}
+			});
+		};
+
+		function filterCode(code) {
+			var LinkConfig = ruless;
+			for (var k in LinkConfig) {
+				var item = LinkConfig[k];
+				if (item.codes.indexOf(code) > -1) {
+					var url = item.page;
+					if (item.isparam) {
+						url += '?code=' + code + "&year=" + selectYear;
+					}else{
+						url += "?year=" + selectYear;
+					}
+					return url
+				}
+			}
+			return false;
+		}
+
+		function onClick(event, treeId, treeNode, clickFlag) {
+			if (treeNode.PID != "0") {
+				var links = filterCode(treeNode.ID)
+				if (links) {
+					$('#knowledge').attr('src', links);
+				}
+			}
+		}
+
+	})
+</script>
+
+</html>

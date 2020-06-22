@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>事后审核引擎</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/css/base.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/static/lib/jquery-step/css/jquery.step.css">
+		<link rel="stylesheet" href="../../layuiadmin/css/cyType.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/css/font-awesome.min.css" media="all">
+		<style type="text/css">
+			.step-list {
+				min-height: 200px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="step-body" id="myStep">
+			<div class="step-header" style="width:80%">
+				<ul>
+					<li>
+						<p id="one" style="font-family: initial;font-weight: bold;">第一步</p>
+					</li>
+					<li>
+						<p id="two" style="font-family: initial;font-weight: bold;"></p>
+					</li>
+					<li>
+						<p id="three" style="font-family: initial;font-weight: bold;"></p>
+					</li>
+					<li>
+						<p id="four" style="font-family: initial;font-weight: bold;"></p>
+					</li>
+				</ul>
+			</div>
+			<div class="step-content">
+				<div class="step-list">
+					<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+						<legend style="font-family: initial;font-weight: bold;">配置审核规则</legend>
+					</fieldset>
+					<form class="layui-form" action="" style="height: 450px;">
+						<div class="layui-form-item">
+							<label class="layui-form-label"></label>
+							<div class="layui-input-block">
+								<input type="checkbox" name="checkrules" value="A003" title="住院天数异常" checked="true">
+								<input type="checkbox" name="checkrules" value="A004" title="分解住院审核" checked="true">
+								<input type="checkbox" name="checkrules" value="A005" title="床位费与住院天数不符" checked="true">
+								<input type="checkbox" name="checkrules" value="A006" title="入出院日期异常" checked="true">
+								<input type="checkbox" name="checkrules" value="A007" title="就诊疾病异常" checked="true">
+								<input type="checkbox" name="checkrules" value="A001" title="异常就诊频次" checked="true">
+								<hr class="layui-bg-green">
+								<input type="checkbox" name="checkrules" value="A002" title="异常就诊费用" checked="true">
+								<input type="checkbox" name="checkrules" value="B001" title="限定诊疗价格" checked="true">
+								<input type="checkbox" name="checkrules" value="B002" title="目录限制用药范围" checked="true">
+								<input type="checkbox" name="checkrules" value="B003" title="单病种政策超限价" disabled="disabled">
+								<input type="checkbox" name="checkrules" value="C001" title="限儿童用药审核" checked="true">
+								<input type="checkbox" name="checkrules" value="C002" title="限定性别用药" checked="true">
+								<hr class="layui-bg-orange">
+								<input type="checkbox" name="checkrules" value="C003" title="限老年人用药审核" checked="true">
+								<input type="checkbox" name="checkrules" value="D001" title="限定性别诊疗服务" disabled="disabled">
+								<input type="checkbox" name="checkrules" value="D002" title="限定儿童诊疗服务" disabled="disabled">
+								<input type="checkbox" name="checkrules" value="B004" title="限定药品价格审核" disabled="disabled">
+								<input type="checkbox" name="checkrules" value="C004" title="阶梯用药审核" disabled="disabled">
+								<input type="checkbox" name="checkrules" value="C005" title="安全用药审核" disabled="disabled">
+							</div>
+						</div>
+					</form>
+
+				</div>
+				<div class="step-list">
+					<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+						<legend style="font-family: initial;font-weight: bold;">选择医疗机构</legend>
+					</fieldset>
+					<div class="example">
+						<div class="block">
+							<div class="layui-container">
+								<form class="layui-form" style="padding-left: 80px;">
+									<!--<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="submitForm"><i class="fa fa-floppy-o">&nbsp;</i>提交表单</button>
+									<input id="getSelValue" class="layui-btn layui-btn-normal" type="button" value="获取选中值" />
+									<input id="getUnSelValue" class="layui-btn layui-btn-normal" type="button" value="获取未选中值" />-->
+									<div id="tranferDiv" cyType="transferTool" value=""></div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="step-list">
+					<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+						<legend style="font-family: initial;font-weight: bold;">正在审核数据，请耐心等待...</legend>
+					</fieldset>
+					<div class="jx">
+						<div class="ysu">
+							<h4 class="ti"> </h4>
+							<p class="y_info"> </p>
+						</div>
+						<div class="L_transform">
+							<div class="trans_bg">
+								<div class="bg_shade"></div>
+								<div class="circles topcircle">
+									<div class="trio">
+										<p>审核规则</p><i></i></div>
+									<div class="pos">
+										<span></span>
+									</div>
+								</div>
+								<div class="circles leftcircle active">
+									<div class="trio">
+										<p>就诊信息</p><i></i></div>
+									<div class="pos">
+										<span></span>
+										<span></span>
+									</div>
+								</div>
+								<div class="circles rightcircle">
+									<div class="trio">
+										<p>费用明细</p><i></i></div>
+									<div class="pos">
+										<span></span>
+										<span></span>
+									</div>
+								</div>
+								<div class="heart_box">
+									<div class="heart"></div>
+									<div class="shan" style="transform: rotate(274deg);"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="demo" style="margin-top: 500px;">
+						<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>
+					</div>
+				</div>
+				<div class="step-list">
+					<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+						<legend style="font-family: initial;font-weight: bold;">完成</legend>
+					</fieldset>
+					<div class="layui-container" style="width: 1000px">
+						<div class="layui-row">
+							<div class="layui-col-md6">
+								<div class="grid-demo layui-bg-green" style="height: 70px;text-align: center;line-height: 4; font-size: large;">审核人次：<span id="checkzrc">5000</span></div>
+							</div>
+							<div class="layui-col-md6">
+								<div class="grid-demo layui-bg-red" style="height: 70px;text-align: center;line-height: 4;font-size: large;">违规人次：<span id="wgzrc">5000</span></div>
+							</div>
+						</div>
+						<script type="text/html" id="toolbarDemo">
+							<div class="layui-btn-container">
+								<button class="layui-btn layui-btn-sm" lay-event="add" id="saveresult">保存结果</button>
+							</div>
+						</script>
+						<table id="LAY-check-manage" lay-filter="LAY-check-manage"></table>
+						<script type="text/html" id="toolbar-check">
+							<a class="layui-btn layui-btn-useradmin layui-btn-sm" lay-event="details">详情</a>
+						</script>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+
+		</fieldset>
+		<a class="layui-btn layui-btn-useradmin layui-btn-sm" id="preBtn">上一步</a>
+		<a class="layui-btn layui-btn-useradmin layui-btn-sm" id="nextBtn">下一步</a>
+
+		<script src="../../layuiadmin/js/jquery-3.4.0.min.js"></script>
+		<script src="../../layuiadmin/js/PinyinMatch.js"></script>
+		<script src="../../layuiadmin/static/lib/jquery-step/js/jquery.step.js"></script>
+		<script src="../../layuiadmin/layui/layui.js"></script>
+
+		<script type="text/javascript">
+			var t1;
+			var t2;
+			var indexs;
+			layui.config({
+				base: '../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'element', 'user', 'transferTool', 'table'], function() {
+				var $ = layui.$,
+					setter = layui.setter,
+					admin = layui.admin,
+					form = layui.form,
+					router = layui.router(),
+					element = layui.element,
+					table = layui.table;
+				transferTool = layui.transferTool; //穿梭对象
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				var step = $("#myStep").step(); //向导对象
+				var alertheight = $(window).height() - 30;
+				var nowStep = 1;
+				function checkBtnHide(step){
+					var maxStep = 4,minStep = 1;
+					if(step>=maxStep){
+						$('#preBtn').show();
+						$('#nextBtn').hide()
+					}
+					if(step<=minStep){
+						$('#preBtn').hide();
+						$('#nextBtn').show()
+					}
+				}
+				checkBtnHide(nowStep);
+				$("#preBtn").click(function(event) {
+					var yes = step.preStep(); //上一步
+					nowStep--;
+					checkBtnHide(nowStep);
+				});
+				//下一步事件
+				$("#nextBtn").click(function(event) {
+					
+					var arrcheckrules = new Array();
+					if($("#nextBtn").text() == "下一步") {
+						$("input:checkbox[name='checkrules']:checked").each(function(i) {            
+							arrcheckrules[i] = $(this).val();    
+						});
+						if(arrcheckrules.length == 0) {
+							layer.open({
+								title: '系统提示',
+								content: '请选择审核规则'
+							});
+							return;
+						} 
+						var yes = step.nextStep();
+					} else if($("#nextBtn").text() == "开始审核") {
+						$("input:checkbox[name='checkrules']:checked").each(function(i) {            
+							arrcheckrules[i] = $(this).val();    
+						});
+						if(transferTool.transferToolSelectedData.length == 0) {
+							layer.open({
+								title: '系统提示',
+								content: '请选择医疗机构'
+							});
+							return;
+						}
+						var yes = step.nextStep();
+						setTimeout(function() {
+							var yyxxarr = transferTool.transferToolSelectedData.split(',');
+							var yyxxarrcount = yyxxarr.length
+							admin.req({
+								url: layui.setter.base_url + 'afterengine/AfterCheckEngine/AfterCheckActionAsync',
+								async: false,
+								type: 'post',
+								data: {
+									institutionCodes: yyxxarr,
+									rulesCheck: arrcheckrules
+								},
+								done: function(result) {
+
+								}
+							});
+						}, 1000);
+
+						setTimeout(function() {
+							t1 = window.setInterval(getcheckresultstatus, 1000);
+						}, 500);    
+					}
+					nowStep++
+					checkBtnHide(nowStep);
+				});
+				$("#goBtn").click(function(event) {
+					var yes = step.goStep(3); //到指定步
+				});
+				var n = 0;
+
+				function getcheckresultstatus() {
+					admin.req({
+						url: layui.setter.base_url + 'afterengine/AfterCheckEngine/GetCheckResultStatus',
+						async: false,
+						type: 'get',
+						done: function(result) {
+							if(result.code == "0") {
+								setTimeout(function() {
+									n = n + Math.random() * 10 | 0;
+									if(n <= 95) {
+										element.progress('demo', n + '%');
+									}
+								}, 2000);
+								if(result.data.CheckResultStatus == "Y") {
+									window.clearInterval(t1)
+									$("#checkzrc").text(result.data.CheckCount);
+									element.progress('demo', '100%');
+									CheckInfoNumber = result.data.CheckNumber;
+									CheckPreNumber = result.data.CheckPreNumber;
+									getcheckresultfromredis(result.data.CheckNumber); //获取本次审核结构汇总情况
+									setTimeout(function() {
+										var yes = step.goStep(4); //到指定步  
+									}, 1500);
+								}
+							} else {
+								window.clearInterval(t1)
+								var yes = step.goStep(4); //到指定步  
+							}
+						}
+					});
+				}
+
+				function getsavecheckresultstatus() {
+					admin.req({
+						url: layui.setter.base_url + 'afterengine/AfterCheckEngine/GetSaveCheckResultStatus',
+						async: false,
+						type: 'get',
+						done: function(result) {
+							
+							window.clearInterval(t2)
+							layer.close(indexs);
+							layer.msg(result.msg, {
+								offset: '15px',
+								icon: 1,
+								time: 2000
+							});
+							setTimeout(function() {
+								$("#saveresult").attr("disabled", "");
+								$("#nextBtn").show();
+								$("#preBtn").hide();
+								$("#nextBtn").text("下一步")
+								element.progress('demo', '0%');
+								var yes = step.goStep(1); //到指定步 
+							}, 1000); 
+						}
+					});
+				}
+
+				function getcheckresultfromredis(checkNumber) {
+					//展示审核结果汇总情况
+					table.render({
+						elem: '#LAY-check-manage',
+						url: layui.setter.base_url + 'afterengine/AfterCheckEngine/GetCheckResultInfoListFromRedis',
+						toolbar: '#toolbarDemo',
+						cols: [
+							[{
+								field: 'RulesName',
+								title: '审核规则',
+								width: 325
+							}, {
+								field: 'Count',
+								title: '违规人次',
+								width: 325
+							}, {
+								title: '操作',
+								fixed: 'right',
+								width: 300,
+								align: 'center',
+								toolbar: '#toolbar-check'
+							}]
+						],
+						where: {
+							token: tokenvalue,
+							checkNumber: checkNumber
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						page: false,
+						height: 'full-260',
+						id: 'IdUser',
+						text: '对不起，加载出现异常！',
+						done: function(res) {
+							$("#wgzrc").text(res.count);
+						}
+					});
+				}
+
+				//监听工具条==审核结果
+				table.on('tool(LAY-check-manage)', function(obj) {
+					checkdata = obj.data;
+					var data = obj.data;
+					if(obj.event === 'details') {
+						var index = layer.open({
+							type: 2,
+							title: '详情',
+							content: 'form.html',
+							maxmin: true,
+							area: ['1100px', alertheight + 'px']
+						});
+						layer.full(index);
+					}
+				});
+				//头工具栏事件
+				table.on('toolbar(LAY-check-manage)', function(obj) {
+					switch(obj.event) {
+						case 'add':
+							var syncYb = '0';
+							layer.open({
+								type: 1,
+								title: false //不显示标题栏
+									,
+								closeBtn: false,
+								area: '300px;',
+								shade: 0.8,
+								id: 'LAY_layuipro' //设定一个id，防止重复弹出
+									,
+								btn: ['同步', '不同步'],
+								btnAlign: 'c',
+								moveType: 1 //拖拽模式，0或者1
+									,
+								content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">是否将审核结果同步到医保库中？</div>',
+								yes: function() {
+									syncYb = '1';
+									layer.closeAll();
+									$("#saveresult").attr("disabled", "disabled");
+									indexs = layer.load(2);
+									var yyxxarrs = transferTool.transferToolSelectedData.split(',');
+									admin.req({
+										url: layui.setter.base_url + 'afterengine/AfterCheckEngine/AfterCheckResultSubmit',
+										//								async: false,
+										type: 'post',
+										data: {
+											checkNumber: CheckInfoNumber,
+											checkPreNumber: CheckPreNumber,
+											institutionCodes: yyxxarrs,
+											syncYb: syncYb
+										},
+										error: function(e) {},
+										done: function(result) {}
+									});
+									setTimeout(function() {
+										t2 = window.setInterval(getsavecheckresultstatus, 1000);
+									}, 1000); 
+								},
+								btn2: function() {
+									syncYb = '0';
+									layer.closeAll();
+									$("#saveresult").attr("disabled", "disabled");
+									indexs = layer.load(2);
+									var yyxxarrs = transferTool.transferToolSelectedData.split(',');
+									admin.req({
+										url: layui.setter.base_url + 'afterengine/AfterCheckEngine/AfterCheckResultSubmit',
+										//								async: false,
+										type: 'post',
+										data: {
+											checkNumber: CheckInfoNumber,
+											checkPreNumber: CheckPreNumber,
+											institutionCodes: yyxxarrs,
+											syncYb: syncYb
+										},
+										error: function(e) {},
+										done: function(result) {}
+									});
+									setTimeout(function() {
+										t2 = window.setInterval(getsavecheckresultstatus, 1000);
+									}, 1000); 
+								}
+							});
+
+							break;
+					};
+				});
+				transferTool.init({
+					elem: "#tranferDiv",
+					seletedValue: "", //已选,变量逗号隔开
+					url: layui.setter.base_url + 'afterengine/AfterCheckEngine/GetYyxxInfo', //url获取数据
+					name: 'province', //form表单获取的结果值
+					disabledValue: "" //不可选,变量逗号隔开
+				});
+				//获取选中的值
+				$(document).on("click", "#getSelValue", function() {
+					alert(transferTool.transferToolSelectedData);
+				});
+
+				//获取未选中的值
+				$(document).on("click", "#getUnSelValue", function() {
+					alert(transferTool.transferToolUnSelectedData);
+				});
+			});
+		</script>
+
+	</body>
+
+</html>

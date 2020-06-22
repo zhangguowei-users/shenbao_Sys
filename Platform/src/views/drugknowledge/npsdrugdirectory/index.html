@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>字典管理</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+		<style>
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="wrap">
+			<div class="left test-1" style="overflow-y: scroll;" id="left">
+				<form class="layui-form">
+					<div class="treeClass">
+						<ul id="treeDemo" class="ztree"></ul>
+					</div>
+				</form>
+			</div>
+			<div class="right" id="right">			
+		        <table class="layui-hide" id="LAY-dict-manage" lay-filter="LAY-dict-manage" style="overflow-y: scroll;"></table>
+		        <script type="text/html" id="toolbarDemo">
+					<div class="layui-btn-container">			
+						<button class="layui-btn layui-btn-sm" lay-event="search">查询</button>
+						<button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+						<button class="layui-btn layui-btn-sm" lay-event="batchdel">批量删除</button>
+					</div>
+				</script>
+				<script type="text/html" id="toolbar-CZ">
+					<a class="layui-btn layuiadmin-btn-useradmin layui-btn-sm" lay-event="edit">编辑</a>
+					<a class="layui-btn layuiadmin-btn-useradmin layui-btn-sm" lay-event="detail">详情</a>
+					<a class="layui-btn layui-btn-danger layuiadmin-btn-useradmin layui-btn-sm" lay-event="del">删除</a>
+				</script>			
+			</div>
+		</div>
+		
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<link rel="stylesheet" href="../../../layuiadmin/style/extend/zTree_v3/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.core.js"></script>
+		<script>
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'tree', 'table'], function() {
+				var $ = layui.$,
+					admin = layui.admin,
+					view = layui.view,
+					table = layui.table,
+					setter = layui.setter,
+					form = layui.form;
+				var itemcode = "";
+				$("#left").height($(window).height() - 50);
+				$("#right").height($(window).height() - 50);
+				var alertheight = $(window).height() - 30
+				var setting = {
+					data: {
+						key: {
+							name: "TitleName"
+						},
+						simpleData: {
+							enable: true,
+							idKey: "TitleCode",
+							pIdKey: "TitleType",
+							rootPId: 'type'
+						}
+					},
+					callback: {
+						onClick: onClick
+					}
+				};						
+				getdata();
+				function getdata() {
+					admin.req({
+						url: layui.setter.base_url + 'znsh/NpsDataDict/GetListByCondition',
+						type: "get",
+						dataType: "json",
+						//async:false,
+						done: function(result) {
+							$.fn.zTree.init($("#treeDemo"), setting, result.data);
+
+						}
+					});
+				}
+
+				function onClick(event, treeId, treeNode, clickFlag) {
+					table.reload('IdDrug', {
+						where: {
+							titletype: treeNode.TitleType,
+							titlecode: treeNode.TitleCode
+						},
+						page:true
+					});
+				}
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				//加载数据字典表格
+				table.render({
+					elem: '#LAY-dict-manage',
+					url: layui.setter.base_url + 'znsh/NpsDrugDirectory/GetPageListByCondition',
+					toolbar: '#toolbarDemo',
+					cols: [
+						[{
+							type: 'checkbox',
+							fixed: 'left'
+						}, {
+							field: 'DrugName',
+							title: '药品名称',
+							width: 150
+						}, {
+							field: 'DrugCode',
+							title: '药品编码',
+							width: 200
+						}, {
+							field: 'UsageAndDose',
+							title: '用法和计量',
+							width: 150
+						}, {
+							field: 'PreparationAndSpecifications',
+							title: '制剂与规格',
+							width: 150
+						}, {
+							field: 'Remark',
+							title: '备注',
+							width: 200
+						}, {
+							fixed: 'right',
+							width: 200,
+							align: 'center',
+							title: '操作',
+							toolbar: '#toolbar-CZ'
+						}]
+					],
+					where: {
+						token: tokenvalue
+//						titletype: 'DataType',
+//						titlecode: 'type'
+					},
+					headers: {
+						Authorization: tokenvalue
+					},
+					page: true,
+					limit: 15,
+					id: 'IdDrug',
+					height: 'full-50',
+					text: '对不起，加载出现异常！'
+				});
+
+				//监听工具条==数字字典
+				table.on('tool(LAY-dict-manage)', function(obj) {
+					dictdata = obj.data;
+					var data = obj.data;
+					if(obj.event === 'del') {
+						layer.confirm('确定删除吗？', function(index) {
+							admin.req({
+								url: layui.setter.base_url + 'znsh/NpsDrugDirectory/Remove',
+								data: {
+									drugcode: data.DrugCode
+								},
+								type: "post",
+								dataType: "json",
+								success: function(result) {
+									layer.msg(result.msg, {
+										icon: 1,
+										time: 1000 //1秒关闭（如果不配置，默认是3秒）
+									}, function() {});
+									if(result.code == 0) {
+										layer.close(index); //执行关闭 
+										obj.del(); //删除对应行
+									}
+								}
+							});
+							layer.close(index);
+						});
+					} else if(obj.event === 'edit') {
+						var index = layer.open({
+								type: 2,
+								title: '编辑药品',
+								content: 'form.html',
+								maxmin: true,
+								area: ['1100px', alertheight + 'px']
+							});
+							layer.full(index);
+					}else if(obj.event === 'detail') {
+						var index = layer.open({
+								type: 2,
+								title: '药品信息',
+								content: 'detail.html',
+								maxmin: true,
+								area: ['1100px', alertheight + 'px']
+							});
+							layer.full(index);
+					}
+				});
+				/****/
+
+				//头工具栏事件
+				table.on('toolbar(LAY-dict-manage)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch(obj.event) {
+						case 'batchdel':
+							var drugCodeArray = new Array();
+							var checkStatus = table.checkStatus('IdDrug'),
+								checkData = checkStatus.data; //得到选中的数据
+
+							if(checkData.length === 0) {
+								return layer.msg('请选择数据', {
+									icon: 0,
+									time: 1000 //1秒关闭（如果不配置，默认是3秒）
+								});
+							}
+							layer.confirm('确定删除吗？', function(index) {
+								for(var i = 0; i < checkData.length; i++) {
+									drugCodeArray.push(checkData[i].DrugCode);
+								}
+								//执行 Ajax 后重载
+								admin.req({
+									///	url: layui.setter.url_base + "DataDict/RemoveBatch",
+									url: layui.setter.base_url + 'znsh/NpsDrugDirectory/RemoveBatch',
+									data: {
+										drugCodeArray: drugCodeArray
+									},
+									type: "post",
+									dataType: "json",
+									done: function(result) {
+										var icon = 1;
+
+										if(result.code == 0) {
+											layui.table.reload('IdDrug', {}); //刷新表格
+										} else {
+											icon = 0;
+										}
+										layer.msg(result.msg, {
+											icon: icon,
+											time: 1000 //1秒关闭（如果不配置，默认是3秒）
+										});
+									}
+								});
+							});
+
+							break;
+						case 'add':
+							var zTreeOjb = $.fn.zTree.getZTreeObj("treeDemo"); //ztree的Id  zTreeId
+							var selectedNodes = zTreeOjb.getSelectedNodes();
+							if(selectedNodes == "") {
+								layer.msg("请选择药品目录", {
+									icon: 0,
+									time: 1000 //1秒关闭（如果不配置，默认是3秒）
+								});
+								return;
+							}
+							dicdatatype = selectedNodes[0].TitleType;
+							if(dicdatatype == "type") {
+								layer.msg("根节点不允许添加!", {
+									icon: 0,
+									time: 1000 //1秒关闭（如果不配置，默认是3秒）
+								});
+								return;
+							}				
+							dicdatacode = selectedNodes[0].TitleCode;
+							dictdata = null;
+							var index = layer.open({
+								type: 2,
+								title: '新增药品',
+								content: 'form.html',
+								maxmin: true,
+								area: ['1100px', alertheight + 'px']
+							});
+							layer.full(index);
+							break;
+						case 'search':
+						    var index = layer.open({
+								type: 2,
+								title: '药品信息查询',
+								content: 'query.html',
+								maxmin: true,
+								area: ['1100px', alertheight - 400 + 'px']
+							});
+						//	layer.full(index);
+							break;
+					};
+				});
+
+				$('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});
+			})
+		</script>
+	</body>
+
+</html>

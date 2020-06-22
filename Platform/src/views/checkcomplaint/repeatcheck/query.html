@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>限儿童用药查询</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+
+		<style>
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="padding: 20px 20px 250px 20px;background-color: #FFFFFF;">
+			<input type="hidden" name="OrgCode" id="OrgCode" />
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">姓名：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="personname" id="personname" autocomplete="off" placeholder="" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">身份证号：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" id="IdNumber" name="IdNumber" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">疾病名称：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="diseaseName" id="diseaseName" autocomplete="off" placeholder="" class="layui-input">
+					</div>
+				</div>
+			</div>
+			<div style="text-align: right;margin-right:30px">
+				<button class="layui-btn layui-btn-big" lay-submit="" lay-filter="save">查询</button>
+			</div>
+		</div>
+
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'form', 'laydate', 'tableSelect'], function() {
+				var $ = layui.$,
+					setter = layui.setter,
+					element = layui.element,
+					form = layui.form,
+					admin = layui.admin,
+					laydate = layui.laydate;
+				var tableSelect = layui.tableSelect;
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];										
+				//监听form表单提交事件
+				form.on('submit(save)', function(data) {
+					var index = parent.layer.getFrameIndex(window.name);
+					var datatype = $(window.parent.document).find("#datatype").val();
+					
+					parent.layer.close(index); //关闭当前页  
+					parent.layui.table.reload('IDTable', {
+						where: {
+							token: tokenvalue,
+							datatype:datatype,
+							rulescode: parent.rulescode,
+							personName:$("#personname").val(),
+							idNumber:$("#IdNumber").val(),
+							diseaseName:$("#diseaseName").val()
+						},
+						page:1
+					}); //刷新表格
+					//清空tab#Name
+					$(window.parent.document).find(".layui-input").val("");
+					$(window.parent.document).find("#ms_name").html("");
+					$(window.parent.document).find("#ms_description").html("");
+					$(window.parent.document).find("#ms_checkdate").html("");
+					parent.layui.table.reload('Table', {
+						where: {
+							token: tokenvalue,
+							hosregistercode: ''
+						}
+					});
+					parent.layui.table.reload('Tables', {
+						where: {
+							token: tokenvalue,
+							hosregistercode: ''
+						}
+					});
+					//重置数据表格
+					$(window.parent.document).find("#Table")[0].reset();
+					$(window.parent.document).find("#Tables")[0].reset();
+					parent.layui.form.render();
+				});
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>规则知识库</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <style>
+        .action-box {
+            display: inline-block;
+        }
+
+        .action-box input {
+            float: left;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space5">
+            <div>
+                <button class="layui-btn layui-btn-sm" data-save>确定</button>
+                <button class="layui-btn layui-btn-sm" data-cancel>取消</button>
+            </div>
+            <div style="height:230px;overflow-y:auto">
+                <table class="layui-table" id="tiptable">
+                    <thead>
+                        <tr>
+                            <td style="width: 40px;text-align: center;">序号</td>
+                            <td style="width: 100;">规则信息</td>
+                            <td>明细</td>
+                            <td>操作</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'admin', 'form', 'setter', 'table', ], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            datepicker = layui.laydate,
+            view = layui.view,
+            util = layui.util,
+            form = layui.form,
+            setter = layui.setter;
+        var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+        var tipdata = parent.TopExport.tipdata;
+        tableRender(tipdata[parent.TopExport.operateId], ['RulesName']);
+
+
+        function tableRender(data, cols) {
+            var html = '';
+            for (var key in data) {
+                var row = data[key]
+                html += '<tr>'
+                html += '<td>' + (parseInt(key) + 1) + '</td>'
+                for (var k in cols) {
+                    var col = cols[k]
+                    if (row[col]) {
+                        html += '<td>' + row[col] + '</td>';
+                    } else {
+                        html += '<td> </td>';
+                    }
+                }
+                if(row.DetailName){
+                    html += '<td>' + row.DetailName + '</td>';
+                }else{
+                    html += '<td>' + row.YDDescription + '</td>';
+                }
+                html += '<td>';
+                html += '<span class="action-box"><input type="radio" value="1" name="check[' + key +
+                    ']" data-change="' + row
+                    .checkid + '" ' + (row.isChecked == 1 ? 'checked' : '') +
+                    ' /> 违规</span> &nbsp;&nbsp;';
+                html += '<span class="action-box"><input type="radio" value="0" name="check[' + key +
+                    ']" data-change="' + row
+                    .checkid + '" ' + (row.isChecked == 1 ? '' : 'checked') + ' /> 不违规</span>';
+                html += '</td>'
+                html += '</tr>'
+            }
+            $('table tbody').html(html);
+        }
+
+        function findRow(rowid) {
+            for (var i in tipdata) {
+                for (var k in tipdata[i]) {
+                    if (tipdata[i][k].checkid == rowid) {
+                        return tipdata[i][k]
+                    }
+                }
+            }
+        }
+
+        function isFalse() {
+            for (var i in tipdata[parent.TopExport.operateId]) {
+                if (tipdata[parent.TopExport.operateId][i].isChecked == 1) {
+                    return 1
+                }
+            }
+            return 0
+        }
+
+        $('[data-save]').click(function () {
+
+            $('.action-box input:radio:checked').each(function(key,el){
+                var rowid = $(el).attr('data-change');
+                var value = $(el).val();
+                var row = findRow(rowid);
+                row['isChecked'] = $(this).val();
+            })
+
+            var value = isFalse();
+            parent.TopExport.listStatHandler(parent.TopExport.operateId, value)
+        })
+
+        $('[data-cancel]').click(function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    })
+</script>
+
+</html>

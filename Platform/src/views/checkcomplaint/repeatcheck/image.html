@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<img src="" id="climage" alt="图片1">
+	</body>
+</html>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+	<script>
+		layui.config({
+			base: '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			index: 'lib/index' //主入口模块
+		}).use(['index'], function() {
+			var $ = layui.$;
+			var imageurl = $(window.parent.document).find("#imageurl").val();
+		    $('#climage').attr('src', imageurl);
+		});
+	</script>

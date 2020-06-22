@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>事后审核引擎</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+	<link rel="stylesheet" href="../../layuiadmin/css/base.css" media="all">
+	<link rel="stylesheet" href="../../layuiadmin/static/lib/jquery-step/css/jquery.step.css">
+	<link rel="stylesheet" href="../../layuiadmin/css/cyType.css" media="all">
+	<link rel="stylesheet" href="../../layuiadmin/css/font-awesome.min.css" media="all">
+	<style type="text/css">
+		.step-list {
+			min-height: 200px;
+		}
+
+		#FirstTrialDescribe,
+		#ComplaintDescribe,
+		#ComplaintResultDescribe,
+		#DoubtfulConclusionDescribe {
+			display: none;
+		}
+
+		p {
+			word-break: break-all;
+		}
+
+		.marktime {
+			float: right;
+			font-weight: 700;
+			color: #BBB;
+		}
+
+		.marker {
+			font-size: 16px;
+			font-weight: 700;
+			color: #FF3300;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="step-body" id="myStep">
+		<div class="step-header" style="width:80%">
+			<ul>
+				<li>
+					<p id="one" style="font-family: initial;font-weight: bold;">人工初审</p>
+				</li>
+				<li>
+					<p id="two" style="font-family: initial;font-weight: bold;">医院疑似违规病例反馈</p>
+				</li>
+				<li>
+					<p id="three" style="font-family: initial;font-weight: bold;">人工复审</p>
+				</li>
+				<li>
+					<p id="four" style="font-family: initial;font-weight: bold;">疑点结论</p>
+				</li>
+			</ul>
+		</div>
+		<div style="clear:both;"></div>
+		<div style="margin-top:20px;padding:10px;">
+			<div class="layui-card" id="ProposalDescribe">
+				<div class="layui-card-body">
+					<p></p>
+				</div>
+			</div>
+			<div class="layui-card" id="FirstTrialDescribe">
+				<div class="layui-card-header">
+					<span class="layui-badge layui-bg-green">人工初审</span>
+					<span data-name="FirstTrialTime" class="marktime"></span>
+				</div>
+				<div class="layui-card-body">
+					<p>医院疑似违规病例反馈</p>
+					<p></p>
+					<p></p>
+				</div>
+			</div>
+			<div class="layui-card" id="ComplaintDescribe">
+				<div class="layui-card-header">
+					<span class="layui-badge layui-bg-cyan">医院疑似违规病例反馈</span>
+					<span data-name="ComplaintTime" class="marktime"></span>
+				</div>
+				<div class="layui-card-body">
+					<p>医院疑似违规病例反馈</p>
+					<table class="layui-table">
+						<thead>
+							<tr>
+								<th>文件名</th>
+								<th>大小</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody id="ComplaintDescribeTable">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="layui-card" id="ComplaintResultDescribe">
+				<div class="layui-card-header">
+					<span class="layui-badge layui-bg-blue">人工复审</span>
+					<span data-name="ComplaintResultTime" class="marktime"></span>
+				</div>
+				<div class="layui-card-body">
+					<p></p>
+					<p></p>
+					<p></p>
+				</div>
+			</div>
+			<div class="layui-card" id="DoubtfulConclusionDescribe">
+				<div class="layui-card-header">
+					<span class="layui-badge">疑点结论</span>
+					<span data-name="DoubtfulConclusionTime" class="marktime"></span>
+				</div>
+				<div class="layui-card-body">
+					<p></p>
+					<table class="layui-table">
+						<thead>
+							<tr>
+								<th>文件名</th>
+								<th>大小</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody id="DoubtfulConclusionDescribeTable">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="../../layuiadmin/js/jquery-3.4.0.min.js"></script>
+	<script src="../../layuiadmin/js/PinyinMatch.js"></script>
+	<script src="../../layuiadmin/static/lib/jquery-step/js/jquery.step.js"></script>
+	<script src="../../layuiadmin/layui/layui.js"></script>
+
+	<script type="text/javascript">
+		var t1;
+		var t2;
+		var indexs;
+		layui.config({
+			base: '../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			index: 'lib/index' //主入口模块
+		}).use(['index', 'admin', 'element', 'user', 'transferTool', 'table'], function () {
+			var $ = layui.$,
+				setter = layui.setter,
+				admin = layui.admin,
+				form = layui.form,
+				router = layui.router(),
+				element = layui.element,
+				table = layui.table;
+			transferTool = layui.transferTool; //穿梭对象
+			var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+			var step = $("#myStep").step(); //向导对象
+
+			var alertheight = $(window).height() - 30
+
+			setStepConent(parent.orgdata);
+
+
+			function goStep(index) {
+				var steps = [{
+						el: '#one',
+						text: '人工初审'
+					},
+					{
+						el: '#two',
+						text: '医院疑似违规病例反馈'
+					},
+					{
+						el: '#three',
+						text: '人工复审'
+					},
+					{
+						el: '#four',
+						text: '疑点结论'
+					}
+				];
+				step.goStep(index);
+				$(steps[index - 1].el).html(steps[index - 1].text);
+			}
+
+			function setStepConent(data) {
+				var indexMap = {
+					'4': 3,
+					'5': 4,
+					'7': 2,
+					'8': 1,
+					'9': 2,
+					'10': 4,
+				}
+				goStep(indexMap[data.States]);
+
+				if (data.ProposalDescribe) {
+					$('#ProposalDescribe p').html(data.ProposalDescribe);
+				}
+
+				if (data.FirstTrialDescribe) {
+					$('#FirstTrialDescribe').show();
+					$("[data-name=FirstTrialTime]").html(data.FirstTrialTime);
+					$('#FirstTrialDescribe p').eq(0).html('描述：' + data.FirstTrialDescribe);
+					$('#FirstTrialDescribe p').eq(1).html('初审扣款金额：<span class="marker">' + data.RealMoneyFirst +
+						'</span>元');
+					admin.req({
+						url: layui.setter.base_url + 'afterengine/CheckComplaint/GetComplainRulesName',
+						data: {
+							'registerCode': data.RegisterCode,
+							'type': 1
+						},
+						type: 'get',
+						done: function (result) {
+							if (result.data.length > 0) {
+								$('#FirstTrialDescribe p').eq(2).html('初审违规规则： <span class="marker">' +
+									result.data.join(', ') + '</span>');
+							} else {
+								$('#FirstTrialDescribe p').eq(2).remove();
+							}
+						}
+					})
+				}
+
+				if (data.ComplaintDescribe) {
+					$('#ComplaintDescribe').show();
+					$("[data-name=ComplaintTime]").html(data.ComplaintTime);
+					$('#ComplaintDescribe p').eq(0).html('描述：' + data.ComplaintDescribe);
+					loadStepFiles(data.CheckComplainId, "#ComplaintDescribeTable", 1)
+				}
+
+				if (data.SecondTrialDescribe) {
+					$('#ComplaintResultDescribe').show();
+					$("[data-name=ComplaintResultTime]").html(data.ComplaintResultTime);
+					$('#ComplaintResultDescribe p').eq(0).html('描述：' + data.SecondTrialDescribe);
+					$('#ComplaintResultDescribe p').eq(1).html('复审扣款金额：<span class="marker">' + data.RealMoneySecond +
+						'</span>元');
+					admin.req({
+						url: layui.setter.base_url + 'afterengine/CheckComplaint/GetComplainRulesName',
+						data: {
+							'registerCode': data.RegisterCode,
+							'type': 2
+						},
+						type: 'get',
+						done: function (result) {
+							if (result.data.length > 0) {
+								$('#ComplaintResultDescribe p').eq(2).html(
+									'复审违规规则：<span class="marker">' + result.data.join(', ') +
+									'</span>');
+							} else {
+								$('#ComplaintResultDescribe p').eq(2).remove()
+							}
+						}
+					})
+				}
+
+				if (data.DoubtfulConclusionDescribe) {
+					$('#DoubtfulConclusionDescribe').show();
+					$("[data-name=DoubtfulConclusionTime]").html(data.DoubtfulConclusionTime);
+					$('#DoubtfulConclusionDescribe p').eq(0).html('描述：' + data.DoubtfulConclusionDescribe);
+					loadStepFiles(data.CheckComplainId, '#DoubtfulConclusionDescribeTable', 2)
+				}
+			}
+
+			function loadStepFiles(code, tableel, type) {
+				admin.req({
+					url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetCLInfo',
+					data: {
+						checkComplainId: code,
+						type: type
+					},
+					type: 'get',
+					done: function (result) {
+						if (result.code == 0) {
+							var demoListView = $(tableel);
+							for (var i = 0; i < result.count; i++) {
+								imageurl = layui.setter.image_url + "uploads" + result.data[i]
+									.ImageUrl;
+								var tr = $(['<tr id="upload-' + i + '">', '<td>' + result.data[
+										i]
+									.ImageName + '</td>', '<td>' + result.data[i]
+									.ImageSize + 'kb</td>', '<td>',
+									'<a href="javascript:window.open(\'' + imageurl +
+									'\');"  class="layui-btn layui-btn-xs layui-btn-danger demo-download" download>查看</a>',
+									'</td>', '</tr>'
+								].join(''));
+								imagename = result.data[i].ImageName;
+								$("#imageurl").val(imageurl);
+								datatype = result.data[i].Datatype;
+								//单个查看
+								demoListView.append(tr);
+							}
+						}
+					}
+				});
+			}
+		});
+	</script>
+
+</body>
+
+</html>

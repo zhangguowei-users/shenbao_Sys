@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>限儿童用药查询</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        html {
+            background-color: #f2f2f2;
+        }
+
+        .form-label {
+            text-align: left;
+            width: 160px;
+        }
+
+        .form-item {
+            margin-left: 160px;
+        }
+
+        #infos {
+            display: block;
+            width: 100%;
+            border: none;
+            height: 433px;
+        }
+
+        .layui-form-radioed.layui-radio-disbaled>i {
+            color: #5FB878 !important;
+        }
+
+        .layui-radio-disbaled>div {
+            color: #333 !important;
+        }
+
+        .layui-btn:disabled {
+            color: #CCC;
+            background-color: #649792;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md12">
+                <iframe id="infos" src="../detail/index2.html"></iframe>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body layui-tab-card">
+                        <div class="layui-form layui-form-pane" id="checkFrom">
+                            <div class="layui-form-item" pane>
+                                <label class="layui-form-label form-label">下一流程</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="ischeck" value="10" title="确认违规" lay-filter="check"
+                                        disabled checked>
+                                    <input type="radio" name="ischeck" value="2" title="申诉" lay-filter="check" disabled>
+                                </div>
+                            </div>
+                            <div class="layui-row">
+                                <button class="layui-btn layui-btn-normal" id="testList" type="button">选择多个上传文件</button>
+                                <div class="layui-form-item" id="uploadfile">
+                                    <div class="layui-inline" style=" width:100%;">
+                                        <div class="layui-upload">
+                                            <div class="layui-upload-list">
+                                                <table class="layui-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>上传文件名</th>
+                                                            <th>大小</th>
+                                                            <th>状态</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="demoList"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label" style="text-align: left;">说明</label>
+                                <div class="layui-input-block">
+                                    <textarea name="WGDescription" class="layui-textarea"
+                                        style="height: 60px;resize:none;overflow: auto;"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" style="text-align: right">
+
+                                <button type="button" class="layui-btn layui-btn-success" style="margin-left:10px;"
+                                    lay-submit="" lay-filter="save" id="save" disabled="true">提交</button>
+                                <button type="button" class="layui-btn layui-btn-normal" id="close">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../../layuiadmin/layui/layui.js"></script>
+    <script>
+        var TopExport = {
+            showTip: '',
+            // 违规列表数据
+            resultList: [],
+            operateId: '',
+            canSub: false,
+            states: 1,
+            // 违规明细列表
+            tipdata: [],
+        }
+
+
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index', //主入口模块
+        }).use(['index', 'admin', 'form', 'table', 'laydate', 'layer', 'upload'], function () {
+            var $ = layui.$,
+                setter = layui.setter,
+                tree = layui.tree,
+                element = layui.element,
+                form = layui.form,
+                admin = layui.admin,
+                laydate = layui.laydate,
+                upload = layui.upload,
+                table = layui.table;
+            var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+            editRow = parent.orgdata;
+            // 获取选中违规的规则列表
+
+            var postData = {
+                JsonArray: {
+                    states: 1, //1 反馈  10 结案
+                    describe: "",
+                    WGQR: [], //列表 操作  如果有一个违规为违规
+                    WGInfo: [] //详情 弹窗
+                },
+                registerCode: '',
+            }
+
+
+            TopExport.showTip = function showTip(id) {
+                TopExport.operateId = id;
+                layer.open({
+                    type: 2,
+                    title: false,
+                    closeBtn: 1,
+                    shadeClose: false,
+                    resize: false,
+                    offset: ['60px'],
+                    area: ['900px', '300px'],
+                    content: 'tiptable.html'
+                });
+            }
+
+
+            // 处理是否可以提交状态
+            function canSubHandler() {
+
+                var isCan = false; // 是否可以提交
+                var isFinish = false; // 是否申诉
+                var isSame = true; //是否相同
+
+                for (var k in TopExport.tipdata) {
+                    var rows = TopExport.tipdata[k];
+                    for (var i in rows) {
+                        var row = rows[i];
+                        if (row.States3 || row.States3 == '0') {
+                            if (row.States3 != row.isChecked) {
+                                isSame = false
+                            }
+                        } else {
+                            if (row.States1 != row.isChecked) {
+                                isSame = false
+                            }
+                        }
+                    }
+                }
+
+                for (var k in TopExport.resultList) {
+                    var row = TopExport.resultList[k];
+                    if (row.RulesLevel == 1) {
+                        if (row.isOperate) {
+                            isCan = true;
+                        }
+                        if (row.States3 || row.States3 == '0') {
+
+                            // if (row.checkValue == 0) {
+                            //     isFinish = true
+                            // }
+                            if (row.States3 && row.States3 != 0 && row.States3 != row.checkValue) {
+                                isFinish = true
+                            }
+                        } else {
+                            if (row.States1 && row.States1 != 0 && row.States1 != row.checkValue) {
+                                isFinish = true
+                            }
+                        }
+                    }
+                }
+                TopExport.canSub = isCan;
+                // if(TopExport.resultList[0].States3){
+                //     if (!isFinish) {
+                //         $("input[name='ischeck'][title='确认违规']").prop('checked', true);
+                //         $("input[name='ischeck'][title='申诉']").prop('checked', false);
+                //         TopExport.states = 10;
+                //     } else {
+                //         $("input[name=ischeck][title=确认违规]").prop('checked', false);
+                //         $("input[name=ischeck][title=申诉]").prop('checked', true);
+                //         TopExport.states = 2;
+                //     }
+                // }else{
+                // console.log('same',isSame)
+                if (isSame) {
+                    $("input[name='ischeck'][title='确认违规']").prop('checked', true);
+                    $("input[name='ischeck'][title='申诉']").prop('checked', false);
+                    TopExport.states = 10;
+                } else {
+                    $("input[name=ischeck][title=确认违规]").prop('checked', false);
+                    $("input[name=ischeck][title=申诉]").prop('checked', true);
+                    TopExport.states = 2;
+                }
+                // }
+
+                form.render();
+                $('#save').prop('disabled', !TopExport.canSub)
+            }
+
+            // 处理当前列值变化
+            TopExport.listStatHandler = function listStatHandler(rowId, checkValue, price) {
+                ;
+                var list = TopExport.resultList;
+                for (var k in list) {
+                    var item = list[k];
+                    if (item.CheckResultInfoCode == rowId) {
+                        item.isOperate = true
+                        item.checkValue = checkValue;
+                        item['editPrice'] = price;
+                    }
+                }
+                canSubHandler();
+
+                layer.close(layer.index)
+            }
+            var submask = ''
+            var demoListView = $('#uploadfile #demoList'),
+                uploadListIns = upload.render({
+                    elem: '#testList',
+                    url: layui.setter.base_url + 'afterengine/ComplaintMZL/CommintFK',
+                    accept: 'file',
+                    multiple: true,
+                    auto: false,
+                    headers: {
+                        Authorization: tokenvalue
+                    },
+                    before: function (obj) {
+                        var IsSceondFK = 0
+                        if (editRow.IsSceondFK) {
+                            IsSceondFK = parseInt(editRow.IsSceondFK);
+                        }
+                        this.data = {
+                            jsonArray: JSON.stringify(postData.JsonArray),
+                            fkcount: IsSceondFK + 1,
+                            registerCode: postData.registerCode
+                        }
+                        submask = parent.layer.load(1);
+                    },
+                    choose: function (obj) {
+                        $('.layui-upload-list').show();
+                        var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                        //读取本地文件
+                        obj.preview(function (index, file, result) {
+                            var tr = $(['<tr id="upload-' + index + '">', '<td>' + file.name +
+                                '</td>', '<td>' + (file.size / 1014).toFixed(1) +
+                                'kb</td>',
+                                '<td>等待上传</td>', '<td>',
+                                '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>',
+                                '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>',
+                                '</td>', '</tr>'
+                            ].join(''));
+
+                            //单个重传
+                            tr.find('.demo-reload').on('click', function () {
+                                obj.upload(index, file);
+                            });
+                            //删除
+                            tr.find('.demo-delete').on('click', function () {
+                                delete files[index]; //删除对应的文件
+                                tr.remove();
+                                uploadListIns.config.elem.next()[0].value =
+                                    ''; //清空 input file 值，以免删除后出现同名文件不可选
+                            });
+                            demoListView.append(tr);
+                        });
+                    },
+                    allDone: function (obj) {
+                        parent.layer.close(submask);
+                        if (obj.aborted <= 0) {
+                            // var index = parent.layer.getFrameIndex(window.name);
+                            // parent.layer.close(index); //关闭当前页
+                            // $(parent.document).find('#reflashTable').click();
+                            // parent.layer.msg('提交成功', {
+                            //     icon: 1,
+                            //     time: 1000
+                            // });
+
+                            parent.layer.alert('提交成功', {
+                                closeBtn: false
+                            }, function (i) {
+                                $(parent.document).find('#reflashTable').click();
+                                var index = parent.layer.getFrameIndex(window
+                                    .name);
+                                parent.layer.close(i)
+                                parent.layer.close(index); //关闭当前页 
+                            });
+                        } else {
+                            layer.alert('有文件上传失败！');
+                        }
+                    },
+                    done: function (res, index, upload) {
+                        if (res.status == 0) { //上传成功
+                            var tr = demoListView.find('tr#upload-' + index),
+                                tds = tr.children();
+                            tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                            tds.eq(3).html(''); //清空操作
+                            return delete this.files[index]; //删除文件队列已经上传成功的文件
+                        }
+                        this.error(index, upload);
+                    },
+                    error: function (index, upload) {
+                        var tr = demoListView.find('tr#upload-' + index),
+                            tds = tr.children();
+                        tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                        tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                    }
+                });
+
+
+
+            //提交初审
+            form.on('submit(save)', function () {
+                if (TopExport.canSub) {
+                    // if ($('.layui-upload-list table tr').length <= 1 && TopExport.states != 2) {
+                    //     layer.alert('请选择上传的文件');
+                    //     return;
+                    // }
+                    // 拼接规则列表
+
+                    var WGInfo = [];
+                    for (var k in TopExport.resultList) {
+                        var row = TopExport.resultList[k];
+                        var Price = row.WGFY;
+                        // console.log('p', Price)
+                        if (row.editPrice) {
+                            Price = row.editPrice;
+                        }
+                        // console.log('row', row)
+                        if (row.isOperate) {
+                            WGInfo.push({
+                                Code: row.CheckResultInfoCode,
+                                value: row.checkValue,
+                                Price: Price
+                            })
+                        } else {
+                            if (row.RulesLevel == '2') {
+                                WGInfo.push({
+                                    Code: row.CheckResultInfoCode,
+                                    value: 1,
+                                    Price: Price
+                                })
+                            } else {
+                                if (row.States3) {
+                                    WGInfo.push({
+                                        Code: row.CheckResultInfoCode,
+                                        value: row.States3,
+                                        Price: Price
+                                    })
+                                } else {
+                                    WGInfo.push({
+                                        Code: row.CheckResultInfoCode,
+                                        value: row.States1,
+                                        Price: Price
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    // 拼接详情列表
+                    var WGQR = [];
+                    for (var k in TopExport.tipdata) {
+                        for (var i in TopExport.tipdata[k]) {
+                            var item = TopExport.tipdata[k][i];
+                            if (item.IsPre == 1) {
+                                WGQR.push({
+                                    Code: item.ComplaintCode,
+                                    value: item.isChecked
+                                })
+                            }
+                        }
+                    }
+
+                    postData.JsonArray.states = TopExport.states;
+                    if (editRow.IsSceondFK && TopExport.states == 2) {
+                        postData.JsonArray.states = 3
+                    }
+                    postData.JsonArray.WGQR = WGQR;
+                    postData.JsonArray.WGInfo = WGInfo;
+                    postData.registerCode = editRow.RegisterCode
+                    postData.JsonArray.describe = $('[name=WGDescription]').val().trim();
+
+                    // if ($('.layui-upload-list table tr').length > 1 && TopExport.states == 2) {
+                    if ($('.layui-upload-list table tr').length > 1) {
+                        uploadListIns.upload();
+                    } else {
+                        // 添加说明
+                        var IsSceondFK = 0
+                        if (editRow.IsSceondFK) {
+                            IsSceondFK = parseInt(editRow.IsSceondFK);
+                        }
+                        var step;
+                        if (IsSceondFK == 0) {
+                            step = 2
+                        } else {
+                            step = 22
+                        }
+                        // console.log(step);
+                        // console.log(postData.JsonArray);
+                        var newPost = {
+                            step: step,
+                            jsonArray: JSON.stringify(postData.JsonArray),
+                            fkcount: IsSceondFK + 1,
+                            registerCode: postData.registerCode
+                        }
+                        submask = parent.layer.load(1);
+
+                        admin.req({
+                            url: setter.base_url + 'afterengine/ComplaintMZL/Commint',
+                            type: 'post',
+                            data: newPost,
+                            done: function (result) {
+                                parent.layer.close(submask);
+                                if (result.code == 0) {
+                                    parent.layer.alert(result.msg, {
+                                        closeBtn: false
+                                    }, function (i) {
+                                        $(parent.document).find('#reflashTable')
+                                            .click();
+                                        var index = parent.layer.getFrameIndex(
+                                            window
+                                            .name);
+                                        parent.layer.close(i)
+                                        parent.layer.close(index); //关闭当前页 
+                                    });
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+
+            $('#close').click(function () {
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index); //关闭当前页 
+            })
+
+        });
+    </script>
+</body>
+
+</html>

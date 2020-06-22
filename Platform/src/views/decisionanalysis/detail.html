@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>"万能神药"用量统计详情</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/css/base.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/static/lib/jquery-step/css/jquery.step.css">
+		<link rel="stylesheet" href="../../layuiadmin/css/cyType.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/css/font-awesome.min.css" media="all">
+		<style type="text/css">
+			.step-list {
+				min-height: 200px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-card">
+			<div class="layui-card-body">
+				<div class="layui-row">
+					<div class="layui-col-sm4">
+						<table class="layui-hide" id="test" lay-filter="test"></table>
+					</div>
+					<div class="layui-col-sm8">
+						<div class="layui-row">
+							<div class="layui-card">
+								<div class="layui-card-body">
+									<div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-heaparea">
+										<div carousel-item id="LAY-index-heaparea">
+											<div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<div class="layui-row" style=" margin-left:5px;">
+							<div class="layui-col-sm5">
+								<div id="djdata"></div>
+							</div>
+							<div class="layui-col-sm7">
+								<div id="container" style="height: 180px; width:450px"></div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../layuiadmin/js/jquery-3.4.0.min.js"></script>
+		<script src="../../layuiadmin/js/PinyinMatch.js"></script>
+		<script src="../../layuiadmin/static/lib/jquery-step/js/jquery.step.js"></script>
+		<script src="../../layuiadmin/layui/layui.js"></script>
+		<script type="text/javascript">
+			layui.config({
+				base: '../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'element', 'table', 'carousel', 'echarts'], function() {
+				var $ = layui.$,
+					setter = layui.setter,
+					admin = layui.admin,
+					router = layui.router(),
+					element = layui.element,
+					table = layui.table,
+					carousel = layui.carousel,
+					echarts = layui.echarts,
+					device = layui.device();
+				var alertheight = $(window).height() - 30;
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				var bigdata = [],
+					bigdatacount = [];
+				var smalldata = [];
+				//轮播切换
+				$('.layadmin-carousel').each(function() {
+					var othis = $(this);
+					carousel.render({
+						elem: this,
+						width: '100%',
+						arrow: 'none',
+						interval: othis.data('interval'),
+						autoplay: othis.data('autoplay') === true,
+						trigger: (device.ios || device.android) ? 'click' : 'hover',
+						anim: othis.data('anim')
+					});
+				});
+				var title = '';
+				var flag = $(window.parent.document).find("#flag").val();
+				var drugname = $(window.parent.document).find("#drugname").val();				
+				if(flag == '1') {
+					title = '门诊';
+				} else {
+					title = '住院';
+				}
+				GetTableData_MC();
+				GetTableData_DJ();
+
+				function GetTableData_MC() {
+					table.render({
+						elem: '#test',
+						url: layui.setter.base_url + 'afterengine/DecisionAnalysis/GetStaticsViewsByTable_JGMC',
+						toolbar: '#toolbarDemo',
+						title: title + '统计分析',
+						cols: [
+							[{
+									field: 'commonname',
+									title: '机构名称',
+									width: 200,
+									align: 'center',
+								},
+								{
+									field: 'count',
+									title: '数量',
+									width: 80,
+									align: 'center',
+								}
+								,
+								{
+									field: 'price',
+									title: '金额(元)',
+									width: 107,
+									align: 'center',
+								}
+							]
+						],
+						page: {
+							layout: ['count', 'prev', 'page', 'next'] //自定义分页布局
+						},
+						id: "IDTable",
+						limit: 12, //每页显示5条
+						limits: [10, 20, 45, 60, 75, 90],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							flag: flag,
+							drugname: drugname
+						},
+						height: 600,
+						headers: {
+							Authorization: tokenvalue
+						},
+						done: function(res) {
+							if(res.code == "0") {
+								bigdata = [], bigdatacount = [];
+								$.each(res.data, function(index, item) {
+									if(index < 10) {
+										if(item.commonname == null) {
+											bigdata.push('无名称');
+										} else {
+											bigdata.push(item.commonname);
+										}
+										if(item.count == null) {
+											bigdatacount.push(0);
+										} else {
+											bigdatacount.push(item.count);
+										}
+									}
+								});
+								GetBigImage();
+							}
+
+						}
+					});
+				}
+
+				function GetTableData_DJ() {
+					admin.req({
+						url: layui.setter.base_url + 'afterengine/DecisionAnalysis/GetStaticsViewsByTable_JGJB',
+						async: false,
+						type: 'get',
+						data: {
+							flag: flag,
+							drugname: drugname
+						},
+						done: function(result) {
+							if(result.code == "0") {
+								var html = '<table class="layui-table layuiadmin-page-table" lay-skin="line"><thead><tr><th>序号</th><th>机构等级</th><th>数目</th><th>金额(元)</th></tr></thead>';
+								html += '<tbody>';
+
+								$.each(result.data, function(index, item) {
+									var obj = new Object();
+									obj.name = item.commonname==null?'无':item.commonname;
+									obj.value = item.count;
+									smalldata.push(obj);
+									html += '<tr><td align=\'center\'>' + (index + 1) + '</td><td>';
+									html += '<span>';
+									if(item.commonname == null) {
+										html += "";
+									} else {
+										html += item.commonname;
+									}
+									html += '</span></td><td><i>' + (item.count == null ? '0' : item.count) + '</i></td><td>'+item.price+'</td></tr>';
+
+								});
+								html += '</tbody></table>';
+								$('#djdata').html(html);
+
+								GetSmallImage();
+								element.render();
+							}
+
+						}
+					});
+				}
+
+				function GetSmallImage() {
+					// 基于准备好的dom，初始化echarts实例
+					var myChart = echarts.init(document.getElementById('container'));
+					// 指定图表的配置项和数据
+					option = {
+						title: {
+							text: '',
+							x: 'left',
+							textStyle: {
+					        fontSize: 17,
+					        fontWeight: '',
+					        color: '#333'                             // 主标题文字颜色
+					    },
+						},
+						tooltip: {
+							trigger: 'item',
+							formatter: "{a} <br/>{b} : {c} ({d}%)"
+						},
+						color: ['#CD5C5C', '#00CED1', '#9ACD32', '#FFC0CB'],
+						stillShowZeroSum: false,
+						series: [{
+							name: '用药情况',
+							type: 'pie',
+							radius: '80%',
+							center: ['60%', '60%'],
+							data: smalldata,
+							itemStyle: {								
+								emphasis: {
+									shadowBlur: 10,
+									shadowOffsetX: 0,
+									shadowColor: 'rgba(128, 128, 128, 0.5)'
+								}
+							}
+						}]
+					};
+					// 使用刚指定的配置项和数据显示图表。
+					myChart.setOption(option);
+				}
+
+				function GetBigImage() {
+					var echheaparea = [],
+						heaparea = [{
+							title: {
+								text: '药名："'+drugname+'"'+title + '使用情况',
+							},
+							color: ['#ff0000'],
+							tooltip: {
+								trigger: 'axis'
+							},
+							legend: {
+								data: ['数量']
+							},
+							calculable: true,
+							xAxis: [{
+								type: 'category',
+								boundaryGap: false,
+								data: bigdata,
+								axisLabel: {
+									rotate: 20,
+								}
+							}],
+							yAxis: [{
+								type: 'value'
+							}],
+							series: [{
+								name: '数量',
+								type: 'line',
+								stack: '总量',
+								itemStyle: {
+									normal: {
+										label: {
+												show: true, //开启显示
+												position: 'top', //在上方显示
+												textStyle: { //数值样式
+													color: '#000000',
+													fontSize: 12
+												}
+										},
+										areaStyle: {
+											color: 'rgb(255,165,79)',
+											type: 'default'
+										}
+									}
+								},
+								data: bigdatacount
+							}]
+						}],
+						elemheaparea = $('#LAY-index-heaparea').children('div'),
+						renderheaparea = function(index) {
+							echheaparea[index] = echarts.init(elemheaparea[index], layui.echartsTheme);
+							echheaparea[index].setOption(heaparea[index]);
+							window.onresize = echheaparea[index].resize;
+						};
+					if(!elemheaparea[0]) return;
+					renderheaparea(0);
+				}
+
+				element.on('tab(filter)', function(data) {
+					if(data.index == 1 && $('#clinic').val() == "0") {
+						GetStaticsData1('2', arrcheck);
+						GetClinicImage();
+					}
+					if(data.index == 0 && $('#hos').val() == "0") {
+						GetStaticsData('1', arrcheck);
+						GetHosImage();
+					}
+				});
+
+			});
+		</script>
+
+	</body>
+
+</html>

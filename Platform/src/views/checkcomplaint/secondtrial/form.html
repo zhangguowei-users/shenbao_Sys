@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>限儿童用药查询</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+	<link rel="stylesheet" href="../../../layuiadmin/style/extend/zTree_v3/zTreeStyle/zTreeStyle.css" type="text/css">
+
+	<style>
+		html {
+			overflow-x: hidden;
+		}
+
+		.wrap {
+			font-size: 0px;
+			/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+			padding: 10px;
+			box-sizing: content-box;
+			/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+		}
+
+		.input-box {
+			padding: 5px 0;
+		}
+
+		.input-box .layui-form-label {
+			width: 100px;
+		}
+
+		.input-box .layui-input-block {
+			margin-left: 130px;
+		}
+
+		.result-box {
+			border: 1px solid #f2f2f2;
+			background: #FFF;
+			padding: 10px 15px;
+			border-left: 5px solid #1E9FFF;
+			border-radius: 5px;
+			margin: 10px 0;
+			/* box-shadow:0 2px 5px 0 rgba(0,0,0,.1) */
+		}
+
+		.size-watch {
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			visibility: hidden;
+			margin: 0;
+			padding: 0;
+			border: 0;
+		}
+
+		.chart-container {
+			width: 100%;
+			height: 340px;
+		}
+
+		.marker,
+		#FirstCheckRules {
+			color: #FF3300;
+			font-weight: 700;
+		}
+	</style>
+</head>
+
+<body>
+	<input id="repeat" type="hidden" />
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space10">
+			<div class="layui-col-sm3">
+				<div class="layui-card">
+					<div class="layui-card-body layui-tab-card">
+						<div class="treeClass" style="height:394px;overflow-x:auto;">
+							<ul id="rules" class="ztree"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-sm9">
+				<div class="layui-card">
+					<div class="layui-card-body" style="padding:0;">
+						<div class="layui-row">
+							<div class="layui-tab layui-tab-card" lay-filter="taber">
+								<ul class="layui-tab-title">
+									<li class="layui-this">基本信息</li>
+									<li>费用信息</li>
+									<li>费用占比分析</li>
+									<li data-detail="detail">违规明细</li>
+									<li>违规描述</li>
+									<li>费用明细</li>
+									<li id="checkinfoTab">审核信息</li>
+								</ul>
+								<div class="layui-tab-content" style="height:354px;overflow-y:auto;">
+									<div class="layui-tab-item layui-show" id="baseTab">
+										<div class="layui-row"></div>
+									</div>
+									<div class="layui-tab-item" id="infoTab">
+										<div class="layui-row"></div>
+									</div>
+									<div class="layui-tab-item">
+										<div class="layui-row" id="fyzbfx">
+											<div class="layui-col-sm6">
+												<div class="chart-container" id="chart1"></div>
+											</div>
+											<div class="layui-col-sm6">
+												<div class="chart-container" id="chart2"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="layui-tab-item" data-detail="detail">
+										<table class="layui-hide" id="wgcfdetail" lay-filter="wgcfdetail"></table>
+									</div>
+									<div class="layui-tab-item">
+										<div class="layui-row" id="wgms"></div>
+									</div>
+									<div class="layui-tab-item">
+										<table class="layui-hide" id="cfdetail" lay-filter="cfdetail"></table>
+									</div>
+									<div class="layui-tab-item" id="checkinfoTabbody">
+										<div class="layui-row" id="checkinfo"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-sm12">
+				<div class="layui-card">
+					<div class="layui-card-body layui-tab-card">
+						<div class="layui-form layui-form-pane layui-col-xs12" lay-filter="formInfo">
+							<div class="layui-inline" style="width: 100%;">
+								<div class="layui-form-item layui-form-text">
+									<label class="layui-form-label" style="text-align: left;">建议违规金额描述</label>
+									<div class="layui-input-block">
+										<textarea name="WGDescription" class="layui-textarea"
+											style="height: 60px;resize:none;overflow: auto;" readonly></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label" style="text-align: left;width: 160px;">建议扣款金额(元)</label>
+								<div class="layui-input-block" style="margin-left: 160px;">
+									<input type="text" class="layui-input" placeholder="请填写违规金额" autocomplete="off"
+										name="Money" id="Money" readonly>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label" style="text-align: left;width: 160px;">扣款金额(元)</label>
+								<div class="layui-input-block" style="margin-left: 160px;">
+									<input type="text" class="layui-input" placeholder="请填写违规金额" autocomplete="off"
+										name="wgMoney" id="wgMoney" readonly>
+								</div>
+							</div>
+							<div class="layui-form-item" id="uploadfile">
+								<div class="layui-inline" style=" width:100%;">
+									<div class="layui-upload">
+										<div class="layui-upload-list" style="display: none;">
+											<table class="layui-table">
+												<thead>
+													<tr>
+														<th>上传文件名</th>
+														<th>大小</th>
+														<th>状态</th>
+														<th>操作</th>
+													</tr>
+												</thead>
+												<tbody id="demoList"></tbody>
+											</table>
+										</div>
+										<button class="layui-btn layui-btn-normal" id="testList"
+											type="button">选择多个上传文件</button>
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item layui-form-text">
+								<label class="layui-form-label">反馈描述</label>
+								<div class="layui-input-block">
+									<textarea placeholder="请输入反馈描述" name="describe" class="layui-textarea"
+										style="height: 120px;resize:none;" lay-verify="required"></textarea>
+								</div>
+							</div>
+							<div class="layui-form-item" style="text-align: right">
+								<button type="button" class="layui-btn layui-btn-success" lay-submit=""
+									lay-filter="save">提交反馈</button>
+								<button type="button" class="layui-btn layui-btn-normal" id="close">取消</button>
+							</div>
+						</div>
+						<div style="clear:both"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="../../../layuiadmin/layui/layui.js"></script>
+	<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.excheck.min.js"></script>
+	<script src="../echarts.min.js"></script>
+	<script src="./base.js"></script>
+	<script>
+		layui.config({
+			base: '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			index: 'lib/index', //主入口模块
+			excodes: '../../util/excodes'
+		}).use(['index', 'form', 'table', 'laydate', 'upload', 'excodes'], function () {
+			var $ = layui.$,
+				setter = layui.setter,
+				element = layui.element,
+				form = layui.form,
+				admin = layui.admin,
+				laydate = layui.laydate,
+				upload = layui.upload,
+				table = layui.table;
+			var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+			var tree;
+			var isShow = false;
+			var orgdata = parent.orgdata
+			$('[name=WGDescription]').val(orgdata.ProposalDescribe);
+			$('[name=Money]').val(orgdata.ProposalMoney);
+			$('[name=wgMoney]').val(orgdata.RealMoneyFirst);
+			var rules = [];
+			var checkTreeSetter = {
+				view: {
+					selectedMulti: true,
+					showLine: true
+				},
+				check: {
+					enable: true,
+					chkStyle: 'checkbox',
+				},
+				data: {
+					key: {
+						name: "NAME"
+					},
+					simpleData: {
+						enable: true,
+						idKey: "ID",
+						pIdKey: "PID",
+						rootPId: 100
+					}
+				},
+				callback: {
+					onClick: onTreeClick,
+					onCheck: onTreeCheck,
+					beforeClick: onTreeClickBefore,
+					beforeCheck: onTreeCheckBefore
+				}
+			}
+
+			function onTreeCheck(event, treeId, treeNode) {
+				var nodes = tree.getCheckedNodes()
+				rules = selectRuleCodes(nodes);
+				form.render();
+			}
+
+			function onTreeClick(event, treeId, treeNode) {
+				GetWGCFData(orgdata.RegisterCode, treeNode.RuleCode);
+				GetWGDesp(treeNode.CheckResultInfoCode, treeNode.RuleCode)
+			}
+
+			function onTreeCheckBefore() {
+				return false
+			}
+
+			function onTreeClickBefore(treeId, treeNode, clickFlag) {
+				if (treeNode.level == 0) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+
+			// 添加数据
+			function setTreeDate(data, callback) {
+				data.unshift({
+					ID: "100",
+					NAME: "违规规则",
+					RuleCode: "",
+				})
+				// 设置树
+				tree = $.fn.zTree.init($("#rules"), checkTreeSetter, data);
+				// 展开树
+				tree.expandAll(true);
+
+				if (callback && typeof callback == 'function') {
+					callback();
+				}
+			}
+
+			// 获取违规列表
+			function getWGTree(registerCode) {
+				admin.req({
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/GetWGTree',
+					data: {
+						'registerCode': registerCode,
+						'treeType': 2
+					},
+					type: 'get',
+					done: function (result) {
+						if (result.code == 0) {
+							for (var k in result.data) {
+								if (result.data[k].States != 8) {
+									result.data[k].checked = true;
+									rules.push(result.data[k].RuleCode);
+								}
+							}
+							setTreeDate(result.data,
+								function () {
+									// 选中第一项目
+									var nodes = tree.getNodes();
+									if (
+										nodes.length > 0 &&
+										nodes[0].children &&
+										nodes[0].children.length > 0
+									) {
+										tree.selectNode(nodes[0].children[0]);
+										GetWGCFData(orgdata.RegisterCode, nodes[0].children[0]
+											.RuleCode);
+										GetWGDesp(nodes[0].children[0].CheckResultInfoCode, nodes[0]
+											.children[0].RuleCode);
+									}
+								}
+							)
+						}
+					}
+				})
+			}
+
+			getWGTree(orgdata.RegisterCode)
+
+
+			element.on('tab(taber)', function (key) {
+				if (key.index == 3) {
+					isShow = true
+				} else {
+					isShow = false
+				}
+			})
+
+			function selectRuleCodes(arr) {
+				var rules = [];
+				for (var i in arr) {
+					if (arr[i].RuleCode) {
+						rules.push(arr[i].RuleCode);
+					}
+				}
+				return rules
+			}
+			// 批量表单项目赋值
+			function SetFormValueByDataKey(data, ins) {
+				for (var key in ins) {
+					if (typeof data[ins[key]] != 'undefined') {
+						$('#' + ins[key]).val(data[ins[key]]);
+					} else {
+						// console.error(ins[key] + ' is not your data\'s key');
+					}
+				}
+			}
+
+			var chart1 = echarts.init($('#chart1').get(0));
+			var chart2 = echarts.init($('#chart2').get(0));
+
+
+			function riseze(el, cb) {
+				// 创建iframe标签，设置样式并插入到被监听元素中
+				var iframe = document.createElement('iframe');
+				iframe.setAttribute('class', 'size-watch');
+				el.appendChild(iframe);
+
+				// 记录元素当前宽高
+				var oldWidth = el.offsetWidth;
+				var oldHeight = el.offsetHeight;
+
+				// iframe 大小变化时的回调函数
+				function sizeChange() {
+					// 记录元素变化后的宽高
+					var width = el.offsetWidth;
+					var height = el.offsetHeight;
+					// 不一致时触发回调函数 cb，并更新元素当前宽高
+					if (width !== oldWidth || height !== oldHeight) {
+						cb({
+							width: width,
+							height: height
+						}, {
+							width: oldWidth,
+							height: oldHeight
+						});
+						oldWidth = width;
+						oldHeight = height;
+					}
+				}
+
+				// 设置定时器用于节流
+				var timer = 0;
+				// 将 sizeChange 函数挂载到 iframe 的resize回调中
+				iframe.contentWindow.onresize = function () {
+					clearTimeout(timer);
+					timer = setTimeout(sizeChange, 20);
+				};
+			}
+
+			riseze(document.getElementById('fyzbfx'), function () {
+				chart1.resize();
+				chart2.resize();
+			});
+
+			function setChartOption(data, title, color) {
+				return {
+					title: {
+						text: title,
+						left: 'center',
+						top: 20,
+						textStyle: {
+							color: '#ccc'
+						}
+					},
+					tooltip: {
+						trigger: 'item',
+					},
+					series: [{
+						type: 'pie',
+						radius: '50%',
+						center: ['50%', '50%'],
+						data: data,
+						roseType: 'radius',
+						label: {
+							normal: {
+								textStyle: {
+									color: '#333'
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								lineStyle: {
+									color: 'rgba(255, 255, 255, 0.3)'
+								},
+								smooth: 0.2,
+								length: 10,
+								length2: 20
+							}
+						},
+						itemStyle: {
+							normal: {
+								shadowBlur: 200,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						},
+						animationType: 'scale',
+						animationEasing: 'elasticOut',
+					}]
+				};
+			}
+
+
+			$('#baseTab .layui-row').html(FormRender(baseTabForm, Template));
+			$('#infoTab .layui-row').html(FormRender(infoTabForm, Template));
+
+			// 点击取消是执行关闭窗口事假
+			$(document).on('click', '#close', function () {
+				var index = parent.layer.getFrameIndex(window.name);
+				parent.layer.close(index); //关闭当前页 
+			})
+
+			// 提交表单
+			$(".layui-input").attr("disabled", "disabled");
+
+			SetFormValueByDataKey(orgdata, ['Name', 'IdNumber', 'Gender', 'Age', 'InstitutionName', 'DiseaseName']);
+			setCheckInfo(orgdata);
+			GetCFData(orgdata.RegisterCode);
+			GetFeeDetail(orgdata.RegisterCode, orgdata.PersonalCode);
+
+			function setCheckInfo(orgdata) {
+				$('#checkinfoTab').hide();
+				var html = '';
+
+				if (orgdata.FirstTrialDescribe && typeof orgdata.FirstTrialDescribe != 'undefined' && orgdata
+					.FirstTrialDescribe != '') {
+					$('#checkinfoTab').show();
+					html += '<div>\
+                        <div class="result-box">\
+                            <span class="layui-badge layui-bg-blue">初审描述</span>\
+                            <div style="display:inline-block;word-break:break-all;">' + orgdata.FirstTrialDescribe +
+						'</div>\
+						<div>初审扣款金额：<span class="marker">' + orgdata.RealMoneyFirst + '</span>元</div>\
+						</div>\
+                    </div>';
+					$('#checkinfoTabbody').html(html);
+
+					// <div>初审违规规则：<span id="FirstCheckRules"></span></div>\
+					// admin.req({
+					// 	url: layui.setter.base_url + 'afterengine/CheckComplaint/GetComplainRulesName',
+					// 	data: {
+					// 		'registerCode': orgdata.RegisterCode,
+					// 		'type': 1
+					// 	},
+					// 	type: 'get',
+					// 	done: function (result) {
+					// 		if (result.code == 0) {
+					// 			$('#FirstCheckRules').html(result.data.join(','));
+					// 		}
+					// 	}
+					// })
+				}
+
+				if (orgdata.ComplaintDescribe) {
+					$('#checkinfoTab').show();
+					html += '<div>\
+                    <div class="result-box">\
+                        <span class="layui-badge layui-bg-cyan">反馈描述</span>\
+                        <div style="display:inline-block;word-break:break-all;">' + orgdata.ComplaintDescribe + '</div>\
+                        <table class="layui-table">\
+                        <thead>\
+                            <tr>\
+                                <th>文件名</th>\
+                                <th>大小</th>\
+                                <th>操作</th>\
+                            </tr>\
+                        </thead>\
+                        <tbody id="demoList">\
+                        </tbody>\
+                    </table>\
+                    </div>\
+                </div>';
+					$('#checkinfoTabbody').html(html);
+					admin.req({
+						url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetCLInfo',
+						data: {
+							checkComplainId: orgdata.CheckComplainId,
+							type: 1
+						},
+						type: 'get',
+						done: function (result) {
+							if (result.code == 0) {
+								var demoListView = $('#checkinfoTabbody #demoList');
+								for (var i = 0; i < result.count; i++) {
+									imageurl = layui.setter.image_url + "uploads" + result.data[i]
+										.ImageUrl;
+									var tr = $(['<tr id="upload-' + i + '">', '<td>' + result.data[
+											i]
+										.ImageName + '</td>', '<td>' + result.data[i]
+										.ImageSize + 'kb</td>', '<td>',
+										'<a href="javascript:window.open(\'' + imageurl +
+										'\');"  class="layui-btn layui-btn-xs layui-btn-danger demo-download" download>查看</a>',
+										'</td>', '</tr>'
+									].join(''));
+									imagename = result.data[i].ImageName;
+									$("#imageurl").val(imageurl);
+									datatype = result.data[i].Datatype;
+									//单个查看
+									demoListView.append(tr);
+								}
+							}
+						}
+					});
+				}
+			}
+
+
+			function GetFeeDetail(registercode, personalcode) {
+				admin.req({
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/GetFeeDetail',
+					data: {
+						registerCode: registercode,
+						personalCode: personalcode,
+						flag: $('#flag').val()
+					},
+					type: 'get',
+					done: function (result) {
+						chart1.setOption(setChartOption(
+							[{
+									value: result.data.YBBXFY,
+									name: '医保报销费用'
+								},
+								{
+									value: result.data.ZFY,
+									name: '个人自付费用'
+								}
+							],
+							'费用占比分析',
+							['#FBFE27', '#FE5050']
+						));
+						chart2.setOption(setChartOption(
+							[{
+									value: result.data.XYF,
+									name: '西药费'
+								},
+								{
+									value: result.data.ZYF,
+									name: '中药费'
+								},
+								{
+									value: result.data.CYF,
+									name: '草药费'
+								},
+								{
+									value: result.data.MYF,
+									name: '蒙药费'
+								}
+							],
+							'药品占比分析',
+							['rgb(131,249,103)', '#1DB7E5']
+						));
+
+						SetFormValueByDataKey(result.data, [
+							'InHosDate', 'OutHosDate', 'InHosDay', 'PersonalTypeName', 'FolkName',
+							'InstitutiongGradeName', 'InstitutionLevelName', 'CompYear',
+							'CityAreaName', 'ZFY', 'YBBXFY', 'YBBXFY', 'GRZFFY', 'MLNFY',
+							'MLWFY', 'XYF', 'ZYF', 'CYF', 'MYF', 'JCF', 'CLF', 'TCF', 'ZLF',
+							'HYF', 'SSF', 'XUEYF', 'TJF', 'TZF', 'QTF', 'BXYF'
+						])
+					}
+				});
+
+			}
+
+			function GetCFData(code) {
+				table.render({
+					elem: '#cfdetail',
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/GetCFDeatilListByCode',
+					title: '处方明细表',
+					totalRow: true,
+					cols: [
+						[{
+								field: 'ItemName',
+								title: '项目名称',
+								width: 180,
+								align: 'center',
+								totalRowText: '合计'
+							},
+							{
+								field: 'HisItemName',
+								title: 'His项目名称',
+								width: 180,
+								align: 'center',
+							},
+							{
+								field: 'CollectFeesCategoryName',
+								title: '收费类别',
+								width: 90,
+								align: 'center',
+							},
+							{
+								field: 'CollectFeesProjectGradeName',
+								title: '收费项目等级',
+								width: 120,
+								align: 'center',
+							},
+							{
+								field: 'PRICE',
+								title: '单价',
+								width: 80,
+								align: 'center',
+							},
+							{
+								field: 'COUNT',
+								title: '数量',
+								width: 80,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'ZFY',
+								title: '总金额',
+								width: 100,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'CompRatio',
+								title: '报销比例',
+								width: 100,
+								align: 'center',
+							},
+							{
+								field: 'YXJE',
+								title: '有效金额',
+								width: 100,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'BKBXJE',
+								title: '不可报销金额',
+								width: 120,
+								align: 'center',
+								totalRow: true
+							}
+						]
+					],
+					page: true,
+					id: "Table",
+					limit: 5, //每页显示5条
+					limits: [5, 20, 45, 60, 75, 90],
+					curr: 1,
+					where: {
+						token: tokenvalue,
+						registercode: code,
+						flag: $('#flag').val()
+					},
+					headers: {
+						Authorization: tokenvalue
+					},
+					height: '350',
+					done: function (res) {}
+				});
+			}
+
+			function GetWGCFData(code, rulecode) {
+				var url = 'afterengine/CheckComplaint/GetWGCFDeatilList';
+				var rulesLink = {
+					'A004': 'afterengine/HosDayError/GetDecomposehosByCode',
+					'A006': 'afterengine/HosDayError/GetInOutDateByCode'
+				}
+				if (layui.excodes.indexOf(rulecode) > -1 && rulecode != 'A005') {
+					if (typeof rulesLink[rulecode] != 'undefined') {
+						$('li[data-detail=detail]').show()
+						if (isShow) {
+							$('.layui-tab-item[data-detail=detail]').show()
+						}
+						table.render({
+							elem: '#wgcfdetail',
+							url: layui.setter.base_url + rulesLink[rulecode],
+							title: '违规列表',
+							cols: [
+								[{
+										field: 'Name',
+										title: '姓名',
+										width: 150,
+										align: 'center',
+									},
+									{
+										field: 'IdNumber',
+										title: '身份证号',
+										width: 180,
+										align: 'center',
+									},
+									{
+										field: 'Gender',
+										title: '性别',
+										width: 60,
+										align: 'center',
+										templet: function (d) {
+											return d.Gender == '1' ? '男' : '女'
+										}
+									},
+									{
+										field: 'Age',
+										title: '年龄',
+										width: 60,
+										align: 'center',
+									},
+									{
+										field: 'PersonalTypeName',
+										title: '人员类型',
+										width: 100,
+										align: 'center',
+									},
+									{
+										field: 'InHosDate',
+										title: '入院日期',
+										width: 180,
+										align: 'center',
+										templet: function (d) {
+											return "<span style=\"color: #ff0000;\">" + d
+												.InHosDate + "</span>"
+										}
+									},
+									{
+										field: 'OutHosDate',
+										title: '出院日期',
+										width: 180,
+										align: 'center',
+										templet: function (d) {
+											return "<span style=\"color: #ff0000;\">" + d
+												.OutHosDate + "</span>"
+										}
+									},
+									{
+										field: 'InstitutionName',
+										title: '就诊医院',
+										width: 200,
+										align: 'center',
+									},
+									{
+										field: 'InHosDay',
+										title: "住院天数",
+										width: 150,
+										align: 'center',
+										templet: function (d) {
+											return "<span style=\"color: #ff0000;\">" + d
+												.InHosDay + "</span>"
+										}
+									},
+									{
+										field: 'DiseaseName',
+										title: '疾病名称',
+										width: 200,
+										align: 'center',
+									},
+									{
+										field: 'CompYear',
+										title: '补偿年度',
+										width: 120,
+										align: 'center',
+									}
+								]
+							],
+							page: true,
+							id: "Tables",
+							limit: 5, //每页显示5条
+							limits: [5, 20, 45, 60, 75, 90],
+							curr: 1,
+							where: {
+								idnumber: orgdata.IdNumber,
+								institutioncode: orgdata.InstitutionCode
+							},
+							headers: {
+								Authorization: tokenvalue
+							},
+							height: '350',
+							done: function (res) {
+
+							}
+						});
+					} else {
+
+						if (isShow) {
+							$('li[data-detail=detail]').next('li').click();
+						}
+						$('[data-detail=detail]').hide()
+					}
+				} else {
+					$('li[data-detail=detail]').show()
+					if (isShow) {
+						$('.layui-tab-item[data-detail=detail]').show()
+					}
+					table.render({
+						elem: '#wgcfdetail',
+						url: layui.setter.base_url + url,
+						title: '违规处方明细表',
+						totalRow: true,
+						cols: [
+							[{
+									field: 'ItemName',
+									title: '项目名称',
+									width: 180,
+									align: 'center',
+									totalRowText: '合计'
+								},
+								{
+									field: 'HisItemName',
+									title: 'His项目名称',
+									width: 180,
+									align: 'center',
+								},
+								{
+									field: 'ResultDescription',
+									title: '违规描述',
+									width: 150,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'CollectFeesCategoryName',
+									title: '收费类别',
+									width: 90,
+									align: 'center',
+								},
+								{
+									field: 'CollectFeesProjectGradeName',
+									title: '收费项目等级',
+									width: 120,
+									align: 'center',
+								},
+								{
+									field: 'PRICE',
+									title: '单价',
+									width: 80,
+									align: 'center',
+								},
+								{
+									field: 'COUNT',
+									title: '数量',
+									width: 80,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'ZFY',
+									title: '总金额',
+									width: 100,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'CompRatio',
+									title: '报销比例',
+									width: 100,
+									align: 'center',
+								},
+								{
+									field: 'YXJE',
+									title: '有效金额',
+									width: 100,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'BKBXJE',
+									title: '不可报销金额',
+									width: 120,
+									align: 'center',
+									totalRow: true
+								}
+							]
+						],
+						page: true,
+						id: "Tables",
+						limit: 5, //每页显示5条
+						limits: [5, 20, 45, 60, 75, 90],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							registercode: code,
+							flag: 2,
+							rulecode: rulecode
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						height: '350',
+						done: function (res) {
+
+						}
+					});
+
+				}
+			}
+
+			function renderWGDesp(messages) {
+				function template(message) {
+					return '<div>\
+						<blockquote class="layui-elem-quote" style="word-break:break-all;">' + message + '</blockquote>\
+					</div>'
+				}
+				var dom = '';
+				for (var i in messages) {
+					var message = messages[i].ResultDescription;
+					dom += template(message);
+				}
+				return dom;
+			}
+
+			function GetWGDesp(CheckResultInfoCode, rulecode) {
+				var otherArr = layui.excodes;
+				var reqUrl = '';
+				if (otherArr.indexOf(rulecode) > -1) {
+					reqUrl = 'afterengine/SupervisionInfo/GetCheckResultInfoList'
+				} else {
+					reqUrl = 'afterengine/SupervisionInfo/GetCheckResultPreInfoList';
+				}
+
+				admin.req({
+					url: layui.setter.base_url + reqUrl,
+					data: {
+						key: CheckResultInfoCode
+					},
+					type: 'get',
+					done: function (result) {
+						if (result.code == 0) {
+							$('#wgms').html(renderWGDesp(result.data));
+						}
+					}
+				})
+			}
+			//多文件列表示例
+			var describe = $('[name=describe]').val();
+			var demoListView = $('#uploadfile #demoList'),
+				uploadListIns = upload.render({
+					elem: '#testList',
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/UpdateFK',
+					data: {
+						registerCode: function () {
+							return orgdata.RegisterCode;
+						},
+						repeat: function () {
+							return $('#repeat').val() == "true" ? true : false;
+						},
+						// rulescode: function () {
+						// 	return rules;
+						// },
+						describe: function () {
+							return $('[name=describe]').val();
+						}
+					},
+					accept: 'file',
+					multiple: true,
+					auto: false,
+					headers: {
+						Authorization: tokenvalue
+					},
+					choose: function (obj) {
+						$('.layui-upload-list').show();
+						var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+						//读取本地文件
+						obj.preview(function (index, file, result) {
+							var tr = $(['<tr id="upload-' + index + '">', '<td>' + file.name +
+								'</td>', '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>',
+								'<td>等待上传</td>', '<td>',
+								'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>',
+								'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>',
+								'</td>', '</tr>'
+							].join(''));
+
+							//单个重传
+							tr.find('.demo-reload').on('click', function () {
+								obj.upload(index, file);
+							});
+							//删除
+							tr.find('.demo-delete').on('click', function () {
+								delete files[index]; //删除对应的文件
+								tr.remove();
+								uploadListIns.config.elem.next()[0].value =
+									''; //清空 input file 值，以免删除后出现同名文件不可选
+							});
+							demoListView.append(tr);
+						});
+					},
+					allDone: function (obj) {
+						if (obj.aborted <= 0) {
+							var index = parent.layer.getFrameIndex(window.name);
+							parent.layer.close(index); //关闭当前页
+							$(parent.document).find('#reflashTable').click();
+							parent.layer.msg('提交成功', {
+								icon: 1,
+								time: 1000
+							});
+						} else {
+							layer.alert('有文件上传失败！');
+						}
+					},
+					done: function (res, index, upload) {
+						if (res.status == 0) { //上传成功
+							var tr = demoListView.find('tr#upload-' + index),
+								tds = tr.children();
+							tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+							tds.eq(3).html(''); //清空操作
+							return delete this.files[index]; //删除文件队列已经上传成功的文件
+						}
+						this.error(index, upload);
+					},
+					error: function (index, upload) {
+						var tr = demoListView.find('tr#upload-' + index),
+							tds = tr.children();
+						tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+						tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+					}
+				});
+
+
+			form.on('submit(save)', function (data) {
+				if ($('.layui-upload-list table tr').length <= 1) {
+					layer.alert('请选择上传的文件');
+					return;
+				}
+				var describe = $('[name=describe]').val();
+				// 确认信息
+				layer.confirm('是否要提交反馈信息吗？', {
+					icon: 7,
+					title: '',
+					btn: ['确定', '取消']
+				}, function (index, layero) {
+					if (typeof parent.orgdata.ComplaintDescribe !=
+						'undefined' && parent.orgdata.States ==
+						7) {
+						$('#repeat').val("true");
+						admin.req({
+							url: layui.setter.base_url +
+								'afterengine/CheckComplaint/DeleteFiles',
+							data: {
+								CheckComplainId: orgdata
+									.CheckComplainId
+							},
+							type: 'post',
+							success: function (result) {
+								if (result.code == '-1') {
+									layer.alert(result.msg);
+								} else {
+									layer.close(index);
+									uploadListIns.upload();
+								}
+							}
+						})
+					} else {
+						layer.close(index);
+						$('#repeat').val("false");
+						uploadListIns.upload();
+					}
+				});
+			})
+		});
+	</script>
+</body>
+
+</html>

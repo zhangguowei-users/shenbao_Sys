@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>医院扣款管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <style>
+        #resetQuery {
+            margin-left: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <!-- form -->
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-form layui-form-pane layui-row layui-col-space5">
+                        <input type="hidden" name="ICDCode" id="ICDCode" />
+                        <input type="hidden" name="YYBM" id="YYBM" />
+                        <div class="layui-col-md3">
+                            <label class="layui-form-label">违规等级</label>
+                            <div class="layui-input-block">
+                                <select name="WGDJ">
+                                    <option value="">全部</option>
+                                    <option value="2">违规</option>
+                                    <option value="1">疑似违规</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-col-md3">
+                            <label class="layui-form-label">疾病病种</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="ICDName" name="ICDName" placeholder="查询疾病病种" autocomplete="off"
+                                    class="layui-input" readonly>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <label class="layui-form-label">结算时间</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="startdate" name="StartTime" placeholder="查询结算开始时间"
+                                    autocomplete="off" class="layui-input" readonly style="float: left;width:49%;">
+                                <input type="text" id="enddate" name="EndTime" placeholder="查询结算结束时间"
+                                    autocomplete="off" class="layui-input" readonly
+                                    style="float: left;width:50%;margin-left:1%;">
+                            </div>
+                        </div>
+                        <div class="layui-col-md3" data-org>
+                            <label class="layui-form-label">机构等级</label>
+                            <div class="layui-input-block">
+                                <select name="JGDJ">
+                                    <option value="">全部</option>
+                                    <option value="8">一级甲等</option>
+                                    <option value="5">二级甲等</option>
+                                    <option value="2">三级甲等</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-col-md3" data-org>
+                            <label class="layui-form-label">报销机构</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="YYMC" name="YYMC" placeholder="查询就诊机构"
+                                    autocomplete="off" class="layui-input" readonly>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <label class="layui-form-label">结论时间</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="StartConclusionTime" name="StartConclusionTime" placeholder="结论开始时间"
+                                    autocomplete="off" class="layui-input" readonly style="float: left;width:49%;">
+                                <input type="text" id="EndConclusionTime" name="EndConclusionTime" placeholder="结论结束时间"
+                                    autocomplete="off" class="layui-input" readonly
+                                    style="float: left;width:50%;margin-left:1%;">
+                            </div>
+                        </div>
+                        <div class="layui-col-md12">
+                            <hr>
+                            <div class="layui-col-md12" style="text-align: right;">
+                                <button class="layui-btn layui-btn-sm" id="searchQuery">查询</button>
+                                <button class="layui-btn layui-btn-normal layui-btn-sm" id="resetQuery">重置</button>
+                                <button class="layui-btn layui-btn-warm layui-btn-sm" style="margin-left: 3px;" id="export">导出Excel</button>
+                                <button style="display: none;" class="layui-btn layui-btn-normal layui-btn-sm"
+                                    id="reflashTable">刷新表格</button>
+                            </div>
+                        </div>
+                        <div class="layui-col-md12">
+                            <table class="layui-hide" id="datalist" lay-filter="datalist"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../layuiadmin/modules/tableSelect.js"></script>
+<script type="text/html" id="control">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="detail">查看</button>
+    </div>
+</script>
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'admin', 'form', 'util', 'laydate', 'setter', 'table', 'tableSelect'], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            table = layui.table,
+            datepicker = layui.laydate,
+            view = layui.view,
+            util = layui.util,
+            form = layui.form,
+            setter = layui.setter,
+            tableSelect = layui.tableSelect;
+        var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+        var orginfo = {
+            orgname:layui.data('userinfo')['OrgName'],
+            orgid:layui.data('userinfo')['OrgId']
+        }
+
+        orginfo['type'] = orginfo.orgid.substring(0,2).indexOf('15')==-1
+
+        if(!orginfo.type){
+            $('[data-org]').remove()
+        }
+
+        var indexs = layer.load(1);
+
+
+        var start = datepicker.render({
+            elem: '#startdate',
+            format: 'yyyy-MM-dd',
+            done: function (value, date, endDate) {
+                end.config.min = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date
+                }; //开始日选好后，重置结束日的最小日期
+                end.config.value = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                }; //将结束日的初始值设定为开始日
+            }
+        })
+
+        var end = datepicker.render({
+            elem: '#enddate',
+            format: 'yyyy-MM-dd',
+            done: function (value, date, endDate) {
+                start.config.max = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date
+                }; //结束日选好后，重置开始日的最大日期
+            }
+        })
+                      
+        var startConclusion = datepicker.render({
+            elem: '#StartConclusionTime',
+            format: 'yyyy-MM-dd',
+            done: function (value, date, endDate) {
+                endConclusion.config.min = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date
+                }; //开始日选好后，重置结束日的最小日期
+                endConclusion.config.value = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                }; //将结束日的初始值设定为开始日
+            }
+        })
+
+        var endConclusion = datepicker.render({
+            elem: '#EndConclusionTime',
+            format: 'yyyy-MM-dd',
+            done: function (value, date, endDate) {
+                startConclusion.config.max = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date
+                }; //结束日选好后，重置开始日的最大日期
+            }
+        })
+        var $Query = {
+            JGDJ:'',
+            WGDJ:'',
+            YYBM:'',
+            ICDCode:'',
+            StartTime:'',
+            EndTime:'',
+            StartConclusionTime:'',
+            EndConclusionTime:''
+        }
+
+        $(document).on('click', '#searchQuery', function () {
+            for (var name in $Query) {
+                if($("[name=" + name + "]").length>=1){
+                    $Query[name] = $("[name=" + name + "]").val().trim();
+                }
+            }
+            list();
+        });
+
+        $(document).on('click', '#reflashTable', function () {
+            list();
+        })
+
+        // 选择机构
+        tableSelect.render({
+            elem: '#YYMC', //定义输入框input对象 必填
+            checkedKey: 'YYDMYYDM', //表格的唯一建值，非常重要，影响到选中状态 必填
+            searchKey: 'keyword',
+            searchPlaceholder: '请输入治疗机构名称',
+            table: { //定义表格参数，与LAYUI的TABLE模块一致，只是无需再定义表格elem
+                url: layui.setter.base_url + 'znsh/ZLXX/GetYYXXList',
+                cols: [
+                    [{
+                            type: 'radio',
+                            width: 40,
+                        },
+                        {
+                            field: 'YYDMYYDM',
+                            title: '编号',
+                            width: 220,
+                            align: 'center',
+                        },
+                        {
+                            field: 'YLJGMC',
+                            title: '机构名称',
+                            width: 270,
+                            align: 'center',
+                        }
+                    ]
+                ],
+                page: true,
+                limit: 5,
+                limits: [5, 10, 15, 20],
+                curr: 1,
+                where: {
+                    token: tokenvalue,
+                },
+                headers: {
+                    Authorization: tokenvalue
+                }
+            },
+            done: function (elem, data) {
+                layui.each(data.data, function (index, item) {
+                    elem.val(item.YLJGMC);
+                    $('#YYBM').val(item.YYDMYYDM)
+                });
+            }
+        });
+
+        // 选择疾病
+        tableSelect.render({
+            elem: '#ICDName', //定义输入框input对象 必填
+            checkedKey: 'IDCCode', //表格的唯一建值，非常重要，影响到选中状态 必填
+            searchKey: 'keyword',
+            searchPlaceholder: '请输入ICD编码或疾病名称',
+            table: { //定义表格参数，与LAYUI的TABLE模块一致，只是无需再定义表格elem
+                url: layui.setter.base_url + 'znsh/NorationalHos/GetDisease',
+                cols: [
+                    [{
+                            type: 'radio',
+                            width: 40,
+                        },
+                        {
+                            field: 'IDCCode',
+                            title: '疾病编码',
+                            width: 220,
+                            align: 'center',
+                        },
+                        {
+                            field: 'DiseaseName',
+                            title: '疾病名称',
+                            width: 270,
+                            align: 'center',
+                        }
+                    ]
+                ],
+                page: true,
+                limit: 5,
+                limits: [5, 10, 15, 20],
+                curr: 1,
+                where: {
+                    token: tokenvalue,
+                    condition: "",
+                    keyword: ""
+                },
+                headers: {
+                    Authorization: tokenvalue
+                }
+            },
+            done: function (elem, data) {
+                layui.each(data.data, function (index, item) {
+                    $('#ICDCode').val(item.IDCCode);
+                    elem.val(item.DiseaseName);
+                });
+            }
+        });
+
+        // 重置表单
+        function resetQuery() {
+            $Query = {
+                JGDJ:'',
+                WGDJ:'',
+                YYBM:'',
+                ICDCode:'',
+                StartTime:'',
+                EndTime:''
+            }
+
+            $('[name=JGDJ]').val('');
+            $('[name=WGDJ]').val('');
+            form.render('select');
+            var resetKeys = [
+                "JGDJ",
+                "WGDJ",
+                "YYBM",
+                "YYMC",
+                "ICDCode",
+                "ICDName",
+                "StartTime",
+                "EndTime",
+                "YYMC",
+                "startdate",
+                "enddate",
+                "StartConclusionTime",
+                "EndConclusionTime"
+            ];
+            for (var k in resetKeys) {
+                $('input[name=' + resetKeys[k] + ']').val('');
+            }
+        }
+
+        $(document).on('click', '#resetQuery', function () {
+            resetQuery();
+            list();
+        });
+
+        function parseParams(data) {
+            try {
+                var tempArr = [];
+                for (var i in data) {
+                    var key = encodeURIComponent(i);
+                    var value = encodeURIComponent(data[i]);
+                    tempArr.push(key + '=' + value);
+                }
+                var urlParamsStr = tempArr.join('&');
+                return urlParamsStr;
+            } catch (err) {
+                return '';
+            }
+        }
+        //导出excel
+        $(document).on('click', '#export', function () {
+            var params = JSON.parse(JSON.stringify($Query));
+            // params['orgid'] = layui.data('userinfo')['OrgId'];
+            // console.log(params)
+            window.open(layui.setter.base_url + 'auth/ExportExcel/ExportYYKK?querystr='+JSON.stringify(params)+'&orgid='+layui.data('userinfo')['OrgId']);
+        });
+
+        list();
+
+        function list() {
+
+            $Query.StartTime = $('#startdate').val();
+            $Query.EndTime = $('#enddate').val();
+            $Query.StartConclusionTime = $('#StartConclusionTime').val();
+            $Query.EndConclusionTime = $('#EndConclusionTime').val();
+
+            if ($Query.StartTime != '') {
+                $Query.StartTime += ' 00:00:00';
+            }
+
+            if ($Query.EndTime != '') {
+                $Query.EndTime += ' 23:59:59';
+            }
+            if ($Query.StartConclusionTime != '') {
+                $Query.StartConclusionTime += ' 00:00:00';
+            }
+
+            if ($Query.EndConclusionTime != '') {
+                $Query.EndConclusionTime += ' 23:59:59';
+            }
+            
+            table.render({
+                elem: '#datalist',
+                url: layui.setter.base_url + 'afterengine/ComplaintStatistical/GetYYKKList',
+                toolbar: '',
+                title: '医院扣款管理',
+                cols: [
+                    [{
+                            type: 'numbers',
+                            title: '序号',
+                            align: 'center',
+                            width: 80,
+                            fixed: 'left'
+                        },
+                        {
+                            field: 'YYMC',
+                            title: '名称',
+                            width: 200,
+                            align: 'center',
+                            fixed: 'left'
+                        },
+                        {
+                            field: 'XZLB',
+                            title: '险种类别',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'FYLY',
+                            title: '费用来源',
+                            width: 180,
+                            align: 'center'
+                        },
+                        {
+                            field: 'SJKKJE',
+                            title: '实际扣款(元)',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'SettlementTime',
+                            title: '结算时间',
+                            width: 220,
+                            align: 'center'
+                        },
+                        {
+                            field: 'ConclusionTime',
+                            title: '结论时间',
+                            width: 220,
+                            align: 'center',
+                        },
+                        {
+                            field: 'JSJE',
+                            title: '结算金额(元)',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'TCJE',
+                            title: '统筹金额(元)',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'DBJE',
+                            title: '大病金额(元)',
+                            width: 180,
+                            align: 'center',
+                        },
+                        // {
+                        //     field: 'GWYJE',
+                        //     title: '公务员金额(元)',
+                        //     width: 180,
+                        //     align: 'center',
+                        // },
+                        {
+                            field: 'CKRC',
+                            title: '扣款人次',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            title: '操作',
+                            toolbar: '#control',
+                            width: 160,
+                            align: 'center',
+                            fixed: 'right'
+                        }
+                    ]
+                ],
+                page: true,
+                id: "IDTable",
+                limit: 10, //每页显示5条
+                limits: [10, 20, 40, 60, 80, 90],
+                curr: 1,
+                where: {
+                    querystr: JSON.stringify($Query),
+                },
+                headers: {
+                    Authorization: tokenvalue
+                },
+                height: $(window).height() - 210,
+                done: function (res) {
+                    layer.close(indexs);
+                }
+            })
+        }
+
+
+
+        table.on('tool(datalist)', function (obj) {
+            var events = {
+                'detail': detail
+            }
+            if (events[obj.event]) {
+                events[obj.event](obj.data);
+            }
+        })
+
+        table.on('rowDouble(datalist)', function (obj) {
+            detail(obj.data)
+        })
+
+        function detail(data) {
+            orgdata = $.extend(true, {}, $Query);
+            orgdata.YYBM = data.YYBM;
+            layer.open({
+                type: 2,
+                title: '结果详情',
+                content: 'detail.html',
+                area: ['100%', '100%']
+            })
+        }
+    })
+</script>
+
+</html>

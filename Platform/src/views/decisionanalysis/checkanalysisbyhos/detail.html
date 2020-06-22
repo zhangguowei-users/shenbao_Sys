@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>详情</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">	
+	</head>
+
+	<body>
+		<div class="layui-col-sm12">
+					<div class="layui-card">						
+						<div class="layui-card-body">
+							<div class="layui-row">
+								<div class="layui-col-sm9">
+								 <table class="layui-hide" id="test" lay-filter="test"></table>
+								</div>
+								<div class="layui-col-sm1" style="border:solid 1px #dfdfdf; margin-left:10px; width: 250px; height: 360px;">
+						        <div class="layui-card" id="wgdes">
+						          <div class="layui-card-header">违规描述</div>
+						          <div class="layui-card-body">
+						            <ul class="layuiadmin-card-status layuiadmin-home2-usernote">
+						              <li>
+						                <h3><label id="ms_name"></label></h3>
+						                <p style="overflow-y:auto;height: 190px;"><label id="ms_description"></label></p>
+						                <span><label id="ms_checkdate"></label></span>
+						              </li>
+						            </ul>
+						          </div>
+						        </div>
+						      </div>
+							</div>
+						</div>
+					</div>
+				</div>
+		
+		<div class="layui-col-sm12">
+		<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="background-color: #FFFFFF;">
+
+			<div class="layui-form-item">
+				<div class="layui-tab layui-tab-card">
+					<ul class="layui-tab-title">
+						<li class="layui-this">基本信息</li>
+						<li>费用信息</li>
+						<li>处方明细</li>
+						<li id="wgli" style=" display:none;">违规费用明细</li>
+					</ul>
+					<div class="layui-tab-content">
+						<div class="layui-tab-item layui-show">
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">姓名</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="Name" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">身份证号</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="IdNumber" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">性别</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="Gender" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">年龄</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="Age" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">人员类型</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="PersonalTypeName" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">民族</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="FolkName" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">就诊医院</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="InstitutionName" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">医院等级</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="InstitutiongGradeName" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">医院级别</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="InstitutionLevelName" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">疾病名称</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="DiseaseName" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">补偿年度</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="CompYear" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">就诊时间</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="ClinicDate" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">行政区划</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="CityAreaName" readonly="true" class="layui-input" style="width:920px;">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="layui-tab-item">
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">总费用</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="ZFY" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">医保报销费用</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="YBBXFY" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">个人自付费用</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="GRZFFY" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">目录内费用</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="MLNFY" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">目录外费用</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="MLWFY" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">西药费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="XYF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">中药费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="ZYF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">草药费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="CYF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">蒙药费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="MYF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">检查费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="JCF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">材料费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="CLF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">特材费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="TCF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">治疗费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="ZLF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">化验费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="HYF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">手术费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="SSF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">血液费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="XUEYF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">特检费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="TJF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">特治费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="TZF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">其他费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="QTF" readonly="true" class="layui-input" style="width:250px;">
+									</div>
+								</div>
+								<div class="layui-inline" style=" width: 320px;">
+									<label class="layui-form-label" style=" width:130px;">靶向药费</label>
+									<div class="layui-input-inline" style="width:180px;">
+										<input type="text" name="BXYF" readonly="true" class="layui-input" style="width:210px;">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="layui-tab-item">
+							<table class="layui-hide" id="cflist" lay-filter="cflist"></table>
+						</div>
+						<div class="layui-tab-item">
+							<table class="layui-hide" id="wgcfdetail" lay-filter="wgcfdetail" style=" display:none;"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script type="text/javascript">
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'element', 'table'], function() {
+				var $ = layui.$,
+					setter = layui.setter,
+					admin = layui.admin,
+					form = layui.form,
+					router = layui.router(),
+					element = layui.element,
+					table = layui.table;
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				var alertheight = $(window).height() - 30;
+				var rn=$(window.parent.document).find("#rn").val();
+				var jgmc=$(window.parent.document).find("#jgmc").val();
+				var rulecode=$(window.parent.document).find("#rulecode").val();
+				var djname = $(window.parent.document).find("#djname").val();
+
+				// 获取url中的参数
+				function GetQueryValue(queryName) {
+					var query = decodeURI(window.location.search.substring(1));
+					var vars = query.split("&");
+					for (var i = 0; i < vars.length; i++) {
+						var pair = vars[i].split("=");
+						if (pair[0] == queryName) { return pair[1]; }
+					}
+					return null;
+				}
+
+				var selectYear = GetQueryValue('year');
+
+				GetTableData();
+
+				function GetTableData() {
+					table.render({
+						elem: '#test',
+						url: layui.setter.base_url + 'afterengine/DecisionAnalysis/GetYBHosInfoList',
+						toolbar: '#toolbarDemo',
+						title: '住院列表',
+						cols: [
+							[{
+									field: 'Name',
+									title: '姓名',
+									align: 'center',
+								},
+								{
+									field: 'IdNumber',
+									title: '身份证号码',
+									align: 'center',
+								},
+								{
+									field: 'Gender',
+									title: '性别',
+									align: 'center',
+								},
+								{
+									field: 'Age',
+									title: '年龄',
+									align: 'center',
+								},
+								{
+									field: 'PersonalTypeName',
+									title: '人员类型',
+									align: 'center',
+								},
+								{
+									field: 'InHosDate',
+									title: '入院时间',
+									align: 'center',
+									templet: function(d) {
+										return d.InHosDate.substr(0, 10)
+									}
+								},
+								{
+									field: 'OutHosDate',
+									title: '出院时间',
+									align: 'center',
+									templet: function(d) {
+										return d.OutHosDate.substr(0, 10)
+									}
+								},
+								{
+									field: 'InstitutionName',
+									title: '就诊医院',
+									align: 'center',
+								},
+								{
+									field: 'DiseaseName',
+									title: '疾病名称',
+									align: 'center',
+								}
+							]
+						],
+						page: true,
+						id: "IDTable",
+						limit: 5, //每页显示10条
+						limits: [4, 8, 12, 16],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							jgmc: jgmc,
+							rulename: rn,
+							djname:djname,
+							year:selectYear
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						height: '360px',
+						done: function(res) {
+							
+						}
+					});
+				}
+				//获取处方明细
+				function GetTableDataByHosPre(str) {
+					
+					table.render({
+						elem: '#cflist',
+						url: layui.setter.base_url + 'afterengine/HosDayError/GetCFDeatilListByCode',
+						title: '处方列表',
+						totalRow: true,
+						cols: [
+							[{
+									field: 'ItemName',
+									title: '医保项目名称',
+									width: 200,
+									align: 'center',
+									totalRowText: '合计'
+								},
+								{
+									field: 'HisItemName',
+									title: 'His项目名称',
+									width: 200,
+									align: 'center',
+								},
+								{
+									field: 'CollectFeesCategoryName',
+									title: '收费类别',
+									width: 120,
+									align: 'center',
+								},
+								{
+									field: 'CollectFeesProjectGradeName',
+									title: '收费项目等级',
+									width: 120,
+									align: 'center',
+								},
+								{
+									field: 'PRICE',
+									title: '单价',
+									width: 80,
+									align: 'center',
+								},
+								{
+									field: 'COUNT',
+									title: '数量',
+									width: 70,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'ZFY',
+									title: '总金额',
+									width: 80,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'CompRatio',
+									title: '报销比例',
+									width: 90,
+									align: 'center',
+								},
+								{
+									field: 'YXJE',
+									title: '有效金额',
+									width: 90,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'BKBXJE',
+									title: '不可报销金额',
+									width: 120,
+									align: 'center',
+									totalRow: true
+								}
+							]
+						],
+						page: true,
+						id: "IDTable1",
+						limit: 5, //每页显示10条
+						limits: [5, 10, 15],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							hosregistercode: str
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						height: '350',
+						done: function(res) {
+						
+						}
+					});
+				}
+
+				function GetWGCFData(code) {
+					table.render({
+						elem: '#wgcfdetail',
+						url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetWGCFDeatilListByKey',
+						title: '违规处方明细表',
+						totalRow: true,
+						cols: [
+							[{
+									field: 'ItemName',
+									title: '项目名称',
+									width: 180,
+									align: 'center',
+									totalRowText: '合计'
+								},
+								{
+									field: 'HisItemName',
+									title: 'His项目名称',
+									width: 180,
+									align: 'center',
+								},
+								{
+									field: 'ResultDescription',
+									title: '违规描述',
+									width: 150,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'CollectFeesCategoryName',
+									title: '收费类别',
+									width: 90,
+									align: 'center',
+								},
+								{
+									field: 'CollectFeesProjectGradeName',
+									title: '收费项目等级',
+									width: 120,
+									align: 'center',
+								},
+								{
+									field: 'PRICE',
+									title: '单价',
+									width: 80,
+									align: 'center',
+								},
+								{
+									field: 'COUNT',
+									title: '数量',
+									width: 80,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'ZFY',
+									title: '总金额',
+									width: 100,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'CompRatio',
+									title: '报销比例',
+									width: 100,
+									align: 'center',
+								},
+								{
+									field: 'YXJE',
+									title: '有效金额',
+									width: 100,
+									align: 'center',
+									totalRow: true
+								},
+								{
+									field: 'BKBXJE',
+									title: '不可报销金额',
+									width: 120,
+									align: 'center',
+									totalRow: true
+								}
+							]
+						],
+						page: true,
+						id: "Tables",
+						limit: 5, //每页显示5条
+						limits: [5, 20, 45, 60, 75, 90],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							key:code
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						height: '350',
+						done: function(res) {
+
+						}
+					});
+				}
+
+				function GetResultInfo1(code){
+						var str = '';
+						var count = 0; 
+						admin.req({
+								url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetCheckResultInfoList',
+								data: {
+									key:code
+								},
+								type: 'get',
+								done: function(result) {	
+									$('#ms_name').html(result.data[0].Name);	
+									$('#ms_description').html(result.data[0].ResultDescription);	
+									$('#ms_checkdate').html(result.data[0].CheckDate );	
+								}
+							});
+						
+					}
+                function GetResultInfo2(code){
+						var str = '';
+						var count = 0; 
+						admin.req({
+								url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetWGDescribe',
+								data: {
+									key:code
+								},
+								type: 'get',
+								done: function(result) {	
+									$('#ms_name').html(result.data[0].Name);
+									for(var i = 0;i<result.count;i++){
+										count++;
+										if(result.data[i].ResultDescription)
+										{
+											str += count + '、'+ result.data[i].ResultDescription + '<br/>' + result.data[0].CheckDate + '<br/>';
+										}else{
+											str += '';
+										}																								
+									}		
+									$('#ms_description').html(str);	
+								}
+							});
+						
+					}
+				table.on('row(test)', function(obj) {
+					var data = obj.data;
+					form.val('layuiadmin-form-admin', {
+						"Name": data.Name,
+						"IdNumber": data.IdNumber,
+						"Gender": data.Gender,
+						"Age": data.Age,
+						"PersonalTypeName": data.PersonalTypeName,
+						"FolkName": data.FolkName,
+						"CityAreaName": data.CityAreaName,
+						"InstitutionName": data.InstitutionName,
+						"InstitutiongGradeName": data.InstitutiongGradeName,
+						"InstitutionLevelName": data.InstitutionLevelName,
+						"DiseaseName": data.DiseaseName,
+						"CompYear": data.CompYear,
+						"ClinicDate": data.ClinicDate,
+						"VillageAreaName": data.VillageAreaName,
+						"ZFY": data.ZFY,
+						"YBBXFY": data.YBBXFY,
+						"GRZFFY": data.GRZFFY,
+						"MLNFY": data.MLNFY,
+						"MLWFY": data.MLWFY,
+						"XYF": data.XYF,
+						"ZYF": data.ZYF,
+						"CYF": data.CYF,
+						"MYF": data.MYF,
+						"JCF": data.JCF,
+						"CLF": data.CLF,
+						"TCF": data.TCF,
+						"ZLF": data.ZLF,
+						"HYF": data.HYF,
+						"SSF": data.SSF,
+						"XUEYF": data.XUEYF,
+						"TJF": data.TJF,
+						"TZF": data.TZF,
+						"QTF": data.QTF,
+						"BXYF": data.BXYF
+					});
+					GetTableDataByHosPre(data.HosRegisterCode);	
+					GetWGCFData(data.CheckResultInfoCode);
+					//判断是否有处方
+					
+					if(rulecode == 'B003'||rulecode=='A005'||rulecode=='A003'||rulecode=='A007'||rulecode=='A011'||rulecode=='B006')
+					{
+						GetResultInfo1(data.CheckResultInfoCode);
+					}else{
+						GetResultInfo2(data.CheckResultInfoCode);
+					}
+					
+					
+					$('#wgcfdetail').css('display','');
+					$('#wgli').css('display','');											
+//						$('#wgcfdetail').css('display','none');
+//						$('#wgli').css('display','none');		
+//						$('#ms_name').html('无违规描述！！！');									
+					obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				});
+			});
+		</script>
+	</body>
+
+</html>

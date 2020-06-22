@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>申诉信息提交</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+		<style>
+			.layui-col-space15>* {
+				padding: 7.5px;
+			}
+			
+			.layui-col-md2 {
+				width: 19%;
+			}
+			
+			.layui-col-md9 {
+				width: 81%;
+			}
+			
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-sm12">
+					<div class="layui-col-sm12">
+						<div class="layui-card">
+							<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="padding: 0px 0px 0px 0px;background-color: #FFFFFF;">
+								<div class="layui-col-md6">
+									<div class="grid-demo layui-bg-red" id="zy" style="cursor:pointer;height:50px;text-align: center;line-height: 3; font-size: large;">住院</div>
+								</div>
+								<div class="layui-col-md6">
+									<div class="grid-demo layui-bg-green" id="mz" style="cursor:pointer;height:50px;text-align: center;line-height: 3;font-size: large;">门诊</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-col-md2">
+						<div class="layui-card">
+							<div class="layui-card-body">
+								<div class="layui-row">
+									<div class="layui-tab layui-tab-card" lay-filter="demo">
+										<form class="layui-form">
+											<div class="treeClass" style="height:873px;">
+												<ul id="treeDemo" class="ztree"></ul>
+											</div>
+										</form>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					<div class="layui-col-md9">
+						<div class="layui-card">
+							<div class="layui-card-body">
+								<div class="layui-row">
+									<script type="text/html" id="toolbarDemo">
+										<div class="layui-btn-container">
+											<button class="layui-btn layui-btn-sm" lay-event="search">查询</button>
+											<button class="layui-btn layui-btn-sm" lay-event="complaint">申诉</button>
+										</div>
+									</script>
+									<div class="layui-row layui-col-space15">
+										<div class="layui-col-sm12">
+											<div class="layui-card">
+												<div class="layui-card-body">
+													<div class="layui-row">
+														<div class="layui-col-sm8">
+															<table class="layui-hide" id="test" lay-filter="test"></table>
+														</div>
+														<div class="layui-col-sm2" style="border:solid 1px #dfdfdf; margin-left:20px; width: 275px; height: 350px;">
+															<div class="layui-card">
+																<div class="layui-card-header">违规描述</div>
+																<div class="layui-card-body">
+																	<ul class="layuiadmin-card-status layuiadmin-home2-usernote">
+																		<li>
+																			<h3><label id="ms_name"></label></h3>
+																			<p><label id="ms_description"></label></p>
+																			<span><label id="ms_checkdate"></label></span>
+																		</li>
+																	</ul>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="layui-col-sm12">
+											<div class="layui-card">
+												<div class="layui-card-body">
+													<div class="layui-row">
+														<div class="layui-tab layui-tab-card" lay-filter="filter">
+															<ul class="layui-tab-title">
+																<li class="layui-this">基本信息</li>
+																<li>费用信息</li>
+																<li>费用明细</li>
+																<li>违规费用明细</li>
+															</ul>
+															<div class="layui-tab-content">
+																<div class="layui-tab-item layui-show">
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">姓名：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="Name" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">身份证号：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="IdNumber" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">性别：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="Gender" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">年龄：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="Age" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">人员类型：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="PersonalTypeName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">民族：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="FolkName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">就诊医院：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="InstitutionName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">医院等级：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="InstitutiongGradeName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">医院级别：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="InstitutionLevelName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item" id="hos">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">入院日期：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="InHosDate" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">出院日期：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="OutHosDate" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">住院天数：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="InHosDay" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item" id="clinic">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">登记日期：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="ClinicDate" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">疾病名称：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="DiseaseName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">补偿年度：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="CompYear" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 790px;">
+																			<label class="layui-form-label" style=" width:80px;">行政区划：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="CityAreaName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:550px;">
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="layui-tab-item">
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">总费用：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="ZFY" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">医保报销费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="YBBXFY" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">个人自付费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="GRZFFY" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">目录内费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="MLNFY" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">目录外费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="MLWFY" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">西药费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="XYF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">中药费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="ZYF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">草药费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="CYF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">蒙药费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="MYF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">检查费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="JCF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">材料费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="CLF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">特殊费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="TSF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">诊疗费费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="ZLF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">化疗费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="HLF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">手术费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="SSF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">血液费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="XUEYF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">特检费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="TJF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">特治费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="TZF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="layui-form-item">
+																		<div class="layui-inline" style=" width: 260px;">
+																			<label class="layui-form-label" style=" width:80px;">其他费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="QTF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																		<div class="layui-inline" style=" width: 270px;">
+																			<label class="layui-form-label" style=" width:90px;">靶向药费：</label>
+																			<div class="layui-input-block inputform">
+																				<input type="text" id="BXYF" autocomplete="off" placeholder="" class="layui-input" style="width:150px;">
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="layui-tab-item">
+																	<table class="layui-hide" id="cfdetail" lay-filter="cfdetail"></table>
+																</div>
+																<div class="layui-tab-item">
+																	<table class="layui-hide" id="wgcfdetail" lay-filter="wgcfdetail"></table>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input type="hidden" id="flag" value='2' />
+		<input type="hidden" id="rulescode" />
+	</body>
+	<script src="../../../layuiadmin/layui/layui.js"></script>
+	<link rel="stylesheet" href="../../../layuiadmin/style/extend/zTree_v3/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.core.js"></script>
+
+	<script>
+		layui.config({
+			base: '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			index: 'lib/index' //主入口模块
+		}).use(['index', 'admin', 'tree', 'form', 'setter', 'table'], function() {
+			var $ = layui.$,
+				admin = layui.admin,
+				view = layui.view,
+				form = layui.form,
+				setter = layui.setter,
+				table = layui.table,
+				form = layui.form;
+			var setting = {
+				data: {
+					key: {
+						name: "NAME"
+					},
+					simpleData: {
+						enable: true,
+						idKey: "ID",
+						pIdKey: "PID",
+						rootPId: 0
+					}
+				},
+				callback: {
+					onClick: onClick
+				}
+			};
+			var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+			var alertheight = $(window).height() - 100;
+
+			$('#mz').on('click', function() {
+				$('#flag').val('1');
+				InitData();
+				getdata($('#flag').val());
+
+			});
+			$('#zy').on('click', function() {
+				$('#flag').val('2');
+				InitData();
+				getdata($('#flag').val());
+
+			})
+			getdata($('#flag').val());
+			GetTableData($('#flag').val(), $('#rulescode').val());
+
+			function getdata(type) {
+				admin.req({
+					url: layui.setter.base_url + "znsh/RulesMain/GetCheckModuleForComplaint",
+					type: "get",
+					dataType: "json",
+					data: {
+						datatype: type
+					},
+					async: false,
+					success: function(result) {
+						if(type == 1) {
+							result.data.push({
+								"ID": '100',
+								"PID": '0',
+								"RuleCode":'',
+								"NAME": '门诊审核规则'
+							});
+							GetTableData(type);
+						} else if(type == 2) {
+							result.data.push({
+								"ID": '100',
+								"PID": '0',
+								"RuleCode":'',
+								"NAME": '住院审核规则'
+							});
+						}
+						$.fn.zTree.init($("#treeDemo"), setting, result.data);
+						//默认选中某节点
+						var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+						treeObj.selectNode(treeObj.getNodeByParam("RuleCode", ''));
+						GetTableData($('#flag').val(), '');
+					}
+				});
+			};
+
+			function onClick(event, treeId, treeNode, clickFlag) {
+				var url = treeNode.Url;
+				$('#rulescode').val(treeNode.RuleCode);
+				GetTableData($('#flag').val(), treeNode.RuleCode);
+			}
+			$(".layui-input").attr("disabled", "disabled");
+			var indexs = layer.load(3);
+			table.on('row(test)', function(obj) {
+				var data = obj.data;
+				$("#Name").val(data.Name);
+				$("#IdNumber").val(data.IdNumber);
+				$("#Gender").val(data.Gender);
+				$("#Age").val(data.Age);
+				$("#InstitutionName").val(data.InstitutionName);
+				$("#DiseaseName").val(data.DiseaseName);
+				GetResultInfo(data.CheckResultInfoCode);
+				GetCFData(data.RegisterCode);
+				GetWGCFData(data.RegisterCode, data.RulesCode);
+				GetFeeDetail(data.RegisterCode, data.PersonalCode);
+				//标注选中样式
+				obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+			});
+
+			function GetFeeDetail(registercode, personalcode) {
+				admin.req({
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/GetFeeDetail',
+					data: {
+						registerCode: registercode,
+						personalCode: personalcode,
+						flag: $('#flag').val()
+					},
+					type: 'get',
+					done: function(result) {
+						if($('#flag').val() == '2') {
+							$('#hos').show();
+							$('#clinic').hide();
+							$("#InHosDate").val(result.data.InHosDate);
+							$("#OutHosDate").val(result.data.OutHosDate);
+							$("#InHosDay").val(result.data.InHosDay);
+						} else {
+							$('#hos').hide();
+							$('#clinic').show();
+							$("#ClinicDate").val(result.data.ClinicDate);
+						}
+						$("#PersonalTypeName").val(result.data.PersonalTypeName);
+						$("#FolkName").val(result.data.FolkName);
+						$("#InstitutiongGradeName").val(result.data.InstitutiongGradeName);
+						$("#InstitutionLevelName").val(result.data.InstitutionLevelName);
+						$("#CompYear").val(result.data.CompYear);
+						$("#CityAreaName").val(result.data.CityAreaName);
+						$("#ZFY").val(result.data.ZFY);
+						$("#YBBXFY").val(result.data.YBBXFY);
+						$("#GRZFFY").val(result.data.GRZFFY);
+						$("#MLNFY").val(result.data.MLNFY);
+						$("#MLWFY").val(result.data.MLWFY);
+						$("#XYF").val(result.data.XYF);
+						$("#ZYF").val(result.data.ZYF);
+						$("#CYF").val(result.data.CYF);
+						$("#MYF").val(result.data.MYF);
+						$("#JCF").val(result.data.JCF);
+						$("#CLF").val(result.data.CLF);
+						$("#TSF").val(result.data.TSF);
+						$("#ZLF").val(result.data.ZLF);
+						$("#HLF").val(result.data.HLF);
+						$("#SSF").val(result.data.SSF);
+						$("#XUEYF").val(result.data.XUEYF);
+						$("#TJF").val(result.data.TJF);
+						$("#TZF").val(result.data.TZF);
+						$("#QTF").val(result.data.QTF);
+						$("#BXYF").val(result.data.BXYF);
+
+					}
+				});
+
+			}
+
+			function GetTableData(flag, rulescode) {
+				table.render({
+					elem: '#test',
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/GetCheckResultInfos',
+					toolbar: '#toolbarDemo',
+					title: '审核结果表',
+					cols: [
+						[{
+								type: 'radio',
+								fixed: 'left'
+							},
+							{
+								field: 'RulesName',
+								title: '审核规则',
+								width: 150,
+								align: 'center',
+							}, {
+								field: 'Name',
+								title: '姓名',
+								width: 150,
+								align: 'center',
+							},
+							{
+								field: 'IdNumber',
+								title: '身份证号',
+								width: 180,
+								align: 'center',
+							},
+							{
+								field: 'Gender',
+								title: '性别',
+								width: 60,
+								align: 'center',
+							},
+							{
+								field: 'Age',
+								title: '年龄',
+								width: 60,
+								align: 'center',
+							},
+							{
+								field: 'DiseaseName',
+								title: '疾病名称',
+								width: 200,
+								align: 'center',
+							},
+							{
+								field: 'InstitutionName',
+								title: '就诊医院',
+								width: 200,
+								align: 'center',
+							}
+						]
+					],
+					page: true,
+					id: "IDTable",
+					limit: 5, //每页显示5条
+					limits: [5, 20, 45, 60, 75, 90],
+					curr: 1,
+					where: {
+						token: tokenvalue,
+						flag: $('#flag').val(),
+						rulescode: rulescode,
+						querystr: '',
+					},
+					headers: {
+						Authorization: tokenvalue
+					},
+					height: '350',
+					done: function(res) {
+						layer.close(indexs);
+					}
+				});
+			}
+
+			function GetCFData(code) {
+				table.render({
+					elem: '#cfdetail',
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/GetCFDeatilListByCode',
+					title: '处方明细表',
+					totalRow: true,
+					cols: [
+						[{
+								field: 'ItemName',
+								title: '项目名称',
+								width: 180,
+								align: 'center',
+								totalRowText: '合计'
+							},
+							{
+								field: 'HisItemName',
+								title: 'His项目名称',
+								width: 180,
+								align: 'center',
+							},
+							{
+								field: 'CollectFeesCategoryName',
+								title: '收费类别',
+								width: 90,
+								align: 'center',
+							},
+							{
+								field: 'CollectFeesProjectGradeName',
+								title: '收费项目等级',
+								width: 120,
+								align: 'center',
+							},
+							{
+								field: 'PRICE',
+								title: '单价',
+								width: 80,
+								align: 'center',
+							},
+							{
+								field: 'COUNT',
+								title: '数量',
+								width: 80,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'ZFY',
+								title: '总金额',
+								width: 100,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'CompRatio',
+								title: '报销比例',
+								width: 100,
+								align: 'center',
+							},
+							{
+								field: 'YXJE',
+								title: '有效金额',
+								width: 100,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'BKBXJE',
+								title: '不可报销金额',
+								width: 120,
+								align: 'center',
+								totalRow: true
+							}
+						]
+					],
+					page: true,
+					id: "Table",
+					limit: 5, //每页显示5条
+					limits: [5, 20, 45, 60, 75, 90],
+					curr: 1,
+					where: {
+						token: tokenvalue,
+						registercode: code,
+						flag: $('#flag').val()
+					},
+					headers: {
+						Authorization: tokenvalue
+					},
+					height: '350',
+					done: function(res) {
+					}
+				});
+			}
+
+			function GetWGCFData(code, rulecode) {
+				table.render({
+					elem: '#wgcfdetail',
+					url: layui.setter.base_url + 'afterengine/CheckComplaint/GetWGCFDeatilList',
+					title: '违规处方明细表',
+					totalRow: true,
+					cols: [
+						[{
+								field: 'ItemName',
+								title: '项目名称',
+								width: 180,
+								align: 'center',
+								totalRowText: '合计'
+							},
+							{
+								field: 'HisItemName',
+								title: 'His项目名称',
+								width: 180,
+								align: 'center',
+							},
+							{
+								field: 'ResultDescription',
+								title: '违规描述',
+								width: 150,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'CollectFeesCategoryName',
+								title: '收费类别',
+								width: 90,
+								align: 'center',
+							},
+							{
+								field: 'CollectFeesProjectGradeName',
+								title: '收费项目等级',
+								width: 120,
+								align: 'center',
+							},
+							{
+								field: 'PRICE',
+								title: '单价',
+								width: 80,
+								align: 'center',
+							},
+							{
+								field: 'COUNT',
+								title: '数量',
+								width: 80,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'ZFY',
+								title: '总金额',
+								width: 100,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'CompRatio',
+								title: '报销比例',
+								width: 100,
+								align: 'center',
+							},
+							{
+								field: 'YXJE',
+								title: '有效金额',
+								width: 100,
+								align: 'center',
+								totalRow: true
+							},
+							{
+								field: 'BKBXJE',
+								title: '不可报销金额',
+								width: 120,
+								align: 'center',
+								totalRow: true
+							}
+						]
+					],
+					page: true,
+					id: "Tables",
+					limit: 5, //每页显示5条
+					limits: [5, 20, 45, 60, 75, 90],
+					curr: 1,
+					where: {
+						token: tokenvalue,
+						registercode: code,
+						flag: 2,
+						rulecode: rulecode
+					},
+					headers: {
+						Authorization: tokenvalue
+					},
+					height: '350',
+					done: function(res) {
+					}
+				});
+			}
+
+			function GetResultInfo(CheckResultInfoCode) {
+				admin.req({
+					url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetCheckResultInfoList',
+					data: {
+						key: CheckResultInfoCode
+					},
+					type: 'get',
+					done: function(result) {
+						$('#ms_name').html(result.data[0].Name);
+						$('#ms_description').html(result.data[0].ResultDescription);
+						$('#ms_checkdate').html(result.data[0].CheckDate);
+					}
+				});
+
+			}
+
+			function InitData() {
+				table.reload('Table', {
+					where: {
+						token: tokenvalue,
+						registercode: '',
+						flag: $('#flag').val()
+					}
+				});
+				table.reload('Tables', {
+					where: {
+						token: tokenvalue,
+						registercode: '',
+						flag: $('#flag').val(),
+						rulecode: ''
+					}
+				});
+				$("#Name").val('');
+				$("#IdNumber").val('');
+				$("#Gender").val('');
+				$("#Age").val('');
+				$("#PersonalTypeName").val('');
+				$("#FolkName").val('');
+				$("#InstitutionName").val('');
+				$("#InstitutiongGradeName").val('');
+				$("#InstitutionLevelName").val('');
+				$("#InHosDate").val('');
+				$("#OutHosDate").val('');
+				$("#ClinicDate").val('');
+				$("#InHosDay").val('');
+				$("#DiseaseName").val('');
+				$("#CompYear").val('');
+				$("#CityAreaName").val('');
+				$("#ZFY").val('');
+				$("#YBBXFY").val('');
+				$("#GRZFFY").val('');
+				$("#MLNFY").val('');
+				$("#MLWFY").val('');
+				$("#XYF").val('');
+				$("#ZYF").val('');
+				$("#CYF").val('');
+				$("#MYF").val('');
+				$("#JCF").val('');
+				$("#CLF").val('');
+				$("#TSF").val('');
+				$("#ZLF").val('');
+				$("#HLF").val('');
+				$("#SSF").val('');
+				$("#XUEYF").val('');
+				$("#TJF").val('');
+				$("#TZF").val('');
+				$("#QTF").val('');
+				$("#BXYF").val('');
+				$('#ms_name').html('');
+				$('#ms_description').html('');
+				$('#ms_checkdate').html('');
+				if($('#flag').val() == '1') {
+					$('#hos').hide();
+					$('#clinic').show();
+				} else {
+					$('#hos').show();
+					$('#clinic').hide();
+				}
+				form.render();
+			}
+			//头工具栏事件
+			table.on('toolbar(test)', function(obj) {
+				var checkStatus = table.checkStatus(obj.config.id);
+				data = checkStatus.data;
+				switch(obj.event) {
+					case 'search':
+						layer.open({
+							type: 2,
+							title: '审核结果查询',
+							content: 'query.html',
+							maxmin: true,
+							area: ['1100px', alertheight + 'px']
+						});
+						break;
+					case 'complaint':
+						//判断是否可以申诉	
+							admin.req({
+								url: layui.setter.base_url + 'afterengine/CheckComplaint/GetCheckComplaintEntity',
+								data: {
+									CheckResultInfoCode: checkStatus.data[0].CheckResultInfoCode
+								},
+								type: 'get',
+								done: function(result) {
+									if(result.count == 0) {
+										var index = layer.open({
+											type: 2,
+											title: '申诉说明录入',
+											content: 'complaint.html',
+											maxmin: true,
+											area: ['1100px', ($(window).height() - 30) + 'px']
+										});
+										layer.full(index);
+
+									} else {
+										layer.alert('您已经申诉过该条记录，请选择其他的记录！');
+									}
+								}
+							});
+						
+						break;
+				};
+			});
+
+		})
+	</script>
+
+</html>

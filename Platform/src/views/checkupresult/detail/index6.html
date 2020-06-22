@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>限儿童用药查询</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalabel=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        #out.layui-tab-content {
+            height: 540px;
+            overflow-x: auto;
+        }
+
+        .input-box {
+            padding: 5px 0;
+        }
+
+        #tabData2 .layui-form-label,
+        #tabData3 .layui-form-label {
+            width: 140px;
+        }
+
+        #tabData2 .layui-input-block,
+        #tabData3 .layui-input-block {
+            margin-left: 170px;
+        }
+
+        #msginfos .layui-card {
+            box-shadow: 0 0 10px #cccccc;
+            display: none;
+        }
+
+        #msginfos .layui-card .layui-form-item {
+            margin-bottom: 5px;
+        }
+
+        #msginfos .layui-card .layui-form-item .layui-form-label {
+            text-align: left;
+            padding: 3px 15px;
+        }
+
+        #msginfos .layui-card .layui-form-item input {
+            height: 24px;
+            font-size: 14px;
+        }
+
+        #msginfos .layui-card .layui-form-item .layui-input-block {
+            min-height: 24px;
+        }
+
+        #msginfos .layui-card .layui-form-item textarea {
+            min-height:60px;
+            resize: none;
+        }
+        .chart-container {
+            width: 100%;
+            height: 340px;
+        }
+        #fyzbfx{
+            position: relative;
+        }
+        .size-watch {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            visibility: hidden;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="padding-top:10px;">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-card" lay-filter="tabSelect">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">基本信息</li>
+                    <li>收费明细</li>
+                    <li>疑点信息</li>
+                    <li>药品统计</li>
+                    <li id="trunk">审核跟踪</li>
+                </ul>
+                <div class="layui-tab-content" id="out">
+                    <div class="layui-tab-item layui-show">
+                        <div class="layui-row">
+                            <div class="layui-col-md12" id="baseData">
+
+                            </div>
+                            <div class="layui-col-md12">
+                                <div class="layui-tab layui-tab-card">
+                                    <ul class="layui-tab-title">
+                                        <li class="layui-this">参保人</li>
+                                        <li>疾病</li>
+                                        <li>医疗机构</li>
+                                    </ul>
+                                    <div class="layui-tab-content">
+                                        <div class="layui-tab-item layui-show">
+                                            <div class="layui-row" id="tabData1">
+
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <div class="layui-row" id="tabData2">
+
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <div class="layui-row" id="tabData3">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="layui-tab-item" id="infoTab">
+                        <div class="layui-row"></div>
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-tab layui-tab-card">
+                                    <ul class="layui-tab-title">
+                                        <li class="layui-this">药品</li>
+                                        <li>检查</li>
+                                        <li>治疗</li>
+                                        <li>材料</li>
+                                        <li>其他</li>
+                                    </ul>
+                                    <div class="layui-tab-content">
+                                        <div class="layui-tab-item layui-show">
+                                            <table class="layui-hide" id="ypf" lay-filter="ypf"></table>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <table class="layui-hide" id="jcf" lay-filter="jcf"></table>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <table class="layui-hide" id="zlf" lay-filter="zlf"></table>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <table class="layui-hide" id="clf" lay-filter="clf"></table>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <table class="layui-hide" id="qtf" lay-filter="qtf"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <table class="layui-hide" id="YDInfo" lay-filter="YDInfo"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item" id="fyzbfx">
+                        <div class="layui-col-sm6">
+                            <div class="chart-container" id="chart1"></div>
+                        </div>
+                        <div class="layui-col-sm6">
+                            <div class="chart-container" id="chart2"></div>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item" id="msginfos">
+                            <div class="layui-card" data-step="a">
+                                <div class="layui-card-header">
+                                    <i class="layui-icon layui-icon-log"></i> 人工初审
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-row">
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理状态</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="step1" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">机构名称</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="FirstTrialInstitutionName" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理人</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="FirstTrialUserName" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理时间</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="FirstTrialTime" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md12">
+                                            <div class="layui-form-item layui-form-text">
+                                                <label class="layui-form-label">说明</label>
+                                                <div class="layui-input-block">
+                                                    <textarea data-item="FirstTrialDescribe" readonly
+                                                        class="layui-textarea"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card" data-step="b">
+                                <div class="layui-card-header">
+                                    <i class="layui-icon layui-icon-log"></i> 医院疑似违规病例反馈
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-row">
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理状态</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="step2" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">机构名称</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ComplaintInstitutionName" readonly
+                                                        class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理人</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ComplaintUserName" readonly
+                                                        class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理时间</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ComplaintTime" readonly
+                                                        class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md12" id="ffk">
+                                            <table class="layui-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>上传文件名</th>
+                                                        <th>大小</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                        <div class="layui-col-md12">
+                                            <div class="layui-form-item layui-form-text">
+                                                <label class="layui-form-label">说明</label>
+                                                <div class="layui-input-block">
+                                                    <textarea data-item="ComplaintDescribe" readonly
+                                                        class="layui-textarea"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card" data-step="c">
+                                <div class="layui-card-header">
+                                    <i class="layui-icon layui-icon-log"></i> 人工复审
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-row">
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理状态</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="step3" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">机构名称</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="SecondTrialInstitutionName"
+                                                        readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理人</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="SecondTrialUserName" readonly
+                                                        class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理时间</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="DoubtfulConclusionTime" readonly
+                                                        class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md12">
+                                            <div class="layui-form-item layui-form-text">
+                                                <label class="layui-form-label">说明</label>
+                                                <div class="layui-input-block">
+                                                    <textarea data-item="SecondTrialDescribe"
+                                                        readonly class="layui-textarea"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card" data-step="d">
+                                <div class="layui-card-header">
+                                    <i class="layui-icon layui-icon-log"></i> 医院疑似违规病例反馈(二次)
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-row">
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理状态</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="step4" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">机构名称</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ComplaintSecondInstitutionName" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理人</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ComplaintSecondUserName" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理时间</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ComplaintSecondTime" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md12" id="sfk">
+                                            <table class="layui-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>上传文件名</th>
+                                                        <th>大小</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                        <div class="layui-col-md12">
+                                            <div class="layui-form-item layui-form-text">
+                                                <label class="layui-form-label">说明</label>
+                                                <div class="layui-input-block">
+                                                    <textarea data-item="ComplaintSecondDescribe" readonly class="layui-textarea"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card" data-step="e">
+                                <div class="layui-card-header">
+                                    <i class="layui-icon layui-icon-log"></i> 专家审核
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-row">
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理状态</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="step5" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">机构名称</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ExpertTrialInstitutionName" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理人</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ExpertTrialUserName" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md3">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">处理时间</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" data-item="ExpertTrialTime" readonly class="layui-input">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md12">
+                                            <div class="layui-form-item layui-form-text">
+                                                <label class="layui-form-label">说明</label>
+                                                <div class="layui-input-block">
+                                                    <textarea data-item="ExpertTrialDescribe" readonly class="layui-textarea"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../layuiadmin/layui/layui.js"></script>
+    <script src="../echarts.min.js"></script>
+    <script type="text/html" id="control">
+        <div class="layui-btn-container">
+                {{# if(d.RulesLevel == '1'){ }}
+                <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="detail">详情</button>
+                {{# } else { }}
+                <button class="layui-btn layui-btn-primary layui-btn-sm" lay-event="result">详情</button>
+                {{# } }}
+        </div>
+    </script>
+
+    <script>
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index', //主入口模块
+        }).use(['index', 'admin', 'form', 'table', 'laydate'], function () {
+            var $ = layui.$,
+                setter = layui.setter,
+                tree = layui.tree,
+                element = layui.element,
+                form = layui.form,
+                admin = layui.admin,
+                laydate = layui.laydate,
+                table = layui.table;
+            var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+            function sleep(delay) {
+                var start = (new Date()).getTime();
+                while ((new Date()).getTime() - start < delay) {
+                    continue;
+                }
+            }
+
+            sleep(200)
+
+            var editRow = parent.parent.orgdata;
+
+            var TabDatas = []
+            var keyFunMap = {
+                0: function () {
+                    if(TabDatas[0]){
+                      return  
+                    }
+                    var mask = parent.layer.load(1);
+                    GetYBHosInfo(editRow.RegisterCode, editRow.PersonalCode, function (result) {
+                        parent.layer.close(mask);
+                        TabDatas[0] = true
+
+                        infoItem(itemRows, '#baseData');
+                        infoItem(itemTabData1, '#tabData1', 3);
+                        infoItem(itemTabData2, '#tabData2');
+                        infoItem(itemTabData3, '#tabData3');
+                        for (var k in result.data) {
+                            $('[data-field=' + k + ']').val(result.data[k])
+                        }
+
+                        $('[data-field=YPFY]').val(getSUM(
+                            [
+                                result.data['XYF'],
+                                result.data['ZYF'],
+                                result.data['CYF'],
+                                result.data['MYF']
+                            ]
+                        ))
+                        $('[data-field=QTFY]').val(getSUM(
+                            [
+                                result.data['CLF'],
+                                result.data['TCF'],
+                                result.data['HYF'],
+                                result.data['SSF'],
+                                result.data['XUEYF'],
+                                result.data['TJF'],
+                                result.data['TZF'],
+                                result.data['BXYF'],
+                                result.data['QTF']
+                            ]
+                        ))
+                        $('[data-field=SettlementDate]').val(editRow.SettlementDate)
+                    });
+                },
+                1: function () {
+                    if(TabDatas[1]){
+                      return  
+                    }
+                    var mask = parent.layer.load(1);
+                    GetFeeDetail(editRow.RegisterCode, function (res) {
+                        parent.layer.close(mask);
+                        TabDatas[1] = true
+
+                        if (!res) {
+                            return
+                        }
+                        var funMap = {
+                            "ypf": setTableYPF,
+                            "jcf": setTableJCF,
+                            "zlf": setTableZLF,
+                            "clf": setTableCLF,
+                            "qtf": setTableQTF,
+                        }
+                        for (var key in res.data) {
+                            var item = res.data[key];
+                            funMap[item.type](item.yBHosPreInfoEntities);
+                        }
+                    })
+                },
+                2: function () {
+                    if(TabDatas[2]){
+                      return  
+                    }
+                    getDescribe(editRow.RegisterCode,editRow.SHLCStates);
+                    TabDatas[2] = true
+                },
+                3: function () {
+                    if(TabDatas[3]){
+                      return  
+                    }
+                    FeeDetail(editRow.RegisterCode, editRow.PersonalCode)
+                    TabDatas[3] = true
+                },
+                4: function () {
+                    if(TabDatas[4]){
+                      return  
+                    }
+                    
+                    GetCheckComplainInfo(editRow.RegisterCode, function (result) {
+                        if (result.code == 0) {
+
+                            TabDatas[4] = true
+
+                            for (var key in result.data) {
+                                if (result.data[key] != null && typeof result.data[key] !=
+                                    'undefined') {
+                                    $("[data-item=" + key + "]").val(result.data[key])
+                                }
+                            }
+                            if(!result.data.ComplaintStatusStep){
+                                $('#trunk').remove()
+                                return
+                            }
+                            var statesTypes = result.data.ComplaintStatusStep.split(',');
+
+
+                            if (statesTypes.length > 0) {
+                                if (statesTypes[0]) { // 初审
+                                    $('[data-step=a]').show();
+                                    $('[data-item=step1]').val(statesTypes[0] == '1' ? '疑似违规' :
+                                        '不违规');
+                                }
+                                if (statesTypes[1]) { // 反馈1
+                                    $('[data-step=b]').show();
+                                    $('[data-item=step2]').val(statesTypes[1] == '2' ? '申诉' :
+                                        '违规');
+                                    getImageInfo(editRow.CheckComplainId, 1, function (res) {
+                                        if (res.data.length > 0) {
+                                            var body = [];
+                                            for (var i in res.data) {
+                                                var row = res.data[i];
+                                                var imageurl = layui.setter.image_url +
+                                                    "uploads" + row
+                                                    .ImageUrl
+                                                var tr = [
+                                                    '<tr>',
+                                                    '<td>' + row.ImageName +
+                                                    '</td>',
+                                                    '<td>' + row.ImageSize +
+                                                    'kb</td>',
+                                                    '<td><a href="javascript:window.open(\'' +
+                                                    imageurl +
+                                                    '\');"  class="layui-btn layui-btn-xs layui-btn-danger demo-download" download>',
+                                                    '查看</a>', '</td>',
+                                                    '</tr>'
+                                                ].join('');
+                                                body.push(tr);
+                                            }
+                                            $('#ffk table tbody').html(body.join(''))
+                                        } else {
+                                            $('#ffk').remove();
+                                        }
+
+                                    })
+                                }
+                                if (statesTypes[2]) {
+                                    $('[data-step=c]').show();
+                                    $('[data-item=step3]').val(statesTypes[2] == '1' ? '疑似违规' :
+                                        '不违规');
+                                }
+                                if (statesTypes[3]) {
+                                    $('[data-step=d]').show();
+                                    $('[data-item=step4]').val(statesTypes[3] == '2' ? '申诉' :
+                                        '违规');
+                                    getImageInfo(editRow.CheckComplainId, 2, function (res) {
+                                        if (res.data.length > 0) {
+                                            var body = [];
+                                            for (var i in res.data) {
+                                                var row = res.data[i];
+                                                var imageurl = layui.setter.image_url +
+                                                    "uploads" + row
+                                                    .ImageUrl
+                                                var tr = [
+                                                    '<tr>',
+                                                    '<td>' + row.ImageName +
+                                                    '</td>',
+                                                    '<td>' + row.ImageSize +
+                                                    'kb</td>',
+                                                    '<td><a href="javascript:window.open(\'' +
+                                                    imageurl +
+                                                    '\');"  class="layui-btn layui-btn-xs layui-btn-danger demo-download" download>',
+                                                    '查看</a>', '</td>',
+                                                    '</tr>'
+                                                ].join('');
+                                                body.push(tr);
+                                            }
+                                            $('#sfk table tbody').html(body.join(''))
+                                        } else {
+                                            $('#sfk').remove();
+                                        }
+                                    })
+                                }
+                                if (statesTypes[4]) {
+                                    $('[data-step=e]').show();
+                                    $('[data-item=step5]').val(editRow.AllMoney > 0 ? '违规' :
+                                        '不违规');
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            keyFunMap['0']();
+            keyFunMap['4']();
+
+            element.on('tab(tabSelect)', function (data) {
+                var key = data.index;
+                keyFunMap[key]();
+            })
+
+
+            var itemRows = [{
+                    'label': '就诊患者',
+                    'field': 'Name'
+                },
+                {
+                    'label': '疾病种类',
+                    'field': 'DiseaseName'
+                },
+                {
+                    'label': '总费用(元)',
+                    'field': 'ZFY'
+                },
+                {
+                    'label': '药品费用(元)',
+                    'field': 'YPFY'
+                },
+                {
+                    'label': '检查费用(元)',
+                    'field': 'JCF'
+                },
+                {
+                    'label': '治疗费用(元)',
+                    'field': 'ZLF'
+                },
+                {
+                    'label': '其他费用(元)',
+                    'field': 'QTFY'
+                },
+                {
+                    'label': '就诊编号',
+                    'field': 'HosRegisterCode'
+                },
+                {
+                    'label': '入院日期',
+                    'field': 'InHosDate'
+                },
+                {
+                    'label': '出院日期',
+                    'field': 'OutHosDate'
+                },
+                {
+                    'label': '住院天数',
+                    'field': 'InHosDay'
+                },
+                {
+                    'label': '结算日期',
+                    'field': 'SettlementDate'
+                }
+            ]
+
+            var itemTabData1 = [{
+                    'label': '身份证号',
+                    'field': 'IdNumber'
+                },
+                {
+                    'label': '姓名',
+                    'field': 'Name'
+                },
+                {
+                    'label': '性别',
+                    'field': 'Gender'
+                },
+                {
+                    'label': '年龄',
+                    'field': 'Age'
+                }
+            ]
+
+            var itemTabData2 = [{
+                    'label': '疾病诊断代码',
+                    'field': 'ICDCode'
+                },
+                {
+                    'label': '疾病诊断名称',
+                    'field': 'DiseaseName'
+                }
+            ]
+
+            var itemTabData3 = [{
+                    'label': '医疗机构编号',
+                    'field': 'InstitutionCode'
+                },
+                {
+                    'label': '医疗机构名称',
+                    'field': 'InstitutionName'
+                },
+                {
+                    'label': '医院等级',
+                    'field': 'InstitutiongGradeName'
+                }
+            ]
+
+            function renderFormItem(name, field, gird) {
+
+                var g = 4
+                if (gird) {
+                    g = gird
+                }
+                return '<div class="layui-col-md' + g + '">\
+                        <div class="layui-form-item">\
+                            <label class="layui-form-label">' + name + '</label>\
+                            <div class="layui-input-block">\
+                                <input type="text" data-field="' + field + '" readonly class="layui-input">\
+                            </div>\
+                        </div>\
+                    </div>'
+            }
+
+            function infoItem(rows, el, g) {
+                var html = [];
+                for (var k in rows) {
+                    html.push(renderFormItem(rows[k].label, rows[k].field, g));
+                }
+                $(el).html(html.join(''));
+            }
+
+            function getDescribe(registerCode,type) {
+                var mask = parent.layer.load(1)
+                if(type == '0'){
+                    table.render({
+                    elem: '#YDInfo',
+                    url: setter.base_url + 'afterengine/ComplaintMZL/GetFisrtYDDescribe',
+                    toolbar: '',
+                    title: '疑点审核初审违规',
+                    cols: [
+                        [{
+                                field: 'RulesName',
+                                title: '规则信息',
+                                width: 160,
+                                align: 'left',
+                            },
+                            {
+                                field: 'WGLX',
+                                title: '违规类型',
+                                width: 120,
+                                align: 'center',
+                                templet: '<div>{{d.WGLX == 1? "疑似违规":"违规"}}</div>'
+                            },
+                            {
+                                field: 'ZZSHZT',
+                                title: '最终审核状态',
+                                width: 130,
+                                align: 'center',
+                            },
+                            {
+                                field: 'YSWGFY',
+                                title: '疑似违规费用(元)',
+                                width: 140,
+                                align: 'center',
+                            },
+                            {
+                                field: 'WGFY',
+                                title: '违规费用(元)',
+                                width: 130,
+                                align: 'center',
+                            },
+                            {
+                                field: 'ResultDescription',
+                                title: '疑点描述',
+                                width: 313,
+                                align: 'left',
+                            }
+                        ]
+                    ],
+                    id: 'YDInfo',
+                    where: {
+                        registerCode: registerCode
+                    },
+                    headers: {
+                        Authorization: tokenvalue
+                    },
+                    height: '340',
+                    done: function (result) {
+                    	parent.layer.close(mask)
+                    }
+                })
+
+                }else{
+                	table.render({
+                    elem: '#YDInfo',
+                    url:setter.base_url + 'afterengine/ComplaintMZL/GetYDInfoList',
+                    toolbar: '',
+                    title: '疑点审核初审违规',
+                    cols: [
+                        [{
+                                field: 'RulesName',
+                                title: '规则信息',
+                                width: 160,
+                                align: 'left',
+                            },
+                            {
+                                title: '违规类型',
+                                width: 120,
+                                align: 'center',
+                                templet: '<div>{{d.ZZSHStates == "智审完成"? "违规":d.ZZSHStates}}</div>'
+                            },
+                            {
+                                field: 'ZZSHStates',
+                                title: '最终审核状态',
+                                width: 130,
+                                align: 'center',
+                                templet: '<div>{{d.ZZSHStates == "智审完成"? "违规":d.ZZSHStates}}</div>'
+                            },
+                            {
+                                field: 'YSWGFY',
+                                title: '疑似违规费用(元)',
+                                width: 140,
+                                align: 'center',
+                            },
+                            {
+                                field: 'WGFY',
+                                title: '违规费用(元)',
+                                width: 130,
+                                align: 'center',
+                            },
+                            {
+                                field: 'YDDescription',
+                                title: '疑点描述',
+                                width: 313,
+                                align: 'left',
+                            },
+                        ]
+                    ],
+                    id: 'YDInfo',
+                    where: {
+                        registerCode: registerCode
+                    },
+                    headers: {
+                        Authorization: tokenvalue
+                    },
+                    height: '430',
+                    done: function (result) {
+                        parent.layer.close(mask);
+                    }
+                })
+            
+                }
+            }
+
+            table.on('tool(YDInfo)', function (obj) {
+                if (obj.event == 'detail') {
+                    if (parent.TopExport.showTip) {
+                        parent.TopExport.showTip(obj.data.CheckResultInfoCode);
+                    }
+                }else if(obj.event == 'result') {
+                    parent.layer.open({
+                        type: 2,
+                        title: false,
+                        closeBtn: 1,
+                        shadeClose: false,
+                        offset: ['60px'],
+                        area: ['900px', '400px'],
+                        content: '../detail/tipresult.html?CheckResultInfoCode='+obj.data.CheckResultInfoCode
+                    });
+                }
+            })
+            // 添加表格数据
+            function setTable(tableid, data, field) {
+                table.render({
+                    elem: '#' + tableid,
+                    data: data,
+                    height: '430',
+                    cols: [field],
+                    page: true,
+                    limit: 10,
+                })
+            }
+
+            function getDetailInfo(data, filter) {
+                var detailInfos = {};
+                for (var key in data) {
+                    var item = data[key];
+                    item.isOperate = false;
+                    if (filter && filter(item)) {
+                        if (item.ComplaintCode) {
+                            admin.req({
+                                // url: setter.base_url + 'afterengine/ComplaintMZL/GetWGQRInfoList',
+                                url:setter.base_url + 'afterengine/ComplaintMZL/GetWGQRInfoListByZJ',
+                                async: false,
+                                type: 'get',
+                                data: {
+                                    complaintCode: item.ComplaintCode
+                                },
+                                done: function (result) {
+                                    if (result.code == 0) {
+                                        detailInfos[item.CheckResultInfoCode] = result.data;
+                                    }
+                                }
+                            })
+                        }
+                    }
+                }
+                return detailInfos;
+            }
+
+            function formatterDetailInfos(arr, defaultValue) {
+                var postData = [];
+                for (var k in arr) {
+                    var item = arr[k];
+                    if (item.CheckResultPreInfoCode) {
+                        postData.push({
+                            Code: item.CheckResultPreInfoCode,
+                            Value: defaultValue
+                        })
+                    }
+                }
+                return postData;
+            }
+
+            function GetYBHosInfo(registerCode, personalCode, done) {
+                admin.req({
+                    url: setter.base_url + 'afterengine/Complaint/GetYBHosInfo',
+                    type: 'get',
+                    data: {
+                        registerCode: registerCode,
+                        personalCode: personalCode
+                    },
+                    done: done
+                })
+            }
+
+            function GetFeeDetail(registerCode, done) {
+                admin.req({
+                    url: setter.base_url + 'afterengine/Complaint/GetFeeDetail',
+                    type: 'get',
+                    data: {
+                        registerCode: registerCode,
+                    },
+                    done: done
+                })
+            }
+
+            function GetCheckComplainInfo(registerCode, done) {
+                admin.req({
+                    url: setter.base_url + 'afterengine/Complaint/GetCheckComplainInfoALL',
+                    type: 'get',
+                    data: {
+                        registerCode: registerCode
+                    },
+                    done: done
+                })
+            }
+            //求和
+            function getSUM(arr) {
+                var sum = 0;
+                for (var i in arr) {
+                    sum = accAdd(arr[i],sum);
+                }
+                return sum.toFixed(2);
+            }
+
+            function setTableYPF(data) {
+                setTable('ypf', data, [{
+                        title: '序号',
+                        type: 'numbers',
+                        align: 'center',
+                        width: 80
+                    },
+                    {
+                        field: 'ItemCode',
+                        title: '药品编码',
+                        align: 'center',
+                        width: 200
+                    },
+                    {
+                        field: 'ItemName',
+                        title: '医院药品名称',
+                        align: 'center',
+                        width: 180
+                    },
+                    {
+                        field: 'CollectFeesCategoryName',
+                        title: '药品类别',
+                        align: 'center',
+                        width: 100
+                    },
+                    {
+                        field: 'CollectFeesProjectGradeName',
+                        title: '报销类别',
+                        align: 'center',
+                        width: 100
+                    },
+                    {
+                        field: 'PRICE',
+                        title: '单价(元)',
+                        align: 'center',
+                        width: 130
+                    },
+                    {
+                        field: 'COUNT',
+                        title: '数量',
+                        align: 'center',
+                        width: 130
+                    },
+                    {
+                        field: 'ZFY',
+                        title: '药品支付费用(元)',
+                        align: 'center',
+                        width: 130
+                    }
+                ])
+            }
+
+            function setTableJCF(data) {
+                setTable('jcf', data, [{
+                        title: '序号',
+                        type: 'numbers',
+                        align: 'center',
+                        width: 80
+                    },
+                    {
+                        field: 'ItemCode',
+                        title: '项目编码',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        field: 'ItemName',
+                        title: '医院检查名称',
+                        align: 'center',
+                        width: 230
+                    },
+                    {
+                        field: 'CollectFeesProjectGradeName',
+                        title: '报销类别',
+                        align: 'center',
+                        width: 120
+                    },
+                    {
+                        field: 'PRICE',
+                        title: '单价',
+                        align: 'center',
+                        width: 120
+                    },
+                    {
+                        field: 'COUNT',
+                        title: '次数',
+                        align: 'center',
+                        width: 120
+                    }
+                ])
+            }
+
+            function setTableZLF(data) {
+
+                setTable('zlf', data, [{
+                        title: '序号',
+                        type: 'numbers',
+                        align: 'center',
+                        width: 80
+                    },
+                    {
+                        field: 'ItemCode',
+                        title: '项目编码',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        field: 'ItemName',
+                        title: '医院治疗名称',
+                        align: 'center',
+                        width: 230
+                    },
+                    {
+                        field: 'CollectFeesProjectGradeName',
+                        title: '报销类别',
+                        align: 'center',
+                        width: 120
+                    },
+                    {
+                        field: 'PRICE',
+                        title: '单价',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        field: 'COUNT',
+                        title: '次数',
+                        align: 'center',
+                        width: 160
+                    },
+                ])
+            }
+
+            function setTableCLF(data) {
+                setTable('clf', data, [{
+                        title: '序号',
+                        type: 'numbers',
+                        align: 'center',
+                        width: 80
+                    },
+                    {
+                        field: 'ItemCode',
+                        title: '项目编码',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        field: 'ItemName',
+                        title: '医院材料名称',
+                        align: 'center',
+                        width: 230
+                    },
+                    {
+                        field: 'CollectFeesProjectGradeName',
+                        title: '报销类别',
+                        align: 'center',
+                        width: 120
+                    },
+                    {
+                        field: 'PRICE',
+                        title: '单价',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        field: 'COUNT',
+                        title: '次数',
+                        align: 'center',
+                        width: 160
+                    },
+                ])
+            }
+
+            function setTableQTF(data) {
+                setTable('qtf', data, [{
+                        title: '序号',
+                        type: 'numbers',
+                        align: 'center',
+                        width: 80
+                    },
+                    {
+                        field: 'ItemCode',
+                        title: '项目编码',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        field: 'ItemName',
+                        title: '项目名称',
+                        align: 'center',
+                        width: 230
+                    },
+                    {
+                        field: 'CollectFeesCategoryName',
+                        title: '项目类别',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        field: 'CollectFeesProjectGradeName',
+                        title: '报销类别',
+                        align: 'center',
+                        width: 100
+                    },
+                    {
+                        field: 'PRICE',
+                        title: '单价',
+                        align: 'center',
+                        width: 130
+                    },
+                    {
+                        field: 'COUNT',
+                        title: '次数',
+                        align: 'center',
+                        width: 130
+                    },
+                ])
+            }
+
+            function getImageInfo(checkComplainId,type,done){
+                admin.req({
+                    url: setter.base_url + 'afterengine/ComplaintMZL/GetImageInfo',
+                    type: 'get',
+                    data: {
+                        checkComplainId:checkComplainId,
+                        type:type
+                    },
+                    done: done
+                })
+            }
+
+            var chart1 = echarts.init($('#chart1').get(0));
+            var chart2 = echarts.init($('#chart2').get(0));
+
+            function FeeDetail(registercode, personalcode) {
+                var mask = parent.layer.load(1);
+                admin.req({
+                    url: layui.setter.base_url + 'afterengine/CheckComplaint/GetFeeDetail',
+                    data: {
+                        registerCode: registercode,
+                        personalCode: personalcode,
+                        flag: $('#flag').val()
+                    },
+                    type: 'get',
+                    done: function (result) {
+                        parent.layer.close(mask)
+                        chart1.setOption(setChartOption(
+                            [{
+                                    value: result.data.YBBXFY,
+                                    name: '医保报销费用'
+                                },
+                                {
+                                    value: result.data.ZFY,
+                                    name: '个人自付费用'
+                                }
+                            ],
+                            '费用占比分析',
+                            ['#FBFE27', '#FE5050']
+                        ));
+                        chart2.setOption(setChartOption(
+                            [{
+                                    value: result.data.XYF,
+                                    name: '西药费'
+                                },
+                                {
+                                    value: result.data.ZYF,
+                                    name: '中药费'
+                                },
+                                {
+                                    value: result.data.CYF,
+                                    name: '草药费'
+                                },
+                                {
+                                    value: result.data.MYF,
+                                    name: '蒙药费'
+                                }
+                            ],
+                            '药品占比分析',
+                            ['rgb(131,249,103)', '#1DB7E5']
+                        ));
+                    }
+                });
+
+            }
+
+            function setChartOption(data, title, color) {
+                return {
+                    title: {
+                        text: title,
+                        left: 'center',
+                        top: 20,
+                        textStyle: {
+                            color: '#ccc'
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                    },
+                    series: [{
+                        type: 'pie',
+                        radius: '50%',
+                        center: ['50%', '50%'],
+                        data: data,
+                        roseType: 'radius',
+                        label: {
+                            normal: {
+                                textStyle: {
+                                    color: '#333'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                lineStyle: {
+                                    color: 'rgba(255, 255, 255, 0.3)'
+                                },
+                                smooth: 0.2,
+                                length: 10,
+                                length2: 20
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                shadowBlur: 200,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        animationType: 'scale',
+                        animationEasing: 'elasticOut',
+                    }]
+                };
+            }
+
+            function riseze(el, cb) {
+                // 创建iframe标签，设置样式并插入到被监听元素中
+                var iframe = document.createElement('iframe');
+                iframe.setAttribute('class', 'size-watch');
+                el.appendChild(iframe);
+
+                // 记录元素当前宽高
+                var oldWidth = el.offsetWidth;
+                var oldHeight = el.offsetHeight;
+
+                // iframe 大小变化时的回调函数
+                function sizeChange() {
+                    // 记录元素变化后的宽高
+                    var width = el.offsetWidth;
+                    var height = el.offsetHeight;
+                    // 不一致时触发回调函数 cb，并更新元素当前宽高
+                    if (width !== oldWidth || height !== oldHeight) {
+                        cb({
+                            width: width,
+                            height: height
+                        }, {
+                            width: oldWidth,
+                            height: oldHeight
+                        });
+                        oldWidth = width;
+                        oldHeight = height;
+                    }
+                }
+
+                // 设置定时器用于节流
+                var timer = 0;
+                // 将 sizeChange 函数挂载到 iframe 的resize回调中
+                iframe.contentWindow.onresize = function () {
+                    clearTimeout(timer);
+                    timer = setTimeout(sizeChange, 20);
+                };
+            }
+
+            riseze(document.getElementById('fyzbfx'), function () {
+                chart1.resize();
+                chart2.resize();
+            });
+
+            function accAdd(arg1, arg2) {
+                var r1, r2, m;
+                try {
+                    r1 = arg1.toString().split(".")[1].length
+                } catch (e) {
+                    r1 = 0
+                }
+                try {
+                    r2 = arg2.toString().split(".")[1].length
+                } catch (e) {
+                    r2 = 0
+                }
+                m = Math.pow(10, Math.max(r1, r2))
+                return (arg1 * m + arg2 * m) / m
+            }
+
+            function accSub(arg1, arg2) {
+                return accAdd(arg1, -arg2);
+            }
+        });
+    </script>
+</body>
+
+</html>

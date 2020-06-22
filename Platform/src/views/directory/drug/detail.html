@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>医保药品目录详细</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+	</head>
+	<body>
+		<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="padding: 20px 20px 20px 20px;background-color: #FFFFFF; width:950px;">
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">药品编码：</label>
+					<div class="layui-input-block inputform">
+					<input type="text" name="DrugCode" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">药品名称：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugName" disabled="disabled" class="layui-input" style="width:250px;">					
+				    </div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">英文名称：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="EnName" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">药品商品名称：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugTradeName" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style="width:100%">
+					<label class="layui-form-label" style=" width:150px;">药品注册名称：</label>
+					<div class="layui-input-block">
+						<input type="text" name="DrugRegisteredName" disabled="disabled" class="layui-input" style="width:85%;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width: 150px;">所属盟市：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="AreaName" disabled="disabled" class="layui-input" style="width:250px;">
+						
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">生产单位：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="ProductionOrg" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">收费项目等级：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="CollectFeesProjectGrade" disabled="disabled" class="layui-input" style="width:250px;">
+						
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">收费类别：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="CollectFeesCategory" disabled="disabled" class="layui-input" style="width:250px;">
+						
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">最高限价：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="HighestPriceFixing" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">院内制剂：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="InnaiStandard" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">剂型：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="Dosage" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">规格：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="Specifications" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">开始时间：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="StartDate" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">终止时间：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="EndDate" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">中蒙药管理办法：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ChmDrugManagement" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">定点机构编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="FixedPointInstitutionsCode" disabled="disabled" class="layui-input" style="width:250px;">
+						</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 100%;">
+					<label class="layui-form-label" style=" width:150px;">限制适用范围：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="LimitMedication" disabled="disabled" class="layui-input" style="width:85%;">
+						</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">国家目录编码：</label>
+					<div class="layui-input-block">
+						<input type="text" name="CountriesDirectoryCode" disabled="disabled" class="layui-input" style="width:250px;">
+						
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">批准文号：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ApprovalTheTitanic" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">批准日期：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ApprovalDate" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:150px;">工伤使用标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="InductrialInjuryUse" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:150px;">生育使用标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="FertilityUse" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:150px;">靶向药标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="TargetedDrugs" disabled="disabled" class="layui-input" style="width:250px;">
+							
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">药品类别码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugCategory" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">药监局药品编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugPrisonCode" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style="width:100%;">
+					<label class="layui-form-label" style=" width:150px;">批准文号备注：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ApprovalTheTitanicRemark" disabled="disabled" class="layui-input" style="width:85%;">
+						
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:150px;">国家基本药物标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="BasicMedicine" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:150px;">国家36个谈判药物：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="Negotiations" disabled="disabled" class="layui-input" style="width:250px;">
+							
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;"> </label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="YBDrugCode" disabled="disabled" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:150px;">His系统对照编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="HisRelativeCode" disabled="disabled" class="layui-input" style="width:250px;">
+				    </div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style="width:100%;">
+					<label class="layui-form-label" style=" width:150px;">备注：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="Remark" disabled="disabled" class="layui-input" style="width:85%;">
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-form-item">
+				<div style="text-align: right;">					
+					<button class="layui-btn layui-btn-big" data-type="cancel">取消</button>
+				</div>
+			</div>
+			
+		</div>	
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'form'], function() {
+				var $ = layui.$,
+					element = layui.element,
+					form = layui.form;				
+				//编辑赋值
+				if(parent.orgdata != "undefined" && parent.orgdata != "") {
+					
+				
+					form.val('layuiadmin-form-admin', {
+						"AreaName": parent.orgdata.AreaName,
+						"DrugCode": parent.orgdata.DrugCode,
+						"DrugName": parent.orgdata.DrugName,
+						"EnName": parent.orgdata.EnName,
+						"DrugTradeName": parent.orgdata.DrugTradeName,
+						"DrugRegisteredName": parent.orgdata.DrugRegisteredName,
+						"ProductionOrg": parent.orgdata.ProductionOrg,
+						"CollectFeesProjectGrade": parent.orgdata.CollectFeesProjectGrade_Name,
+						"CollectFeesCategory": parent.orgdata.CollectFeesCategory_Name,
+						"HighestPriceFixing": parent.orgdata.HighestPriceFixing,
+						"InnaiStandard": parent.orgdata.InnaiStandard,
+						"Dosage": parent.orgdata.Dosage,
+						"Specifications": parent.orgdata.Specifications,
+						"StartDate": parent.orgdata.StartDate,
+						"EndDate": parent.orgdata.EndDate,
+						"ChmDrugManagement": parent.orgdata.ChmDrugManagement,
+						"FixedPointInstitutionsCode": parent.orgdata.FixedPointInstitutionsCode,
+						"LimitMedication": parent.orgdata.LimitMedication,
+						"CountriesDirectoryCode": parent.orgdata.CountriesDirectoryCode,
+						"ApprovalTheTitanic": parent.orgdata.ApprovalTheTitanic,
+						"ApprovalDate": parent.orgdata.ApprovalDate,
+						"InductrialInjuryUse": parent.orgdata.InductrialInjuryUse_Name,
+						"FertilityUse": parent.orgdata.FertilityUse_Name,
+						"TargetedDrugs": parent.orgdata.TargetedDrugs_Name,
+						"DrugCategory": parent.orgdata.DrugCategory,
+						"DrugPrisonCode": parent.orgdata.DrugPrisonCode,
+						"ApprovalTheTitanicRemark": parent.orgdata.ApprovalTheTitanicRemark,
+						"BasicMedicine": parent.orgdata.BasicMedicine_Name,
+						"Negotiations": parent.orgdata.Negotiations_Name,
+						"YBDrugCode": parent.orgdata.YBDrugCode,
+						"HisRelativeCode": parent.orgdata.HisRelativeCode,
+						"Remark": parent.orgdata.Remark
+					})
+				}
+
+				var active = {
+					//取消
+					cancel: function() {
+						var index = parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index); //关闭当前页  
+					}
+
+				};
+
+				$('.layui-btn').on('click', function() {
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});
+			});
+		</script>
+	</body>
+</html>

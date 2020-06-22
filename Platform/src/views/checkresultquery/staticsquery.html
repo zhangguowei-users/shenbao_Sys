@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>审核结果统计</title>
+		 <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+    <style>
+        .wrap {
+            font-size: 0px;
+            /*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+            padding: 10px;
+            box-sizing: content-box;
+            /*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+        }
+
+        .left {
+            box-sizing: border-box;
+            display: inline-block;
+
+            /*两个子元素都设置为inline-block*/
+            vertical-align: top;
+            /*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+            width: 200px;
+            /*height: 750px;*/
+        }
+
+        .right {
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: top;
+            width: -webkit-calc(100% - 200px);
+            width: calc(100% - 200px);
+            /*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+            /*height: 750px;*/
+        }
+
+        #left .layui-form {
+            height: calc(100vh - 90px);
+            min-height: 550px;
+            overflow-y: auto;
+        }
+
+        #left .layui-form::-webkit-scrollbar {
+            /*滚动条整体样式*/
+            width: 7px;
+            /*高宽分别对应横竖滚动条的尺寸*/
+            height: 1px;
+        }
+
+        #left .layui-form::-webkit-scrollbar-thumb {
+            /*滚动条里面小方块*/
+            border-radius: 7px;
+            -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            background: #009688;
+        }
+
+        #left .layui-form::-webkit-scrollbar-track {
+            /*滚动条里面轨道*/
+            -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 7px;
+            background: #EDEDED;
+        }
+
+        #treeDemo {
+            margin-top: 10px;
+        }
+    </style>
+
+	</head>
+	<body>
+		<div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-xs12">
+                <div class="layui-card">
+                    <div class="layui-card-body">                        
+                        <div class="layui-form layui-form-pane layui-row layui-col-space5" id="querybox">                           
+                            <input type="text" id="RulesCode" name="RulesCode" autocomplete="off" hidden>
+                            <input type="hidden" name="InstitutionCode" id="InstitutionCode" />
+                            <div class="layui-col-sm8 layui-col-xs12 layui-col-md4">
+                                <label class="layui-form-label">就诊医院</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="InstitutionName" name="InstitutionName" placeholder="查询就诊医院"
+                                        autocomplete="off" class="layui-input" readonly>
+                                </div>
+                            </div>
+                            <!--<div class="layui-col-sm3">
+                                <label class="layui-form-label">审核规则</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="RulesName" name="RulesName" placeholder="查询审核规则"
+                                        autocomplete="off" class="layui-input" readonly>
+                                </div>
+                            </div>-->
+                            <div class="layui-col-sm4">
+                                <label class="layui-form-label">开始时间</label>
+                                <div class="layui-input-block">
+                                    <input type="text" class="layui-input" placeholder="查询审核开始时间" autocomplete="off"
+                                        name="StartDate" id="StartDate">
+                                </div>
+                            </div>
+                            <div class="layui-col-sm4">
+                                <label class="layui-form-label">结束时间</label>
+                                <div class="layui-input-block">
+                                    <input type="text" class="layui-input" placeholder="查询审核结束时间" autocomplete="off"
+                                        name="EndDate" id="EndDate">
+                                </div>
+                            </div>  
+                            
+                            <div class="layui-col-sm12">
+                                <hr>
+                            </div>
+                            <div class="layui-col-xs12" style="text-align: right">
+                                <button class="layui-btn layui-btn-sm" id="searchQuery">查询</button>
+                                <button style="display: none;" class="layui-btn layui-btn-normal layui-btn-sm"
+                                    id="reflashTable">刷新表格</button>
+                                <button class="layui-btn layui-btn-normal layui-btn-sm" id="resetQuery">重置</button>                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>     
+         <div class="layui-row">
+            <div class="layui-col-sm12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table class="layui-hide" id="detail" lay-filter="cfdetail"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+	</body>
+	<script src="../../layuiadmin/layui/layui.js"></script>
+	<link rel="stylesheet" href="../../layuiadmin/style/extend/zTree_v3/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../layuiadmin/lib/extend/zTree_v3/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.core.js"></script>
+	<script src="../../layuiadmin/modules/tableSelect.js"></script>
+	<script src="../checkcomplaint/echarts.min.js"></script>	
+
+<script>
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'admin', 'tree', 'form', 'util','laydate','setter', 'table', 'tableSelect'], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            view = layui.view,
+            setter = layui.setter,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate,
+            util = layui.util,
+            tableSelect = layui.tableSelect;
+        var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+        var nowtime = new Date();
+        var start = laydate.render({
+            elem: '#StartDate',
+            format: 'yyyy-MM-dd',
+            done: function (value, date, endDate) {
+                end.config.min = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date
+                }; //开始日选好后，重置结束日的最小日期
+                end.config.value = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                }; //将结束日的初始值设定为开始日
+            }
+        })
+
+        var end = laydate.render({
+            elem: '#EndDate',
+            format: 'yyyy-MM-dd',
+            done: function (value, date, endDate) {
+                start.config.max = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date
+                }; //结束日选好后，重置开始日的最大日期
+            }
+        })
+
+       var $Filter = {
+            rules: ' ',            
+        }
+        var $Query = {           
+            StartDate: '', // 开始时间
+            EndDate: '', // 开始时间
+            InstitutionCode: '',//就诊机构编码
+            RulesCode:''
+        }
+
+        function resetQuery() {           
+            $Query = {                
+                StartDate: '', // 开始时间
+	            EndDate: '', // 开始时间
+	            InstitutionCode: '',//就诊机构编码
+	            RulesCode:''
+            }
+            form.render('select');
+            var resetKeys = ['InstitutionCode',
+                'InstitutionName', 'RulesName', 'RulesCode', 'StartDate', 'EndDate'
+            ];
+            for (var k in resetKeys) {
+                $('input[name=' + resetKeys[k] + ']').val('');
+            }
+        }
+
+        $(document).on('click', '#reflashTable', function () {
+            GetTableData();
+        })
+        $(document).on('click', '#searchQuery', function () {
+            for (var name in $Query) {
+                $Query[name] = $("[name=" + name + "]").val().trim();
+            }
+            GetTableData();
+        });
+        $(document).on('click', '#resetQuery', function () {
+            resetQuery();
+            GetTableData();
+        });
+        
+
+
+        var indexs = layer.load(3);
+
+        $('#RulesCode').change(function () {
+            $Filter.rules = $(this).val();
+        })       
+        GetTableData()
+        // 选择审核规则
+        tableSelect.render({
+            elem: '#RulesName', //定义输入框input对象 必填
+            checkedKey: 'RulesCode', //表格的唯一建值，非常重要，影响到选中状态 必填
+            searchKey: 'keyword',
+            searchPlaceholder: '规则名称',
+            table: { //定义表格参数，与LAYUI的TABLE模块一致，只是无需再定义表格elem
+                url: layui.setter.base_url + 'znsh/RulesMain/GetRulesList',
+                cols: [
+                    [{
+                            type: 'radio',
+                            width: 40,
+                        },
+                        {
+                            field: 'RulesCode',
+                            title: '规则编码',
+                            width: 220,
+                            align: 'center',
+                        },
+                        {
+                            field: 'RulesName',
+                            title: '规则名称',
+                            width: 270,
+                            align: 'center',
+                        }
+                    ]
+                ],
+                page: true,
+                limit: 5,
+                limits: [5, 10, 15, 20],
+                curr: 1,
+                where: {
+                    token: tokenvalue,
+                    condition: "",
+                    keyword: ""
+                },
+                headers: {
+                    Authorization: tokenvalue
+                }
+            },
+            done: function (elem, data) {
+                layui.each(data.data, function (index, item) {
+                    $('#RulesCode').val(item.RulesCode);
+                    elem.val(item.RulesName);
+                    $Filter.rules = item.RulesCode;
+                    GetTableData();
+                });
+            }
+        });
+       
+        // 选择机构
+        tableSelect.render({
+            elem: '#InstitutionName', //定义输入框input对象 必填
+            checkedKey: 'YYDMYYDM', //表格的唯一建值，非常重要，影响到选中状态 必填
+            searchKey: 'keyword',
+            searchPlaceholder: '请输入治疗机构名称',
+            table: { //定义表格参数，与LAYUI的TABLE模块一致，只是无需再定义表格elem
+                url: layui.setter.base_url + 'znsh/ZLXX/GetYYXXList',
+                cols: [
+                    [{
+                            type: 'radio',
+                            width: 40,
+                        },
+                        {
+                            field: 'YYDMYYDM',
+                            title: '医疗机构编号',
+                            width: 220,
+                            align: 'center',
+                        },
+                        {
+                            field: 'YLJGMC',
+                            title: '医院名称',
+                            width: 270,
+                            align: 'center',
+                        }
+                    ]
+                ],
+                page: true,
+                limit: 5,
+                limits: [5, 10, 15, 20],
+                curr: 1,
+                where: {
+                    token: tokenvalue,
+                },
+                headers: {
+                    Authorization: tokenvalue
+                }
+            },
+            done: function (elem, data) {
+                layui.each(data.data, function (index, item) {
+                    elem.val(item.YLJGMC);
+                    $('#InstitutionCode').val(item.YYDMYYDM)
+                });
+            }
+        });
+
+        function GetTableData() {
+            var flag = '2'
+            if($Query.StartDate != ''){
+                $Query.StartDate += ' 00:00:00';
+            }
+
+            if($Query.EndDate != ''){
+                $Query.EndDate += ' 23:59:59';
+            }
+            table.render({
+                elem: '#detail',
+                url: layui.setter.base_url + 'afterengine/CheckComplaint/GetComplaintStaticsList',
+                toolbar: '#toolbarDemo',
+                title: '审核结果表',
+                cols: [
+                    [
+                        {
+                            field: 'InstitutionName',
+                            title: '医疗机构名称',
+                            width: 180,
+                            align: 'center',
+                            
+                        },
+                        {
+                            field: 'Type',
+                            title: '费用来源',
+                            width: 150,
+                            align: 'center',
+                            templet: function (d) {
+                                return d.Type=="2"?"住院":"门诊"
+                            },
+                        },
+                        {
+                            field: 'KKJE',
+                            title: '实际扣款',
+                            width: 110,
+                            align: 'center',
+                            style: 'color:#F00;'
+                        },
+                        {
+                            field: 'StartTime',
+                            title: '开始时间',
+                            width: 120,                            
+                            align: 'center',
+                        },
+                        {
+                            field: 'EndTime',
+                            title: '结束时间',
+                            width: 120,
+                            templet: function (d) {
+                                return util.toDateString(d.EndTime, 'yyyy-MM-dd')
+                            },
+                            align: 'center',
+                        },
+                        {
+                            field: 'JSJE',
+                            title: '结算金额',
+                            width: 110,
+                            align: 'center',
+                        },
+                        {
+                            field: 'SJBCJE',
+                            title: '统筹金额',
+                            width: 110,
+                            align: 'center',
+                        },
+                        {
+                            field: 'DBJE',
+                            title: '大病金额',
+                            width: 110,
+                            align: 'center',
+                        },
+                        {
+                            field: 'YLJZJE',
+                            title: '医疗救助金额',
+                            width: 120,
+                            align: 'center',
+                        },
+                        {
+                            field: 'SYBXJE',
+                            title: '商业保险金额',
+                            width: 135,
+                            align: 'center',
+                        },
+                        {
+                            field: 'SYBXBCJE',
+                            title: '商业保险补充金额',
+                            width: 120,
+                            align: 'center',
+                        },
+                        {
+                            field: 'KKRC',
+                            title: '扣款人次',
+                            width: 110,                            
+                            align: 'center',
+                            style: 'color:#F00;'
+                        }
+                    ]
+                ],
+                page: true,
+                id: "IDTable",
+                limit: 10, //每页显示5条
+                limits: [10, 20, 40, 60, 80, 90],
+                curr: 1,
+                where: {
+                    token: tokenvalue,
+                    querystr: JSON.stringify($Query),
+                },
+                headers: {
+                    Authorization: tokenvalue
+                },
+                height: $(window).height() - 120,
+                done: function (res) {
+                    layer.close(indexs);
+                }
+            });
+        }
+    })
+</script>
+</html>

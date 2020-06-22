@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/css/base.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/css/cyType.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/css/font-awesome.min.css" media="all">
+		<style>
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-sm6">
+					<div class="wrap">
+						<div class="left test-1" style="overflow-y: scroll;" id="left">
+							<hr/>
+							<form class="layui-form">
+								<div class="treeClass" style="height:600px;">
+									<ul id="treeDemo" class="ztree"></ul>
+								</div>
+							</form>
+						</div>
+						<div class="right" id="right">
+							<table class="layui-hide" id="dj" lay-filter="dj"></table>
+							<input type="hidden" id="jgmc" />
+							<input type="hidden" id="rn" />
+							<input type="hidden" id="rulecode" />
+							<input type="hidden" id="djname" />
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-sm6">
+					<div class="layui-card">
+						<div class="layui-card-body" style="height: 600px; overflow: hidden;">
+							<div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-heaparea">
+								<div carousel-item id="LAY-index-heaparea" style="height: 550px;">
+									<div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<link rel="stylesheet" href="../../../layuiadmin/style/extend/zTree_v3/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="../../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.core.js"></script>
+
+		<script type="text/javascript">
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'tree', 'element', 'table', 'carousel', 'echarts'], function() {
+				var $ = layui.$,
+					setter = layui.setter,
+					admin = layui.admin,
+					router = layui.router(),
+					table = layui.table,
+					carousel = layui.carousel,
+					echarts = layui.echarts,
+					device = layui.device();
+				var alertheight = $(window).height() - 15;
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				var jgdata = [];
+				var djname = $(window.parent.document).find("#djname").val();
+				$("#djname").val(djname);
+				var tjdata = [],
+					tjdatacount = [];
+				//轮播切换
+				$('.layadmin-carousel').each(function() {
+					var othis = $(this);
+					carousel.render({
+						elem: this,
+						width: '100%',
+						arrow: 'none',
+						interval: othis.data('interval'),
+						autoplay: othis.data('autoplay') === true,
+						trigger: (device.ios || device.android) ? 'click' : 'hover',
+						anim: othis.data('anim')
+					});
+				});
+				var setting = {
+					data: {
+						key: {
+							name: "NAME"
+						},
+						simpleData: {
+							enable: true,
+							idKey: "ID",
+							pIdKey: "PID",
+							rootPId: 0
+						}
+					},
+					callback: {
+						onClick: onClick
+					}
+				};
+
+				// 获取url中的参数
+				function GetQueryValue(queryName) {
+					var query = decodeURI(window.location.search.substring(1));
+					var vars = query.split("&");
+					for (var i = 0; i < vars.length; i++) {
+						var pair = vars[i].split("=");
+						if (pair[0] == queryName) { return pair[1]; }
+					}
+					return null;
+				}
+
+				var selectYear = GetQueryValue('year');
+
+				getTreeData();
+
+				function getTreeData() {
+					admin.req({
+						url: layui.setter.base_url + "afterengine/DecisionAnalysis/GetInstitutionList",
+						type: "get",
+						dataType: "json",
+						data: {
+							level: djname,
+							year: selectYear
+						},
+						async: false,
+						success: function(result) {
+							result.data.push({
+								"ID": '100',
+								"PID": '0',
+								"NAME": djname
+							});
+							let treeObj = $.fn.zTree.init($("#treeDemo"), setting, result.data);
+							treeObj.expandAll(true); //默认展开						        
+							var nodes = treeObj.getNodes();
+							if(nodes.length > 0) {
+								var node = treeObj.selectNode(nodes[0]); //默认选中根节点
+								$('#jgmc').val('全部');
+								$('#djname').val(djname);
+							}
+
+						}
+					});
+				};
+
+				function onClick(event, treeId, treeNode, clickFlag) {
+					var jgbm = treeNode.ID;
+					var jgmc = treeNode.NAME;
+					if(treeNode.PID == 0) {
+						$('#jgmc').val('全部');
+					} else {
+						$('#jgmc').val(jgmc);
+					}
+					table.reload('IDTable', {
+						where: {
+							token: tokenvalue,
+							djname: djname,
+							flag: '2',
+							jgbm: jgbm,
+							year:selectYear
+						}
+					}); //刷新表格
+				}
+
+				GetTableData();
+
+				function GetTableData() {
+					table.render({
+						elem: '#dj',
+						url: layui.setter.base_url + 'afterengine/DecisionAnalysis/GetStaticsViewsJGMCByDJ',
+						title: '机构分析',
+						totalRow: true,
+						cols: [
+							[{
+									field: 'commonname',
+									title: '规则名称',
+									align: 'center',
+									totalRowText: '合计',
+									templet: function(d) {
+										return d.rulename
+									}
+								},
+								{
+									field: 'count',
+									title: '违规人次数',
+									align: 'center',
+									totalRow: true
+								}
+
+							]
+						],
+						id: "IDTable",
+						where: {
+							token: tokenvalue,
+							djname: djname,
+							flag: '2',
+							year:selectYear
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						height: 600,
+						done: function(res) {
+							if(res.code == "0") {
+								tjdata = [], tjdatacount = [];
+								$.each(res.data, function(index, item) {
+									if(index < 10) {
+										if(item.rulename == null) {
+											tjdata.push('无');
+										} else {
+											tjdata.push(item.rulename);
+										}
+										if(item.count == null) {
+											tjdatacount.push(0);
+										} else {
+											tjdatacount.push(item.count);
+										}
+									}
+								});
+								GetImage();
+							}
+						}
+					});
+				}
+
+				function GetImage() {
+					var echheaparea = [],
+						heaparea = [{
+							title: {
+								text: '分析情况(违规人次数)',
+							},
+							color: ['#8A2BE2'],
+							tooltip: {
+								trigger: 'axis'
+							},
+							//							legend: {
+							//								data: ['违规人次数']
+							//							},
+							calculable: true,
+							xAxis: [{
+								type: 'category',
+								boundaryGap: false,
+								data: tjdata,
+								axisLabel: {
+									rotate: 40
+								}
+							}],
+							yAxis: [{
+								type: 'value'
+							}],
+							series: [{
+								name: '数量',
+								type: 'line',
+								stack: '总量',
+								itemStyle: {
+									normal: {
+										label: {
+											show: true, //开启显示
+											position: 'top', //在上方显示
+											textStyle: { //数值样式
+												color: '#EE7621',
+												fontSize: 12
+											}
+										},
+										areaStyle: {
+											color: '#4EEE94',
+											type: 'default'
+										}
+									}
+								},
+								data: tjdatacount
+							}]
+						}],
+						elemheaparea = $('#LAY-index-heaparea').children('div'),
+						renderheaparea = function(index) {
+							echheaparea[index] = echarts.init(elemheaparea[index], layui.echartsTheme);
+							echheaparea[index].setOption(heaparea[index]);
+							window.onresize = echheaparea[index].resize;
+						};
+					if(!elemheaparea[0]) return;
+					renderheaparea(0);
+				}
+
+				table.on('row(dj)', function(obj) {
+					var data = obj.data;
+					$('#rn').val(data.rulename);
+					$('#rulecode').val(data.rulecode);
+					//标注选中样式
+					obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+					if(data.rulecode == 'A004' || data.rulecode == 'A006') {
+						str_html = 'otherlist.html?year='+selectYear
+					} else {
+						str_html = 'detail.html?year='+selectYear
+					}
+					var index = layer.open({
+						type: 2,
+						title: '所属机构：' + $('#jgmc').val() + "  规则名称：" + $('#rn').val(),
+						content: str_html,
+						maxmin: true,
+						area: ['1100px', alertheight + 'px']
+					});
+					layer.full(index);
+				});
+			});
+		</script>
+
+	</body>
+
+</html>

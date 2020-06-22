@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>限定医院类型级别</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../../layuiadmin/style/admin.css" media="all">
+	</head>
+
+	<body>
+			<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="padding: 20px 20px 20px 20px;background-color: #FFFFFF; width:950px; height:500px;">
+					<input type="hidden" name="CRowId" id="CRowId" />
+					<input type="hidden" name="RulesCode" id="RulesCode" />
+					<input type="hidden" name="RulesRowId" id="RulesRowId" />
+					<input type="hidden" name="ItemCode" id="ItemCode" />
+					<div class="layui-form-item">
+						<div class="layui-inline" style=" width: 450px;">
+							<label class="layui-form-label" style=" width:160px;">项目名称：</label>
+							<div class="layui-input-inline" style="width:250px;">
+								<input type="text" id="ItemName" name="ItemName" lay-verify="required" class="layui-input" style="width:250px;">
+								
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 450px;">
+							<label class="layui-form-label" style=" width:160px;">限定机构级别：</label>
+							<div class="layui-input-inline" style="width:250px;">
+								<select disabled id="LimitGrade" name="LimitGrade" class="layui-input" lay-verify="required" style="width:250px;">
+									<option value="" selected>请选择机构等级</option>
+									<option value="2">三级甲等</option>
+									<option value="5">二级甲等</option>
+									<option value="8">一级甲等</option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 450px;">
+							<label class="layui-form-label" style=" width:160px;">排序码：</label>
+							<div class="layui-input-inline" style="width:250px;">
+								<input type="text" name="SortCode" lay-verify="number" autocomplete="off" value="1" class="layui-input" style="width:250px;">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline" style="width:100%;">
+							<label class="layui-form-label" style=" width:160px; ">描述：</label>
+							<div class="layui-input-block inputform">
+								<textarea name="Describe" class="layui-textarea" placeholder="" style="width:85%; height: 20px; "></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div style="text-align: right;">
+							<button class="layui-btn layui-btn-big" lay-submit="" lay-filter="save">保存</button>
+							<button class="layui-btn layui-btn-big" data-type="cancel">取消</button>
+						</div>
+					</div>
+				</div>
+		<script src="../../../../layuiadmin/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '../../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index',  'form'], function() {
+				var $ = layui.$,
+					element = layui.element,
+					form = layui.form,
+					admin = layui.admin;
+				if(parent.orgdata != "undefined" && parent.orgdata != "") {
+					
+					form.val('layuiadmin-form-admin', {						
+						"CRowId": parent.orgdata.CRowId,
+						"RulesCode": parent.orgdata.RulesCode,
+						"RulesRowId": parent.orgdata.RulesRowId,						
+						"ItemCode": parent.orgdata.ItemCode,
+						"ItemName": parent.orgdata.ItemName,
+						"LimitGrade": parent.orgdata.LimitGrade,
+						"Describe": parent.orgdata.Describe,
+						"SortCode": parent.orgdata.SortCode
+					})
+				}	
+				$(".layui-input,.layui-textarea").attr("disabled", "disabled");			
+				var active = {
+					//取消
+					cancel: function() {
+						var index = parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index); //关闭当前页  
+					}
+				};
+				$('.layui-btn').on('click', function() {
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});
+			});
+		</script>
+	</body>
+
+</html>

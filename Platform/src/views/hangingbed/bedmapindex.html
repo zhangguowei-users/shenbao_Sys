@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+		<link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+		<script src="../../layuiadmin/layui/layui.js?t=1"></script>
+		<link rel="stylesheet" href="../../layuiadmin/style/extend/css/reset.min.css" media="all">
+		<link rel="stylesheet" href="../../layuiadmin/style/extend/css/style.css" media="all">
+		<script src="../../layuiadmin/lib/extend/js/jquery.min.js"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=ckrg6cjos3nit7LboOUtGP122AvURt2l"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js"></script>
+		<style>
+			.anchorBL {
+				display: none;
+			}
+			
+			#btn {
+				position: absolute;
+				top: 35%;
+				left: 198px;
+				height: 75px;
+				width: 20px;
+				border: 0;
+				border-left: 1px solid rgb(23, 32, 43, 0.2);
+				background-color: #87CEFA;
+				color: #F5FFFA;
+				cursor: pointer;
+			}
+			
+			.box {
+				float: left;
+				position: relative;
+				left: 0;
+				width: 200px;
+				margin-left: -200px;
+				display: block;
+				background-color: #FFFFFF;
+				z-index: 4000;
+				-moz-transition: margin-left 0.1s;
+				transition: margin-left 0.1s;
+			}
+			
+			#controls {
+				position: absolute;
+				height: 20px;
+				font-family: arial;
+				bottom: 8px;
+				margin: 2px;
+				padding: 2px;
+				z-index: 40;
+				background: #fff;
+				color: #444;
+				width: 200px;
+				right: 12px;
+				-moz-box-shadow: 0 0 5px #888;
+				-webkit-box-shadow: 0 0 5px #888;
+				box-shadow: 0 0 5px #888;
+				text-align: center;
+			}
+			
+			#mapDiv {
+				padding: 0;
+				margin: 0;
+			}
+			
+			#HomeButton {
+				position: absolute;
+				top: 98px;
+				left: 21px;
+				z-index: 5000;
+				-moz-transition: left 0.1s;
+				transition: left 0.1s;
+			}
+			
+			#navigation_div {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				width: 600px;
+				z-index: 999;
+			}
+			
+			#div_lqmjcx {
+				position: absolute;
+				top: 10px;
+				left: 90px;
+				width: 400px;
+				z-index: 3000;
+				-moz-transition: left 0.1s;
+				transition: left 0.1s;
+			}
+			
+			#div_chaxun {
+				position: absolute;
+				top: 10px;
+				left: 90px;
+				width: 400px;
+				z-index: 3000;
+				-moz-transition: left 0.1s;
+				transition: left 0.1s;
+			}
+			
+			section {
+				width: 100%;
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+		<!--zTree_start-->
+		<link rel="stylesheet" href="../../layuiadmin/style/extend/zTree_v3/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../layuiadmin/lib/extend/zTree_v3/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.core.js"></script>
+		<script type="text/javascript" src="../../layuiadmin/lib/extend/zTree_v3/jquery.ztree.excheck.js"></script>
+		<!--zTree_end-->
+		<script>
+			var $;
+			var admin;
+			var map;
+			var ele;
+			var echarts;
+			var laytpl;
+			var tokenvalue;
+			var box; //地图伸缩用
+			var btn; //地图伸缩按钮
+			var table;
+			var form;
+			var param;
+			var setter;
+			var areaname = "" //行政区划名称
+			var areacode = "" //行政区划代码
+			var level = "" //行政区划级别
+			var zoom = "8";
+			var opts = {
+				width: 350, // 信息窗口宽度
+				title: "各项指标达标情况", // 信息窗口标题
+				enableMessage: true //设置允许信息窗发送短息
+			};
+			var wsydata = [];
+			var wssdata = [];
+			var selectlevel = "3";
+			var querylever = "";
+			layui.config({
+				base: '../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'tree', 'table', 'form', 'echarts', 'laytpl', 'element'], function() {
+				$ = layui.$,
+					admin = layui.admin,
+					view = layui.view,
+					table = layui.table,
+					setter = layui.setter,
+					form = layui.form,
+					echarts = layui.echarts,
+					laytpl = layui.laytpl,
+					laypage = layui.laypage, //分页
+					ele = layui.element;
+				box = document.getElementById("left")
+				btn = document.getElementById("btn")
+				$("#right").height($(window).height() - 70);
+				$("#left").height($(window).height());
+				$("#tab-left").height($(window).height() - 70);
+				$("#mapDiv").height($(window).height());
+				//获取tokenValue
+				tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				//getdata();
+				
+				var setting = {
+					data: {
+						simpleData: {
+							enable: true,
+							idKey: "AreaId",
+							pIdKey: "ParentId",
+							rootPId: "Layer"
+						}
+					},
+					callback: {
+						onClick: onClick
+					}
+				};
+
+				function getdata() {
+					var indexs = "";
+					admin.req({
+						url: layui.setter.base_url + 'api/Area/GetListByConditionByX',
+						type: "get",
+						dataType: "json",
+						beforeSend: function() {
+							indexs = layer.load(2);
+						},
+						complete: function() {
+							layer.close(indexs);
+						},
+						done: function(result) {
+							let treeObj = $.fn.zTree.init($("#treexzqh"), setting, result.data);
+							var nodes = treeObj.getNodes();
+							if(nodes.length > 0) {
+								treeObj.expandNode(nodes[0], true, false, false); //默认展开根节点
+							}
+						}
+					});
+				}
+
+				function onClick(event, treeId, treeNode, clickFlag) {
+
+					
+					
+					areaname = treeNode.name;
+					areacode = treeNode.AreaId;
+					level = treeNode.Layer;
+					initMap(map, areaname)
+					
+
+				}
+
+				/**************点击左侧伸缩小图标按钮Start********************/
+				btn.onclick = function() {
+					if(box.offsetLeft == 0) {
+						closebox();
+					} else {
+						openbox();
+					}
+				}
+				/**************点击左侧伸缩小图标按钮End********************/
+
+				/************地图初始化Start***************/
+				// 百度地图API功能
+				map = new BMap.Map("mapDiv"); // 创建Map实例
+				initMap(map, "呼和浩特市")
+				//监听地图缩放级别事件
+				map.addEventListener("zoomend", function(evt) {
+					zoom = map.getZoom()
+
+					//map.setZoom(zoom)
+					clearAllLable();
+					
+
+				});
+				/************地图初始化End***************/
+			});
+
+			
+		
+			
+			//			//鼠标滑轮事件
+			var scrollFunc = function(e) {
+				e = e || window.event;
+			}
+			/*注册事件*/
+			if(document.addEventListener) {
+				document.addEventListener('DOMMouseScroll', scrollFunc, false);
+			} //W3C
+			window.onmousewheel = document.onmousewheel = scrollFunc; //IE/Opera/Chrome
+
+			
+			
+
+			//打开左侧导航
+			function openbox() {
+				box.style['margin-left'] = 0 + "px"
+				$("#btn").html("《")
+				$('#div_lqmjcx').css({
+					'left': '210px',
+					'top': '10px'
+				});
+				$('#div_chaxun').css({
+					'left': '210px',
+					'top': '10px'
+				});
+
+			}
+
+			//关闭左侧导航
+			function closebox() {
+				box.style['margin-left'] = -200 + "px"
+				$("#btn").html("》")
+				$('#div_lqmjcx').css({
+					'left': '10px',
+					'top': '10px'
+				});
+				$('#div_chaxun').css({
+					'left': '10px',
+					'top': '10px'
+				});
+
+			}
+
+			
+			/************地图边界Start***************/
+			function initMap(map, cityName) {
+				//var indexs = layer.load(2);
+				var point = new BMap.Point(111.65, 40.82); // 创建点坐标  112.987402, 28.201509
+				map.centerAndZoom(point, 1); // 初始化地图,设置中心点坐标和地图级别。
+				map.addControl(new BMap.ScaleControl()); // 添加比例尺控件
+				map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件
+				map.setCenter(cityName); // 设置地图显示的城市 此项是必须设置的
+				map.enableScrollWheelZoom();
+				map.addControl(new BMap.NavigationControl({
+					type: BMAP_NAVIGATION_CONTROL_LARGE,
+					anchor: BMAP_ANCHOR_TOP_LEFT,
+					offset: new BMap.Size(40, 250)
+				}));
+				var bdary = new BMap.Boundary();
+				bdary.get(cityName, function(rs) { //获取行政区域       					
+					if(rs.boundaries.length == 0) {
+						layer.close(indexs);
+						return;
+					}
+					//添加遮罩层
+					//思路：利用行政区划点的集合与外围自定义东南西北形成一个环形遮罩层
+					//1.获取选中行政区划边框点的集合  rs.boundaries[0]
+					var strs = new Array();
+					strs = rs.boundaries[0].split(";");
+					var EN = ""; //行政区划东北段点的集合
+					var NW = ""; //行政区划西北段点的集合
+					var WS = ""; //行政区划西南段点的集合
+					var SE = ""; //行政区划东南段点的集合
+					var pt_e = strs[0]; //行政区划最东边点的经纬度
+					var pt_n = strs[0]; //行政区划最北边点的经纬度
+					var pt_w = strs[0]; //行政区划最西边点的经纬度
+					var pt_s = strs[0]; //行政区划最南边点的经纬度
+					var n1 = ""; //行政区划最东边点在点集合中的索引位置
+					var n2 = ""; //行政区划最北边点在点集合中的索引位置
+					var n3 = ""; //行政区划最西边点在点集合中的索引位置
+					var n4 = ""; //行政区划最南边点在点集合中的索引位置
+
+					//2.循环行政区划边框点集合找出最东南西北四个点的经纬度以及索引位置
+					for(var n = 0; n < strs.length; n++) {
+						var pt_e_f = parseFloat(pt_e.split(",")[0]);
+						var pt_n_f = parseFloat(pt_n.split(",")[1]);
+						var pt_w_f = parseFloat(pt_w.split(",")[0]);
+						var pt_s_f = parseFloat(pt_s.split(",")[1]);
+
+						var sPt = new Array();
+						try {
+							sPt = strs[n].split(",");
+							var spt_j = parseFloat(sPt[0]);
+							var spt_w = parseFloat(sPt[1]);
+							if(pt_e_f < spt_j) { //东
+								pt_e = strs[n];
+								pt_e_f = spt_j;
+								n1 = n;
+							}
+							if(pt_n_f < spt_w) { //北
+								pt_n_f = spt_w;
+								pt_n = strs[n];
+								n2 = n;
+							}
+
+							if(pt_w_f > spt_j) { //西
+								pt_w_f = spt_j;
+								pt_w = strs[n];
+								n3 = n;
+							}
+							if(pt_s_f > spt_w) { //南
+								pt_s_f = spt_w;
+								pt_s = strs[n];
+								n4 = n;
+							}
+						} catch(err) {
+							alert(err);
+						}
+					}
+					//3.得出东北、西北、西南、东南四段行政区划的边框点的集合
+					if(n1 < n2) { //第一种情况 最东边点在索引前面
+						for(var o = n1; o <= n2; o++) {
+							EN += strs[o] + ";"
+						}
+						for(var o = n2; o <= n3; o++) {
+							NW += strs[o] + ";"
+						}
+						for(var o = n3; o <= n4; o++) {
+							WS += strs[o] + ";"
+						}
+						for(var o = n4; o < strs.length; o++) {
+							SE += strs[o] + ";"
+						}
+						for(var o = 0; o <= n1; o++) {
+							SE += strs[o] + ";"
+						}
+					} else { //第二种情况 最东边点在索引后面
+						for(var o = n1; o < strs.length; o++) {
+							EN += strs[o] + ";"
+						}
+						for(var o = 0; o <= n2; o++) {
+							EN += strs[o] + ";"
+						}
+						for(var o = n2; o <= n3; o++) {
+							NW += strs[o] + ";"
+						}
+						for(var o = n3; o <= n4; o++) {
+							WS += strs[o] + ";"
+						}
+						for(var o = n4; o <= n1; o++) {
+							SE += strs[o] + ";"
+						}
+					}
+					//4.自定义外围边框点的集合
+					var E_JW = "170.672126, 39.623555;"; //东
+					var EN_JW = "170.672126, 81.291804;"; //东北角
+					var N_JW = "105.913641, 81.291804;"; //北
+					var NW_JW = "-169.604276,  81.291804;"; //西北角
+					var W_JW = "-169.604276, 38.244136;"; //西
+					var WS_JW = "-169.604276, -68.045308;"; //西南角
+					var S_JW = "114.15563, -68.045308;"; //南
+					var SE_JW = "170.672126, -68.045308 ;"; //东南角
+					//4.添加环形遮罩层
+					var ply1 = new BMap.Polygon(EN + NW + WS + SE + E_JW + SE_JW + S_JW + WS_JW + W_JW + NW_JW + EN_JW + E_JW, {
+						strokeColor: "none",
+						fillColor: "rgb(246,246,246)",
+						strokeOpacity: 0
+					}); //建立多边形覆盖物
+					//map.addOverlay(ply1); //遮罩物是半透明的，如果需要纯色可以多添加几层
+					//5. 给目标行政区划添加边框，其实就是给目标行政区划添加一个没有填充物的遮罩层
+					var ply = new BMap.Polygon(rs.boundaries[0], {
+						strokeWeight: 2,
+						strokeColor: "#8B0A50",
+						fillColor: ""
+					});
+					map.addOverlay(ply);
+					map.setViewport(ply.getPath()); //调整视野
+					if(cityName == "呼和浩特市") {
+						map.setZoom(8)
+					}
+
+					// loadCityMapInfo(map);
+					layer.close(indexs);
+				});
+
+				return map;
+			}
+			/************地图边界End***************/
+		</script>
+	</head>
+
+	<body>
+		<aside class="box" id="left">
+			<button id="btn">》</button>
+			<div class="layui-tab layui-tab-card" style="margin: 1px 0;">
+				<ul class="layui-tab-title">
+					<li class="layui-this">行政区划</li>
+				</ul>
+				<div class="layui-tab-content" id="tab-left">
+					<div class="layui-tab-item layui-show">
+						<form class="layui-form">
+							<div class="treeClass">
+								<ul id="treexzqh" class="ztree"></ul>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</aside>
+		<section id="right">
+			<!--右侧地图-->
+			<div id="mapDiv"></div>
+			<div id="HomeButton"></div>
+		</section>
+		</body>
+
+</html>

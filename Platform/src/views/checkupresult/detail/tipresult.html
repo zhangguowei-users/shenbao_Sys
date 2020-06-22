@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>规则知识库</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <style>
+        .action-box {
+            display: inline-block;
+        }
+
+        .action-box input {
+            float: left;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space5">
+            <div>
+                <button class="layui-btn layui-btn-sm" data-save>确定</button>
+            </div>
+            <table class="layui-hide" id="resultTable" lay-filter="resultTable"></table>
+        </div>
+        <div class="layui-layer-shade" id="layui-layer-shade1" times="1"
+            style="z-index: 19891014; background-color: rgb(0, 0, 0); opacity: 0.01;"></div>
+        <div class="layui-layer layui-layer-loading" id="layui-layer1" type="loading" times="1" showtime="0"
+            contype="string" style="z-index: 19891015; top: 181.5px; left: 431.5px;">
+            <div id="" class="layui-layer-content layui-layer-loading1"></div><span class="layui-layer-setwin"></span>
+        </div>
+    </div>
+</body>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'admin', 'form', 'setter', 'table', 'layer'], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            datepicker = layui.laydate,
+            view = layui.view,
+            util = layui.util,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer,
+            setter = layui.setter;
+
+        // var mask = layer.load(1);
+
+        var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+        // 获取url中的参数
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    return pair[1];
+                }
+            }
+            return (false);
+        }
+
+        var CheckResultInfoCode = getQueryVariable('CheckResultInfoCode');
+        var model = getQueryVariable('model')
+
+
+        function getResultData(code, done) {
+            admin.req({
+                url: setter.base_url + 'afterengine/ComplaintMZL/GetFisrtWGConfirmList',
+                async: false,
+                type: 'get',
+                data: {
+                    checkResultInfoCode: code
+                },
+                done: done
+            })
+        }
+
+        getResultData(CheckResultInfoCode, function (result) {
+            $('.layui-layer-shade,.layui-layer-loading').fadeOut();
+            setTable(
+                "resultTable",
+                result.data,
+                [{
+                        type: 'numbers',
+                        title: '序号',
+                        align: 'center',
+                        width: 80,
+                    },
+                    {
+                        field: 'RulesName',
+                        title: '规则信息',
+                        width: 200,
+                        align: 'center'
+                    },
+                    {
+                        field: 'DetailName',
+                        title: '明细',
+                        width: 450,
+                        align: 'center'
+                    },
+                    {
+                        field: 'ItemCode',
+                        title: '项目编码',
+                        width: 200,
+                        align: 'center'
+                    },
+                    // {
+                    //     field: 'YXJE',
+                    //     title: '有效金额(元)',
+                    //     width: 130,
+                    //     align: 'center'
+                    // },
+                    // {
+                    //     field: 'BKBXJE',
+                    //     title: '不可报销金额(元)',
+                    //     width: 200,
+                    //     align: 'center'
+                    // },
+                    // {
+                    //     field: 'CompRatio',
+                    //     title: '报销比例',
+                    //     width: 130,
+                    //     align: 'center'
+                    // },
+                    {
+                        field: 'DJ',
+                        title: '单价(元)',
+                        width: 130,
+                        align: 'center'
+                    },
+                    {
+                        field: 'LimitPrice',
+                        title: '限价(元)',
+                        width: 130,
+                        align: 'center'
+                    },
+                    {
+                        field: 'CLimitPrice',
+                        title: '超限价(元)',
+                        width: 130,
+                        align: 'center'
+                    },
+                    {
+                        field: 'Count',
+                        title: '数目',
+                        width: 130,
+                        align: 'center'
+                    }
+                ]
+            )
+        })
+
+        function setTable(tableid, data, field) {
+            table.render({
+                elem: '#' + tableid,
+                data: data,
+                height: '310',
+                cols: [field],
+                page: false,
+                // limit: 10
+            })
+        }
+
+        $('[data-save]').click(function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    })
+</script>
+
+</html>

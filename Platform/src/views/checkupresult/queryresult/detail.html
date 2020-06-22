@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>医院扣款管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <style>
+        #resetQuery {
+            margin-left: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <!-- form -->
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-form layui-form-pane layui-row layui-col-space5">
+                        <div class="layui-col-md12" style="text-align: right;">
+                            <button class="layui-btn layui-btn-warm layui-btn-sm" style="margin-left: 3px;" id="export">导出Excel</button>
+                        </div>
+                        <div class="layui-col-md12">
+                            <table class="layui-hide" id="datalist" lay-filter="datalist"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../layuiadmin/modules/tableSelect.js"></script>
+<script type="text/html" id="control">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="detail">详情</button>
+    </div>
+</script>
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'admin', 'form', 'util', 'laydate', 'setter', 'table', 'tableSelect'], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            table = layui.table,
+            datepicker = layui.laydate,
+            view = layui.view,
+            util = layui.util,
+            form = layui.form,
+            setter = layui.setter,
+            tableSelect = layui.tableSelect;
+        var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+        var indexs = layer.load(1);
+        var $Query = parent.orgdata;
+
+        $(document).on('click', '#export', function () {
+            var params = JSON.parse(JSON.stringify($Query))
+            window.open(layui.setter.base_url + 'auth/ExportExcel/ExportCheckUserListByYLJG?querystr='+JSON.stringify(params)+"&orgid="+layui.data('userinfo')['OrgId']);
+        });
+
+        function parseParams(data) {
+            try {
+                var tempArr = [];
+                for (var i in data) {
+                    var key = encodeURIComponent(i);
+                    var value = encodeURIComponent(data[i]);
+                    tempArr.push(key + '=' + value);
+                }
+                var urlParamsStr = tempArr.join('&');
+                return urlParamsStr;
+            } catch (err) {
+                return '';
+            }
+        }
+
+        list();
+
+        function list() {
+            table.render({
+                elem: '#datalist',
+                url: layui.setter.base_url + 'afterengine/ComplaintStatistical/GetCheckUserListByYLJG',
+                toolbar: '',
+                title: '医院扣款管理',
+                cols: [
+                    [{
+                            type: 'numbers',
+                            title: '序号',
+                            align: 'center',
+                            width: 80,
+                            fixed: 'left'
+                        },
+                        {
+                            field: 'Name',
+                            title: '姓名',
+                            width: 180,
+                            align: 'center',
+                            fixed: 'left'
+                        },
+                        {
+                            field: 'RegisterCode',
+                            title: '住院登记编码',
+                            width: 200,
+                            align: 'center',
+                            
+                        },
+                        {
+                            field: 'PersonalCode',
+                            title: '个人编码',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'IdNumber',
+                            title: '身份证号',
+                            width: 180,
+                            align: 'center'
+                        },
+                        {
+                            field: 'Gender',
+                            title: '性别',
+                            width: 180,
+                            align: 'center'
+                        },
+                        {
+                            field: 'Age',
+                            title: '年龄',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'InstitutionName',
+                            title: '就诊机构名称',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'DiseaseName',
+                            title: '疾病名称',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'KKJE',
+                            title: '违规金额(元)',
+                            width: 180,
+                            align: 'center',
+                            style: 'color:red;'
+                        },
+                        {
+                            field: 'SettlementDate',
+                            title: '结算时间',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'InHosDate',
+                            title: '入院日期',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            field: 'OutHosDate',
+                            title: '出院日期',
+                            width: 180,
+                            align: 'center',
+                        },
+                        {
+                            title: '操作',
+                            toolbar: '#control',
+                            width: 160,
+                            align: 'center',
+                            fixed: 'right'
+                        }
+                    ]
+                ],
+                page: true,
+                id: "IDTable",
+                limit: 10, //每页显示5条
+                limits: [10, 20, 40, 60, 80, 90],
+                curr: 1,
+                where: {
+                    querystr: JSON.stringify($Query),
+                },
+                headers: {
+                    Authorization: tokenvalue
+                },
+                height: $(window).height() - 100,
+                done: function (res) {
+                    layer.close(indexs);
+                }
+            })
+        }
+
+        table.on('tool(datalist)', function (obj) {
+            var events = {
+                'detail': detail
+            }
+            if (events[obj.event]) {
+                events[obj.event](obj.data);
+            }
+        })
+
+        function detail(data){
+            parent.layer.open({
+                type: 2,
+                title: '违规记录',
+                closeBtn: 1,
+                shadeClose: false,
+                offset: ['60px'],
+                area: ['900px', '450px'],
+                content: './tipresult.html?code='+data.RegisterCode
+            });
+        }
+    })
+</script>
+
+</html>

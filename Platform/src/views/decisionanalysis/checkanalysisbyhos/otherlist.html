@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+		<style>
+			.layui-col-sm2 { 
+				width: 15%;
+			}
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+	</head>
+
+	</head>
+	<body style="background: #fff;">
+		<div class="layui-fluid" style=" width:1100px; overflow: hidden;">
+			<div class="layui-row" >
+				<script id="demo" type="text/html">
+					{{# if(d.count>0) {layui.each(d.list, function(index, item){ var i=index; if(i!=0&&i%4==0){i++}}
+					<hr style=" clear: both; height:1px;border:none;padding: 0px;" /> {{#}}}
+					<div class="layui-col-md3"  style=" width:260px; " onclick="aa('{{item.IdNumber}}','{{item.InstitutionCode}}')" >
+						<div class="layadmin-contact-box" >
+							<div class="layui-col-md4 layui-col-sm4">
+								<a href="javascript:void(0);">
+									<div class="layadmin-text-center" style="padding-left: 20px;">
+										{{# if(item.Gender == '男性'){ }}
+										<img src="../../aftercheckquery/diseaseerror/img/boys.png"> {{# } else { }}
+										<img src="../../aftercheckquery/diseaseerror/img/girls.png"> {{# } }}
+									</div>
+								</a>
+							</div>
+							<div class="layui-col-md6 layadmin-padding-left10 layui-col-sm7" style="margin-left:0px; cursor: pointer;">
+								<div class="layadmin-address">
+									姓名：{{item.Name}}
+									<br> 年龄：{{item.Age}}
+									<br> 疾病名称：{{item.DiseaseName}}
+									<br> 就诊机构：{{item.InstitutionName}}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{{#$('#demo1').css('display','block'); });}
+					else
+					{$('#demo1').css('display','none');}}
+						<div>没有数据！</div>
+					{{#}
+					 }}
+					<hr style=" clear: both; height:1px;border:none;padding: 0px;" />
+				</script>
+				<table width="100%">
+				<tr><td>
+				<div class="layui-fluid layadmin-maillist-fluid" >
+					<div id="view" class="layui-row" style="height:550px;">
+					</div>
+				</div>
+				</td></tr>
+				<tr><td>
+					<center>
+				<div id="demo1" style=" text-align: center;"></div>
+				    </center>
+				</td></tr>
+				</table>
+				<input type="hidden" id="idnumber" name="idnumber" />
+				<input type="hidden" id="institutioncode" name="institutioncode" />
+				<input type="hidden" id="rulecode" name="rulecode" />
+			</div>
+		</div>
+        <script src="../../../layuiadmin/js/jquery.min.js"></script>
+			<script src="../../../layuiadmin/layui/layui.js"></script>
+			<script type="text/javascript">
+				layui.config({
+					base: '../../../layuiadmin/' //静态资源所在路径
+				}).extend({
+					index: 'lib/index' //主入口模块
+				}).use(['index', 'admin', 'laypage', 'layer',  'user'], function() {
+					var $ = layui.$,
+						setter = layui.setter,
+						admin = layui.admin,
+						view = layui.view,
+						laypage = layui.laypage,
+						layer = layui.layer;
+					var laytpl = layui.laytpl;
+					var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+					var indexs=layer.load(3);	
+					var rn=$(window.parent.document).find("#rn").val();
+					var jgmc=$(window.parent.document).find("#jgmc").val();
+					var rulecode=$(window.parent.document).find("#rulecode").val();
+					var djname = $(window.parent.document).find("#djname").val();
+					$('#rulecode').val(rulecode);
+
+					// 获取url中的参数
+					function GetQueryValue(queryName) {
+						var query = decodeURI(window.location.search.substring(1));
+						var vars = query.split("&");
+						for (var i = 0; i < vars.length; i++) {
+							var pair = vars[i].split("=");
+							if (pair[0] == queryName) { return pair[1]; }
+						}
+						return null;
+					}
+
+					var selectYear = GetQueryValue('year');
+
+                    loadlist();
+
+					function loadlist() {
+						admin.req({
+							url: layui.setter.base_url + 'afterengine/DecisionAnalysis/GetCheckResultInfosByRules',
+							type: 'get',
+							data: {
+								token: tokenvalue,
+								page: 1,
+								limit: 15,
+								yljgdjName: djname,
+								institutionName: jgmc,
+								ruleCode: rulecode,
+								datatype:'2'
+							},
+							dataType: "json",
+							success: function(result) {								
+									layer.close(indexs);									
+									datas = {
+										"title": rn+"表",
+										"list": result.data,
+										"count":result.count
+									};
+									laypage.render({
+										elem: 'demo1',
+										count: result.count, //数据总数
+										layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+										limit: 20,
+										jump: function(obj) {
+											loadlist_page(obj.curr);
+										}
+									});								
+							}
+						});
+					}
+                    function loadlist_page(i) {
+                    	
+						admin.req({
+							url: layui.setter.base_url + 'afterengine/DecisionAnalysis/GetCheckResultInfosByRules',
+							type: 'get',
+							data: {
+								token: tokenvalue,	
+								page: i,	
+								limit: 20,
+								yljgdjName: djname,
+								institutionName: jgmc,
+								ruleCode: rulecode,
+								datatype:'2',
+								year:selectYear
+							},
+							dataType: "json",
+							success: function(result) {								
+									data = {
+										"title": rn+"表",
+										"list": result.data,
+										"count":result.count
+									};
+									var getTpl = demo.innerHTML,
+										view = document.getElementById('view');
+									laytpl(getTpl).render(data, function(html) {
+										view.innerHTML = html;
+									});
+							}
+						});
+					}
+					function loadlist_search() {
+						admin.req({
+							url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetYBHosInfoList',
+							type: 'get',
+							data: {
+								token: tokenvalue,								
+								rulescode: 'B002',
+								page: 1,
+								limit: 15,								
+								condition: $("#querycondition").val(),
+								keyValue: $("#queryvalue").val(),
+								idnumber: $("#IdNumber").val(),
+								institutionCode: $("#OrgCode").val()
+							},
+							dataType: "json",
+							success: function(result) {
+									data = {
+										"title": "医保目录限制用药表",
+										"list": result.data,
+										"count":result.count
+									};
+									laypage.render({
+										elem: 'demo1',
+										count: result.count, //数据总数
+										layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+										limit: 15,
+										jump: function(obj) {
+											loadlist_page(obj.curr);
+										}
+									});	
+							}
+						});
+					}
+					
+					
+					$(document).on('click','#btn',function(){
+						if($('#slidediv').css('display') == "block") {								
+								loadlist_search();
+								$('#slidediv').slideUp();
+								
+							} else {								
+								$('#slidediv').slideDown();
+							}
+						});
+					$(document).on('click','#clear',function(){
+						    $("#querycondition").val('ZFY'),
+							$("#queryvalue").val(''),
+							$("#IdNumber").val(''),
+							$("#OrgCode").val(''),
+							$("#OrgName").val('')		
+						});
+				});
+
+				function aa(str, str1, obj) {
+					$('#idnumber').val(str);
+					$('#institutioncode').val(str1);
+					var index = layer.open({
+							type: 2,
+							title: '违规列表',
+							content: 'decompdetail.html',
+							maxmin: true,
+							area: ['1100px', ($(window).height() - 30) + 'px']
+						});
+						layer.full(index);
+					
+				}
+			</script>
+	</body>
+</html>

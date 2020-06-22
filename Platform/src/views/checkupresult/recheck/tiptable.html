@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>规则知识库</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+    <style>
+        .action-box {
+            display: inline-block;
+        }
+
+        .action-box input {
+            float: left;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space5">
+            <div>
+                <button class="layui-btn layui-btn-sm" data-save>确定</button>
+                <button class="layui-btn layui-btn-sm" data-cancel>取消</button>
+            </div>
+            <div style="height:230px;overflow-y:auto">
+                <table id="tiptable"></table>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../datatableRender.js"></script>
+<script>
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'admin', 'form', 'setter', 'table', ], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            datepicker = layui.laydate,
+            view = layui.view,
+            util = layui.util,
+            form = layui.form,
+            setter = layui.setter;
+        var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+        var tipdata = parent.TopExport.tipdata;
+        var style = "display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"
+        // ---------------------------------------------------
+        /*
+            过滤字段开始
+            ItemCode    项目编码
+            YXJE        有效金额
+            BKBXJE      不可报销金额
+            CompRatio   报销比例
+            Count       数目
+            DJ          单价
+        */
+        var tipRows = tipdata[parent.TopExport.operateId]
+        var editFields2 = [];
+        var editFields = [{
+                Title: "序号",
+                Rowspan: 2,
+                Width: '80',
+                Template: function (row, index) {
+                    return parseInt(index) + 1
+                }
+            },
+            {
+                Title: "规则信息",
+                Rowspan: 2,
+                Width: '160px',
+                Field:'RulesName'
+            },
+            {
+                Title: "明细",
+                Rowspan: 2,
+                Width: '400px',
+                Template: function (row, index) {
+                    if (row.DetailName) {
+                        return row.DetailName
+                    } else {
+                        return row.YDDescription
+                    }
+                },
+            },
+            {
+                Title: "项目编码",
+                Rowspan: 2,
+                Width: '160px',
+                Field:'ItemCode'
+            },
+            {
+                Title: "单价(元)",
+                Rowspan: 2,
+                Width: '100px',
+                Field:'Price'
+            },
+            {
+                Title: "数目",
+                Rowspan: 2,
+                Width: '100x',
+                Template:function(row,index){
+                    return row.Count?row.Count:'0'
+                }
+            },
+        ]
+
+        var filterKeys2 = [{
+                key: 'States3',
+                title: '人工复审',
+                width: '100px',
+                Template: function (row, index) {
+                    return (row.States3 == 1 ? '违规' : '不违规')
+                }
+            },
+            {
+                key: 'States2',
+                title: '医院疑似违规病例反馈',
+                width: '100px',
+                Template: function (row, index) {
+                    return (row.States2 == 1 ? '违规' : '不违规')
+                }
+            },
+            {
+                key: 'States1',
+                title: '人工初审',
+                width: '100px',
+                Template: function (row, index) {
+                    return (row.States1 == 1 ? '违规' : '不违规')
+                }
+            },
+        ]
+        var TCount = 0;
+        for (var item in filterKeys2) {
+            if (tipRows[0][filterKeys2[item].key]) {
+                editFields2.push({
+                    Title: filterKeys2[item].title,
+                    Template: filterKeys2[item].Template,
+                })
+                TCount++;
+            }
+        }
+
+        editFields.push({
+            Title: "操作",
+            Rowspan: 2,
+            Style: 'width:120px;',
+            Template: function (row, index) {
+                
+                if(row.States3 || row.States3 == '0'){
+                    isDisabled = false;
+                    if(row.States3 == 0){
+                        return '不违规'
+                    }
+                }else{
+                    isDisabled = false;
+                    if(row.States1 == 0){
+                        return '不违规'
+                    }
+                }
+                
+                return [
+                    '<span class="action-box">',
+                    '<input type="radio" value="1" name="check[', index,
+                    ']" data-change="',
+                    row.ComplaintCode, '" ', (row.isChecked == 1 ? 'checked' :
+                        ''),
+                    ' /> 违规',
+                    '</span> &nbsp;&nbsp;',
+                    '<span class="action-box">',
+                    '<input type="radio" value="0" name="check[', index,
+                    ']" data-change="',
+                    row.ComplaintCode, '" ', (row.isChecked == 1 ? '' :
+                        'checked'),
+                    ' /> 不违规',
+                    '</span>'
+                ].join('');
+            }
+        })
+        editFields.push({
+            Title: "最近操作人",
+            Colspan: TCount
+        })
+        // 过滤字段结束
+        $('#tiptable').replaceWith(
+            dataTable({
+                fields: [
+                    editFields,
+                    editFields2
+                ],
+                data: tipdata[parent.TopExport.operateId]
+            }, {
+                tableClass: "layui-table",
+                tableId: "tiptable",
+            })
+
+        )
+        //设置table长度
+            
+        var tSize = $('#tiptable tbody tr').eq(0).find('td').length * 160 + 200;
+        if (tSize < 870) {
+            tSize = '1000px'
+        } else {
+            tSize += 'px'
+        }
+        $('#tiptable').css('width', tSize)
+
+        // ---------------------------------------------------
+
+        function findRow(rowid) {
+            for (var i in tipdata) {
+                for (var k in tipdata[i]) {
+                    if (tipdata[i][k].ComplaintCode == rowid) {
+                        return tipdata[i][k]
+                    }
+                }
+            }
+        }
+
+        function isFalse() {
+            // console.log(tipdata[parent.TopExport.operateId]);
+            // if(tipdata[parent.TopExport.operateId][0].States3 == '0' || tipdata[parent.TopExport.operateId][0].States3 == null){
+            //     for(var i in tipdata[parent.TopExport.operateId]){
+            //         var row = tipdata[parent.TopExport.operateId][i];
+            //         if(row.States1 == '1' && row.isChecked == '0') {
+            //             return 1
+            //         }else if(row.States1 == '0'){
+            //             return 0 
+            //         }
+            //     }
+            //     return 1 
+            // }else{
+
+            if(tipdata[parent.TopExport.operateId].States3){
+                for (var i in tipdata[parent.TopExport.operateId]) {
+                    if (tipdata[parent.TopExport.operateId][i].isChecked == 0) {
+                        return 0
+                    }
+                }
+                return 1
+            }else{
+                for (var i in tipdata[parent.TopExport.operateId]) {
+                    if (tipdata[parent.TopExport.operateId][i].isChecked == 1) {
+                        return 1
+                    }
+                }
+                return 0
+            }    
+                
+            // }
+        }
+
+        $('[data-save]').click(function () {
+            $('.action-box input:radio:checked').each(function (key, el) {
+                var rowid = $(el).attr('data-change');
+                var value = $(el).val();
+                var row = findRow(rowid);
+                row['isChecked'] = $(this).val();
+            })
+
+            var value = isFalse();
+            var rows = tipdata[parent.TopExport.operateId];
+            var v1 = 0;
+            for (var k in rows) {
+                row = rows[k];
+                if (row.isChecked == 1) {
+                    v1 = accAdd(row.ZJ, v1);
+                }
+            }
+            
+            parent.TopExport.listStatHandler(parent.TopExport.operateId, value, v1);
+        })
+
+        $('[data-cancel]').click(function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+
+        function accAdd(arg1, arg2) {
+            var r1, r2, m;
+            try {
+                r1 = arg1.toString().split(".")[1].length
+            } catch (e) {
+                r1 = 0
+            }
+            try {
+                r2 = arg2.toString().split(".")[1].length
+            } catch (e) {
+                r2 = 0
+            }
+            m = Math.pow(10, Math.max(r1, r2))
+            return (arg1 * m + arg2 * m) / m
+        }
+    })
+</script>
+
+</html>

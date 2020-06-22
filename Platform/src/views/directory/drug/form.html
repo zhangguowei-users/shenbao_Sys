@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>医保药品目录维护</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+	</head>
+
+	<body>
+		<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="padding: 20px 20px 20px 20px;background-color: #FFFFFF; width:950px;">
+			<input type="hidden" name="CRowId" id="CRowId" />
+			<input type="hidden" name="AreaCode" id="AreaCode" />
+			<input type="hidden" name="AreaName" id="AreaName" />
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>药品编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugCode" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>药品名称：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>英文名称：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="EnName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">药品商品名称：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugTradeName" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style="width:100%">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>药品注册名称：</label>
+					<div class="layui-input-block">
+						<input type="text" name="DrugRegisteredName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:85%;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">所属盟市：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="AreaCode" lay-verify="required" placeholder="请选择" lay-filter="AreaCode">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">生产单位：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="ProductionOrg" autocomplete="off" placeholder="" class="layui-input">
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>收费项目等级：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="CollectFeesProjectGrade" lay-verify="required" placeholder="请选择" lay-filter="CollectFeesProjectGrade">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>收费类别：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="CollectFeesCategory" lay-verify="required" placeholder="请选择" lay-filter="CollectFeesCategory">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">最高限价：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="HighestPriceFixing" autocomplete="off" placeholder="" lay-verify="required|number" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">院内制剂：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="InnaiStandard" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>剂型：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="Dosage" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>规格：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="Specifications" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">开始时间：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="StartDate" id="StartDate" placeholder="yyyy-MM-dd" autocomplete="off" lay-verify="date" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">终止时间：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="EndDate" id="EndDate" placeholder="yyyy-MM-dd" autocomplete="off" lay-verify="date" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">中蒙药管理办法：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ChmDrugManagement" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">定点机构编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="FixedPointInstitutionsCode" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 100%;">
+					<label class="layui-form-label" style=" width:160px;">限制适用范围：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="LimitMedication" autocomplete="off" placeholder="" class="layui-input" style="width:85%;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">国家目录编码：</label>
+					<div class="layui-input-block">
+						<input type="text" name="CountriesDirectoryCode" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">批准文号：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ApprovalTheTitanic" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">批准日期：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ApprovalDate" id="ApprovalDate" placeholder="yyyy-MM-dd" autocomplete="off" lay-verify="date" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>工伤使用标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="InductrialInjuryUse" lay-verify="required" placeholder="请选择" lay-filter="InductrialInjuryUse">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>生育使用标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="FertilityUse" lay-verify="required" placeholder="请选择" lay-filter="FertilityUse">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>靶向药标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="TargetedDrugs" lay-verify="required" placeholder="请选择" lay-filter="TargetedDrugs">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">药品类别码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugCategory" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">药监局药品编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="DrugPrisonCode" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style="width:100%;">
+					<label class="layui-form-label" style=" width:160px;">批准文号备注：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ApprovalTheTitanicRemark" autocomplete="off" placeholder="" class="layui-input" style="width:85%;">
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>国家基本药物标识：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="BasicMedicine" lay-verify="required" placeholder="请选择" lay-filter="BasicMedicine">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style="width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>国家36个谈判药物：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="Negotiations" lay-verify="required" placeholder="请选择" lay-filter="Negotiations">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">医保系统内部编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="YBDrugCode" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" >* </span>His系统对照编码：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="HisRelativeCode" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style="width:100%;">
+					<label class="layui-form-label" style=" width:160px; ">备注：</label>
+					<div class="layui-input-block inputform">
+						<textarea name="Remark" class="layui-textarea" placeholder="" style="width:85%; "></textarea>
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-form-item">
+				<div style="text-align: right;">
+					<button class="layui-btn layui-btn-big" lay-submit="" lay-filter="save">保存</button>
+					<button class="layui-btn layui-btn-big" data-type="cancel">取消</button>
+				</div>
+			</div>
+		</div>
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script src="../../../layuiadmin/lib/treeSelect.js"></script>
+		<script>
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'treeSelect', 'form', 'laydate'], function() {
+				var $ = layui.$,
+					element = layui.element,
+					form = layui.form,
+					admin = layui.admin,
+					laydate = layui.laydate,
+					treeSelect = layui.treeSelect;
+				//日期
+				laydate.render({
+					elem: '#StartDate'
+				});
+				laydate.render({
+					elem: '#EndDate'
+				});
+				laydate.render({
+					elem: '#ApprovalDate'
+				});
+				//加载所属盟市
+				admin.req({
+					url: layui.setter.base_url + 'api/Area/GetListByParentId',
+					type: 'get',
+					async: false,
+					data: {
+						ParentId: '150000000000'
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.AreaCode + "'>" + item.AreaName + "</option>";
+
+							});
+							$("select[name='AreaCode']").append($html);
+							form.render('select');
+						}
+					}
+				});
+
+				//加载收费项目等级
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_05"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='CollectFeesProjectGrade']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载收费类别
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_06"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='CollectFeesCategory']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载工伤使用标识
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_07"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='InductrialInjuryUse']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载生育使用标识
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_08"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='FertilityUse']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载靶向药标识
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_09"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='TargetedDrugs']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载国家基本药物标识
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_10"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='BasicMedicine']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载国家36谈判药物
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_09"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='Negotiations']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//编辑赋值
+				if(parent.orgdata != "undefined" && parent.orgdata != "") {
+					
+					form.val('layuiadmin-form-admin', {
+						"CRowId": parent.orgdata.CRowId,
+						"AreaCode": parent.orgdata.AreaCode + "00000000",
+						"AreaName": parent.orgdata.AreaName,
+						"DrugCode": parent.orgdata.DrugCode,
+						"DrugName": parent.orgdata.DrugName,
+						"EnName": parent.orgdata.EnName,
+						"DrugTradeName": parent.orgdata.DrugTradeName,
+						"DrugRegisteredName": parent.orgdata.DrugRegisteredName,
+						"ProductionOrg": parent.orgdata.ProductionOrg,
+						"CollectFeesProjectGrade": parent.orgdata.CollectFeesProjectGrade,
+						"CollectFeesCategory": parent.orgdata.CollectFeesCategory,
+						"HighestPriceFixing": parent.orgdata.HighestPriceFixing,
+						"InnaiStandard": parent.orgdata.InnaiStandard,
+						"Dosage": parent.orgdata.Dosage,
+						"Specifications": parent.orgdata.Specifications,
+						"StartDate": parent.orgdata.StartDate,
+						"EndDate": parent.orgdata.EndDate,
+						"ChmDrugManagement": parent.orgdata.ChmDrugManagement,
+						"FixedPointInstitutionsCode": parent.orgdata.FixedPointInstitutionsCode,
+						"LimitMedication": parent.orgdata.LimitMedication,
+						"CountriesDirectoryCode": parent.orgdata.CountriesDirectoryCode,
+						"ApprovalTheTitanic": parent.orgdata.ApprovalTheTitanic,
+						"ApprovalDate": parent.orgdata.ApprovalDate,
+						"InductrialInjuryUse": parent.orgdata.InductrialInjuryUse,
+						"FertilityUse": parent.orgdata.FertilityUse,
+						"TargetedDrugs": parent.orgdata.TargetedDrugs,
+						"DrugCategory": parent.orgdata.DrugCategory,
+						"TargetedDrugs": parent.orgdata.TargetedDrugs,
+						"DrugPrisonCode": parent.orgdata.DrugPrisonCode,
+						"ApprovalTheTitanicRemark": parent.orgdata.ApprovalTheTitanicRemark,
+						"BasicMedicine": parent.orgdata.BasicMedicine,
+						"Negotiations": parent.orgdata.Negotiations,
+						"YBDrugCode": parent.orgdata.YBDrugCode,
+						"HisRelativeCode": parent.orgdata.HisRelativeCode,
+						"Remark": parent.orgdata.Remark
+					})
+				}
+
+				//监听form表单提交事件				
+				form.on('submit(save)', function(data) {
+					var param = data.field; //定义临时变量获取表单提交过来的数据，非json格式
+					
+					if(parent.orgdata != "undefined" && parent.orgdata != "") { //编辑
+						admin.req({
+							url: layui.setter.base_url + 'znsh/DrugDirectory/Edit', //实际使用请改成服务端真实接口
+							data: {
+								model: param
+							},
+							type: 'post',
+							done: function(result) {
+								layer.msg(result.msg, {
+									offset: '15px',
+									icon: 1,
+									time: 1000
+								}, function() {
+									var index = parent.layer.getFrameIndex(window.name);
+									parent.layer.close(index); //关闭当前页  
+									parent.location.reload(); //刷新父亲对象（用于框架）
+								});
+							}
+						});
+					} else { //新增
+						//判断所属盟市
+						if(parent.orgdata.AreaCode == "") {
+							alert('请选择所属盟市！');
+							return;
+						}
+						admin.req({
+							url: layui.setter.base_url + 'znsh/DrugDirectory/Create',
+							data: {
+								model: param
+							},
+							type: 'post',
+							done: function(result) {
+								layer.msg(result.msg, {
+									offset: '15px',
+									icon: 1,
+									time: 1000
+								}, function() {
+									var index = parent.layer.getFrameIndex(window.name);
+									parent.layer.close(index); //关闭当前页  
+									parent.location.reload(); //刷新父亲对象（用于框架）
+								});
+							}
+						});
+					}
+				});
+				var active = {
+					//取消
+					cancel: function() {
+						var index = parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index); //关闭当前页  
+					}
+
+				};
+
+				$('.layui-btn').on('click', function() {
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>就诊疾病异常查询</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+		<style>
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+	</head>
+
+	<body style="background: #fff;">
+		<div class="layui-fluid">
+		        <input type="hidden" id="OrgCode" name="OrgCode" />
+				<div class="layui-card">
+					<div id="slidediv" style=" width:100%; display: none;">
+						<div class="layui-form-item">
+							<div class="layui-inline">
+								<label class="layui-form-label">身份证号：</label>
+								<div class="layui-input-inline" style="width:250px;">
+									<input type="text" name="IdNumber" id="IdNumber" autocomplete="off" placeholder="" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-inline">
+								<label class="layui-form-label">就诊医院：</label>
+								<div class="layui-input-inline" style="width:250px;">
+									<input type="text" id="OrgName" name="OrgName" class="layui-input" style="width:250px;" readonly="true">
+								</div>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-inline">
+								<label class="layui-form-label">查询条件：</label>
+								<div class="layui-input-inline" style="width:250px;">
+									<select name="querycondition" id="querycondition" placeholder="请选择" class="layui-input">
+										<option value="ZFY">总费用</option>
+										<option value="MLNFY">目录内费用</option>
+										<option value="YBBXFY">统筹支付金额</option>
+									</select>
+								</div>
+							</div>
+							<div class="layui-inline">
+								<label class="layui-form-label">大于等于：</label>
+								<div class="layui-input-inline" style="width:250px;">
+									<input type="text" name="queryvalue" id="queryvalue" autocomplete="off" placeholder="" class="layui-input">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-inline" style=" padding-left: 25px;">
+						<button id="btn" class="layui-btn"  lay-filter="search">查询</button>
+					    <button id="clear" class="layui-btn"  >清空</button>
+					</div>
+				</div>
+			
+		</div>
+
+		<div class="layui-fluid layadmin-maillist-fluid">
+			<div class="layui-row">
+				<script id="demo" type="text/html">
+					{{# if(d.count>0) {layui.each(d.list, function(index, item){ var i=index; if(i!=0&&i%3==0){i++}}
+					<hr style=" clear: both; height:1px;border:none;padding: 0px;" /> {{#}}}
+					<div class="layui-col-md4"  onclick="aa('{{item.HosRegisterCode}}','{{item.PersonalCode}}')">
+						<div class="layadmin-contact-box">
+							<div class="layui-col-md3 layui-col-sm2">
+								<a href="javascript:void(0);">
+									<div class="layadmin-text-center" style="width:50px; padding-left: 20px;">
+										{{# if(item.Gender == '男性'){ }}
+										<img src="img/boys.png"> {{# } else { }}
+										<img src="img/girls.png"> {{# } }}
+									</div>
+								</a>
+							</div>
+							<div class="layui-col-md8 layadmin-padding-left10 layui-col-sm2" style="margin-left:0px; cursor: pointer;">
+								<div class="layadmin-address">
+									姓名：{{item.Name}}
+									<br> 年龄：{{item.Age}}
+									<br> 疾病名称：{{item.DiseaseName}}
+									<br> 就诊机构：{{item.InstitutionName}}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{{#$('#demo1').css('display','block'); });}
+					else
+					{$('#demo1').css('display','none');}}
+						<div>没有数据！</div>
+					{{#}
+					 }}
+					<hr style=" clear: both; height:1px;border:none;padding: 0px;" />
+				</script>
+				<div class="layui-fluid layadmin-maillist-fluid">
+					<div id="view" class="layui-row" style=" height:650px;">
+					</div>
+				</div>
+				<div id="demo1" style=" text-align: center;"></div>
+				<input type="hidden" id="regcode" name="regcode" />
+				<input type="hidden" id="pcode" name="pcode" />
+			</div>
+		</div>
+
+		<body>
+			<script src="../../../layuiadmin/js/jquery.min.js"></script>
+			<script src="../../../layuiadmin/layui/layui.js"></script>
+			<script type="text/javascript">
+				var alertheight;
+				layui.config({
+					base: '../../../layuiadmin/' //静态资源所在路径
+				}).extend({
+					index: 'lib/index' //主入口模块
+				}).use(['index', 'admin', 'laypage', 'layer',  'user','tableSelect'], function() {
+					var $ = layui.$,
+						setter = layui.setter,
+						admin = layui.admin,
+						view = layui.view,
+						tableSelect = layui.tableSelect
+						laypage = layui.laypage,
+						layer = layui.layer;
+					var laytpl = layui.laytpl;
+					var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+					 alertheight = $(window).height() - 30;
+					 var indexs=layer.load(3);
+					//加载医疗机构信息
+				tableSelect.render({
+					elem: '#OrgName', //定义输入框input对象 必填
+					checkedKey: 'YYDMYYDM', //表格的唯一建值，非常重要，影响到选中状态 必填
+					searchKey: 'condition',
+					searchPlaceholder: '请输入医院代码或医院名称',
+					table: { //定义表格参数，与LAYUI的TABLE模块一致，只是无需再定义表格elem
+						url: layui.setter.base_url + 'afterengine/HosDayError/GetYYXXList',
+						cols: [
+							[{
+									type: 'radio',
+									width: 40,
+								},
+								{
+									field: 'YYDMYYDM',
+									title: '医院代码',
+									width: 220,
+									align: 'center',
+								},
+								{
+									field: 'YLJGMC',
+									title: '医院名称',
+									width: 270,
+									align: 'center',
+								},
+								{
+									field: 'YLJGDJMC',
+									title: '医院等级',
+									width: 270,
+									align: 'center',
+								}
+							]
+						],
+						page: true,
+						limit: 5,
+						limits: [5, 10, 15, 20],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							condition: "",
+							keyword: ""
+						},
+						headers: {
+							Authorization: tokenvalue
+						}
+					},
+					done: function(elem, data) {
+						layui.each(data.data, function(index, item) {
+							$('#OrgCode').val(item.YYDMYYDM);
+							elem.val(item.YLJGMC);
+						});
+					}
+				});
+                    loadlist();
+                    var datatype = $(parent.document.getElementById("Select")).val();
+					function loadlist() {
+						if(datatype == '1'){
+							admin.req({
+							url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetYBHosInfoList',
+							type: 'get',
+							data: {
+								token: tokenvalue,
+								rulescode: 'A007',
+								datatype:'1',
+								page: 1,
+								limit: 15,
+								condition: $("#querycondition").val(),
+								keyValue: $("#queryvalue").val(),
+								idnumber: $("#IdNumber").val(),
+								institutionCode: $("#OrgCode").val()								
+							},
+							dataType: "json",
+							success: function(result) {
+								layer.close(indexs);
+								datas = {
+									"title": "就诊疾病异常表",
+									"list": result.data,
+									"count":result.count
+								};
+								laypage.render({
+									elem: 'demo1',
+									count: result.count, //数据总数
+									layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+									limit: 15,
+									jump: function(obj) {
+										loadlist_page(obj.curr);
+									}
+								});
+								//var getTpl = demo.innerHTML,
+									//view = document.getElementById('view');
+								//laytpl(getTpl).render(datas, function(html) {
+									//view.innerHTML="";
+									//view.innerHTML = html;
+								//});
+
+							}
+						});
+						}else{
+							admin.req({
+							url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetYBHosInfoList',
+							type: 'get',
+							data: {
+								token: tokenvalue,
+								rulescode: 'A007',
+								datatype:'2',
+								page: 1,
+								limit: 15,
+								condition: $("#querycondition").val(),
+								keyValue: $("#queryvalue").val(),
+								idnumber: $("#IdNumber").val(),
+								institutionCode: $("#OrgCode").val()								
+							},
+							dataType: "json",
+							success: function(result) {
+								layer.close(indexs);
+								datas = {
+									"title": "就诊疾病异常表",
+									"list": result.data,
+									"count":result.count
+								};
+								laypage.render({
+									elem: 'demo1',
+									count: result.count, //数据总数
+									layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+									limit: 15,
+									jump: function(obj) {
+										loadlist_page(obj.curr);
+									}
+								});
+								//var getTpl = demo.innerHTML,
+									//view = document.getElementById('view');
+								//laytpl(getTpl).render(datas, function(html) {
+									//view.innerHTML="";
+									//view.innerHTML = html;
+								//});
+
+							}
+						});
+						}
+						
+					}
+                    function loadlist_page(i) {
+						admin.req({
+							url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetYBHosInfoList',
+							type: 'get',
+							data: {
+								token: tokenvalue,								
+								rulescode: 'A007',
+								page: i,
+								limit: 15,								
+								condition: $("#querycondition").val(),
+								keyValue: $("#queryvalue").val(),
+								idnumber: $("#IdNumber").val(),
+								institutionCode: $("#OrgCode").val()
+							},
+							dataType: "json",
+							success: function(result) {
+								data = {
+									"title": "就诊疾病异常表",
+									"list": result.data,
+									"count":result.count
+								};
+								var getTpl = demo.innerHTML,
+									view = document.getElementById('view');
+								laytpl(getTpl).render(data, function(html) {
+									view.innerHTML = html;
+								});
+
+							}
+						});
+					}
+					function loadlist_search() {
+						admin.req({
+							url: layui.setter.base_url + 'afterengine/SupervisionInfo/GetYBHosInfoList',
+							type: 'get',
+							data: {
+								token: tokenvalue,								
+								rulescode: 'A007',
+								page: 1,
+								limit: 15,								
+								condition: $("#querycondition").val(),
+								keyValue: $("#queryvalue").val(),
+								idnumber: $("#IdNumber").val(),
+								institutionCode: $("#OrgCode").val()
+							},
+							dataType: "json",
+							success: function(result) {
+								data = {
+									"title": "就诊疾病异常表",
+									"list": result.data,
+									"count":result.count
+								};
+								laypage.render({
+									elem: 'demo1',
+									count: result.count, //数据总数
+									layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+									limit: 15,
+									jump: function(obj) {
+										loadlist_page(obj.curr);
+									}
+								});
+								//var getTpl = demo.innerHTML,
+								//	view = document.getElementById('view');
+								//laytpl(getTpl).render(data, function(html) {
+								//	view.innerHTML = html;
+								//});
+
+							}
+						});
+					}
+					
+					
+					$(document).on('click','#btn',function(){
+						if($('#slidediv').css('display') == "block") {								
+								loadlist_search();
+								$('#slidediv').slideUp();
+								
+							} else {								
+								$('#slidediv').slideDown();
+							}
+						});
+					$(document).on('click','#clear',function(){
+						    $("#querycondition").val('ZFY'),
+							$("#queryvalue").val(''),
+							$("#IdNumber").val(''),
+							$("#OrgCode").val(''),
+							$("#OrgName").val('')		
+						});
+				});
+
+				function aa(str, str1, obj) {
+					$('#regcode').val(str);
+					$('#pcode').val(str1);
+					var index = layer.open({
+							type: 2,
+							title: '就诊疾病异常',
+							content: 'detail.html',
+							maxmin: true,
+							area: ['1100px', alertheight + 'px']
+						});
+						layer.full(index);					
+				}
+			</script>
+
+</html>

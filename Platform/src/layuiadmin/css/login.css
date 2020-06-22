@@ -1,0 +1,106 @@
+*{
+    padding:0;
+    margin: 0;
+    border: 0;
+    outline: none;
+}
+html,body{
+    height:100%;
+}
+.top{
+    height:10%;
+    width:100%;
+    background-image: linear-gradient(to right,#3b6ad4 , #5695f4);   
+}
+.logo{
+    float: left;
+    height:90%;
+    width: 5.5%;
+    margin-left: 2%;
+    margin-top: 0.4%;
+}
+.text{
+    float: left;
+    height: 90%;
+    width: 25%;
+    margin-top: 0.4%;
+}
+.middle{
+    height: 80%;
+}
+.bottom{
+    height:10%;
+    background-image: url(../img/login__29.png);
+    color: white;
+    text-align: center;
+}
+.img-middle{
+    margin-top: 8%;
+    margin-left: 17%;
+    width: 39%;
+    height:60%;
+}
+.text-middle{
+    width: 6%;
+    height: 6%;
+    position: absolute;
+    top:26%;
+}
+.name-input{
+    width: 30%;
+    height: 10%;
+    background: url(../img/login__13.png) no-repeat;
+    background-size: auto;
+    position: absolute;
+    top:34%;
+    left:56%;
+}
+.password-input{
+    width: 30%;
+    height: 10%;
+    background: url(../img/login__13.png) no-repeat;
+    background-size: auto;
+    position: absolute;
+    top:44%;
+    left:56%;
+}
+.login{
+    width: 20.5%;
+    height:6%;
+    position: absolute;
+    top:54%;
+}
+.bottom-zc{
+    position: absolute;
+    left: 56%;
+    top:62%;
+}
+#zc{
+    color: #5a65ca;
+}
+.img-name{
+    height:55%;
+    width: 10%;
+}
+#name{
+    position: absolute;
+    top:2%;
+    font-size: larger;
+    background:transparent;
+    height:50%;
+    width: 58%;
+    font-weight: initial;
+}
+.img-password{
+    height:55%;
+    width: 10%;
+}
+#password{
+    position: absolute;
+    top:2%;
+    font-size: larger;
+    font-weight: initial;
+    background: transparent;
+    height:50%;
+    width: 58%;
+}

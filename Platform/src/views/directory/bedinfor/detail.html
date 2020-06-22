@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>床位信息维护</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+	</head>
+
+	<body>
+		<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="padding: 20px 20px 20px 20px;background-color: #FFFFFF; width:950px; height:550px;">
+			<input type="hidden" name="CRowId" id="CRowId" />
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" > </span>床位编号：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="CWBH" lay-verify="required" disabled="disabled" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">主治医生：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ZZYS" disabled="disabled" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">主任医生：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ZRYS" disabled="disabled" autocomplete="off" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">住院医生：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ZYYS" autocomplete="off" disabled="disabled" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">责任护士：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ZRHS" autocomplete="off" disabled="disabled" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">房间号：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="FJH" autocomplete="off" disabled="disabled" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">主床号：</label>
+					<div class="layui-input-block inputform">
+						<input type="text" name="ZCH" autocomplete="off" disabled="disabled" placeholder="" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" ></span>医疗机构：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="YLJGBH" id="YLJGBH" disabled="disabled" lay-verify="required" placeholder="请选择" lay-search="" lay-filter="YLJGBH">
+							<!--<option value=""></option>-->
+							<option value="">直接选择或搜索选择</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;"><span style="color: red; font-size: 20px ;float:left;" ></span>科室名称：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="KSBH" id="KSBH" disabled="disabled" lay-verify="required" placeholder="请选择" lay-search="" lay-filter="KSBH">
+							<!--<option value=""></option>-->
+							<option value="">直接选择或搜索选择</option>
+						</select>
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style="width:100%;">
+					<label class="layui-form-label" style=" width:160px; ">备注：</label>
+					<div class="layui-input-block inputform">
+						<textarea name="Remark" class="layui-textarea" disabled="disabled" placeholder="" style="width:85%; "></textarea>
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-form-item">
+				<div style="text-align: right;">
+					<button class="layui-btn layui-btn-big" data-type="cancel">取消</button>
+				</div>
+			</div>
+		</div>
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script src="../../../layuiadmin/lib/treeSelect.js"></script>
+		<script>
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'treeSelect', 'form'], function() {
+				var $ = layui.$,
+					element = layui.element,
+					form = layui.form,
+					admin = layui.admin,
+					treeSelect = layui.treeSelect;
+
+				//加载医疗机构级别
+				admin.req({
+					url: layui.setter.base_url + 'znsh/BedsInformation/GetYYXXList',
+					type: 'get',
+					async: false,
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.YLJGBH + "'>" + item.YLJGMC + "</option>";
+							});
+							$("select[name='YLJGBH']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载科室信息
+				admin.req({
+					url: layui.setter.base_url + 'znsh/BedsInformation/GetKSXXList',
+					type: 'get',
+					async: false,
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.YYKSBM + "'>" + item.YYKSMC + "</option>";
+							});
+							$("select[name='KSBH']").append($html);
+							form.render('select');
+						}
+					}
+				});
+
+				//编辑赋值
+				if(parent.orgdata != "undefined" && parent.orgdata != "") {
+					form.val('layuiadmin-form-admin', {
+						"CRowId": parent.orgdata.CRowId,
+						"CWBH": parent.orgdata.CWBH,
+						"KSBH": parent.orgdata.KSBH,
+						"KSMC": parent.orgdata.KSMC,
+						"ZZYS": parent.orgdata.ZZYS,
+						"ZRYS": parent.orgdata.ZRYS,
+						"ZYYS": parent.orgdata.ZYYS,
+						"ZRHS": parent.orgdata.ZRHS,
+						"FJH": parent.orgdata.FJH,
+						"ZCH": parent.orgdata.ZCH,
+						"YLJGBH": parent.orgdata.YLJGBH,
+						"Remark": parent.orgdata.Remark
+
+					})
+					$(".layui-input").attr("disabled", "disabled");
+					$('#Remark').attr("disabled", "disabled");
+
+				}
+				var active = {
+					//取消
+					cancel: function() {
+						var index = parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index); //关闭当前页  
+					}
+
+				};
+				$('.layui-btn').on('click', function() {
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});
+			});
+		</script>
+	</body>
+
+</html>

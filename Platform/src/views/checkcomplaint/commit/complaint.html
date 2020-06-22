@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>申诉说明录入</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+
+	</head>
+
+	<body>
+		<div class="layui-form" lay-filter="layuiadmin-form-admin" style="background-color: #FFFFFF;">
+			<div class="layui-card">
+				<div class="layui-card-body">
+					<div class="layui-form-item">
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">审核编码：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="CheckResultInfoCode" name="CheckResultInfoCode" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">规则名称：</label>
+							<div class="layui-input-block inputform">
+								<input type="hidden" id="RulesCode" name="RulesCode" />
+								<input type="text" id="RulesName" name="RulesName" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">登记编码：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="RegisterCode" name="RegisterCode" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">个人编码：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="PersonalCode" name="PersonalCode" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">身份证号码：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="IdNumber" name="IdNumber" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">姓名：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="Name" name="Name" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">性别：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="Gender" name="Gender" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">年龄：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="Age" name="Age" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">机构名称：</label>
+							<div class="layui-input-block inputform">
+								<input type="hidden" id="InstitutionCode" name="InstitutionCode" />
+								<input type="text" id="InstitutionName" name="InstitutionName" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">疾病名称：</label>
+							<div class="layui-input-block inputform">
+								<input type="hidden" id="ICDCode" name="ICDCode" />
+								<input type="hidden" id="DataType" name="DataType" />
+								<input type="text" id="DiseaseName" name="DiseaseName" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">审核时间：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="CheckDate" name="CheckDate" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+						<div class="layui-inline" style=" width: 360px;">
+							<label class="layui-form-label" style=" width:120px;">是否有处方：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="IsPre" name="IsPre" autocomplete="off" placeholder="" class="layui-input" style="width:200px;" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline" style=" width:100%;">
+							<label class="layui-form-label" style=" width:120px;">审核结果描述：</label>
+							<div class="layui-input-block inputform">
+								<input type="text" id="ResultDescription" name="ResultDescription" autocomplete="off" placeholder="" class="layui-input" style=" width:90%;" disabled="disabled">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline" style=" width:100%;">
+							<label class="layui-form-label" style=" width:120px;">请输入申诉描述：</label>
+							<div class="layui-input-block inputform">
+								<textarea class="layui-textarea" id="ComplaintDescribe" name="ComplaintDescribe" lay-verify="required" placeholder="请输入内容" style=" width:90%;"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item" id="uploadfile">
+						<div class="layui-inline" style=" width:100%;">
+							<div class="layui-upload">
+								<button class="layui-btn layui-btn-normal" id="testList" type="button">选择多文件</button>
+								<div class="layui-upload-list">
+									<table class="layui-table">
+										<thead>
+											<tr>
+												<th>文件名</th>
+												<th>大小</th>
+												<th>状态</th>
+												<th>操作</th>
+											</tr>
+										</thead>
+										<tbody id="demoList"></tbody>
+									</table>
+								</div>
+								<button class="layui-btn" id="testListAction" type="button">开始上传</button>
+							</div>
+						</div>
+					</div>
+					<div style="text-align: right;">
+						<input type="hidden" id="ComplaintCode" />
+						<button id="btn_save" name="btn_save" class="layui-btn layui-btn-big" lay-submit="" lay-filter="save">保存</button>
+						<button class="layui-btn layui-btn-big" data-type="cancel">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'form', 'upload'], function() {
+				var $ = layui.$,
+					admin = layui.admin,
+					upload = layui.upload,
+					setter = layui.setter,
+					form = layui.form;
+				var complaintcode='1';	
+				// $('#uploadfile').hide();
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+
+				if(parent.data != "undefined" && parent.data != "") {
+					//alert(parent.data[0].CheckResultInfoCode);
+					form.val('layuiadmin-form-admin', {
+						"CheckResultInfoCode": parent.data[0].CheckResultInfoCode,
+						"RulesName": parent.data[0].RulesName,
+						"RulesCode": parent.data[0].RulesCode,
+						"RegisterCode": parent.data[0].RegisterCode,
+						"PersonalCode": parent.data[0].PersonalCode,
+						"IdNumber": parent.data[0].IdNumber,
+						"Name": parent.data[0].Name,
+						"Gender": parent.data[0].Gender,
+						"Age": parent.data[0].Age,
+						"InstitutionCode": parent.data[0].InstitutionCode,
+						"InstitutionName": parent.data[0].InstitutionName,
+						"ICDCode": parent.data[0].ICDCode,
+						"DataType": parent.data[0].DataType,
+						"DiseaseName": parent.data[0].DiseaseName,
+						"CheckDate": parent.data[0].CheckDate,
+						"IsPre": parent.data[0].IsPre == '0' ? '否' : '是',
+						"ResultDescription": parent.data[0].ResultDescription
+					});
+
+				}
+				//监听form表单提交事件
+				form.on('submit(save)', function(data) {
+					var param = data.field; //定义临时变量获取表单提交过来的数据，非json格式
+					if(param.CheckResultInfoCode == "") {
+						layer.msg('没有可申诉的信息');
+					} else {
+						admin.req({
+							url: layui.setter.base_url + 'afterengine/CheckComplaint/Create', //实际使用请改成服务端真实接口
+							data: {
+								model: param
+							},
+							type: 'post',
+							done: function(result) {
+								
+								layer.msg(result.msg, {
+									offset: '15px',
+									icon: 1,
+									time: 1000
+								}, function() {
+									$('#ComplaintCode').val(result.data);
+									complaintcode=result.data;
+									$('#ComplaintDescribe').attr('disabled', 'disabled');
+									$('#uploadfile').show();
+									$('#btn_save').hide();
+									form.render();
+									//alert($('#ComplaintCode').val());
+									//var index = parent.layer.getFrameIndex(window.name);
+									//parent.layer.close(index); //关闭当前页  
+									//parent.location.reload(); //刷新父亲对象（用于框架）
+								});
+							}
+						});
+					}
+				});
+				var active = {
+					//取消
+					cancel: function() {
+						var index = parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index); //关闭当前页  
+					}
+
+				};
+				$('.layui-btn').on('click', function() {
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});
+				//多文件列表示例
+				var demoListView = $('#demoList'),
+					uploadListIns = upload.render({
+						elem: '#testList',
+						url: layui.setter.base_url + 'afterengine/CheckComplaint/Upload',
+						data: {
+							CheckResultInfoCode: $('#CheckResultInfoCode').val()
+						},
+						accept: 'file',
+						multiple: true,
+						auto: false,
+						bindAction: '#testListAction',
+						headers: {
+							Authorization: tokenvalue
+						},
+						choose: function(obj) {
+							var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+							//读取本地文件
+							obj.preview(function(index, file, result) {
+								var tr = $(['<tr id="upload-' + index + '">', '<td>' + file.name + '</td>', '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>', '<td>等待上传</td>', '<td>', '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>', '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>', '</td>', '</tr>'].join(''));
+
+								//单个重传
+								tr.find('.demo-reload').on('click', function() {
+									obj.upload(index, file);
+								});
+
+								//删除
+								tr.find('.demo-delete').on('click', function() {
+									delete files[index]; //删除对应的文件
+									tr.remove();
+									uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+								});
+								demoListView.append(tr);
+							});
+						},
+						done: function(res, index, upload) {
+							
+							if(res.status == 0) { //上传成功
+								var tr = demoListView.find('tr#upload-' + index),
+									tds = tr.children();
+								tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+								tds.eq(3).html(''); //清空操作
+								return delete this.files[index]; //删除文件队列已经上传成功的文件
+							}
+							this.error(index, upload);
+						},
+						error: function(index, upload) {
+							var tr = demoListView.find('tr#upload-' + index),
+								tds = tr.children();
+							tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+							tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+						}
+					});
+			});
+		</script>
+	</body>
+
+</html>

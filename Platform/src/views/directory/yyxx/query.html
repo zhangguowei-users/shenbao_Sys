@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>医疗机构管理查询</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+
+		<style>
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-form layui-form-pane" lay-filter="layuiadmin-form-admin" style="padding: 20px 20px 20px 20px;background-color: #FFFFFF;">
+			<input type="hidden" name="XZQHBM" id="XZQHBM" />
+			<input type="hidden" name="XZQHBMNAME" id="XZQHBMNAME" />
+			<input type="hidden" name="YLJGJBMC" id="YLJGJBMC" />
+			<input type="hidden" name="YLJGDJMC" id="YLJGDJMC" />
+
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">医疗机构编码：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="YLJGBM" id="YLJGBM" autocomplete="off" placeholder="" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">医疗机构名称：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" id="YLJGMC" name="YLJGMC" class="layui-input" style="width:250px;">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">医院代码：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" name="YYDM" id="YYDM" autocomplete="off" placeholder="" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">医疗机构级别：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="YLJGJBBM" id="YLJGJBBM" placeholder="请选择" lay-filter="YLJGJBBM">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">医疗机构等级：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<select name="YLJGDJBM" id="YLJGDJBM" placeholder="请选择" lay-filter="YLJGDJBM">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline" style=" width: 450px;">
+					<label class="layui-form-label" style=" width:160px;">所属行政区划：</label>
+					<div class="layui-input-inline" style="width:250px;">
+						<input type="text" id="tree" lay-filter="tree" class="layui-input">					
+					</div>
+				</div>
+			</div>
+			<div style="text-align: right;margin-right:30px">
+				<button class="layui-btn layui-btn-big" lay-submit="" lay-filter="save">查询</button>
+			</div>
+		</div>
+
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script>
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'form', 'tableSelect', 'treeSelect'], function() {
+				var $ = layui.$,
+					setter = layui.setter,
+					element = layui.element,
+					form = layui.form,
+					admin = layui.admin,
+					treeSelect = layui.treeSelect;
+				var tableSelect = layui.tableSelect;
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				//加载treeSelect
+				treeSelect.render({ // 选择器
+					elem: '#tree',
+					// 数据
+					data: layui.setter.base_url + 'api/Area/GetListToTreeToXian',
+					type: 'get',
+					headers: {
+						Authorization: 'Bearer ' + layui.data(layui.setter.tableName)[layui.setter.request.tokenName],
+					},
+					placeholder: '请选择', // 占位符
+					search: true, // 是否开启搜索功能：true/false，默认false
+					click: function(d) { // 点击回调
+						$('#XZQHBM').val(d.current.id);
+						$('#XZQHBMNAME').val(d.current.name);
+					},
+					// 加载完成后的回调函数
+					success: function(d) {
+						if(parent.orgdata != "undefined" && parent.orgdata != "") {
+							if(parent.orgdata.XZQHBM != "0" && parent.orgdata.XZQHBM != null) {
+								treeSelect.checkNode('tree', parent.orgdata.XZQHBM);
+							}
+						}
+					}
+				});
+
+				//加载医疗机构等级
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_13"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='YLJGDJBM']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				//加载医疗机构级别
+				admin.req({
+					url: layui.setter.base_url + 'api/DataDict/GetListByDataType',
+					type: 'get',
+					async: false,
+					data: {
+						dataTypeCode: "S001_04"
+					},
+					done: function(result) {
+						var $html = "";
+						if(result.code == "0") {
+							$.each(result.data, function(index, item) {
+								$html += "<option value='" + item.ItemCode + "'>" + item.ItemName + "</option>";
+							});
+							$("select[name='YLJGJBBM']").append($html);
+							form.render('select');
+						}
+					}
+				});
+				form.on('select(YLJGJBBM)', function(data) {
+					$('#YLJGJBMC').val(data.elem[data.elem.selectedIndex].text);
+					form.render('select');
+				});
+				form.on('select(YLJGDJBM)', function(data) {
+					$('#YLJGDJMC').val(data.elem[data.elem.selectedIndex].text);
+					form.render('select');
+				});
+				
+				//监听form表单提交事件
+				form.on('submit(save)', function(data) {
+					var object = {};
+					object['YLJGBM'] = $("#YLJGBM").val();
+					object['YLJGMC'] = $("#YLJGMC").val();	
+					object['YYDM'] = $("#YYDM").val();
+					object['YLJGJBBM'] = $("#YLJGJBBM").val();	
+					object['YLJGDJBM'] = $("#YLJGDJBM").val();
+					object['XZQHBM'] = $("#XZQHBM").val();	
+					var index = parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index); //关闭当前页  
+					parent.layui.table.reload('IDTable', {
+						where: {
+							token: tokenvalue,
+							querystr:JSON.stringify(object)
+						},
+						page:1
+					});
+				});
+
+			});
+		</script>
+	</body>
+
+</html>

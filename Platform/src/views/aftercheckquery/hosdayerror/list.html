@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>住院天数异常查询</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+		<style>
+			.wrap {
+				font-size: 0px;
+				/*通过设置父元素字体大小为0；来消除div之间的空格。或者通过注释,<div>wwww</div><!--  --><div> wwww</div>*/
+				padding: 10px;
+				box-sizing: content-box;
+				/*父元素是content-box模式*，为了计算右侧盒子的宽度，我们把子元素设置为border-box模式，这样宽度就是整个盒子的宽度了。*/
+			}
+			
+			.left {
+				box-sizing: border-box;
+				display: inline-block;
+				/*两个子元素都设置为inline-block*/
+				vertical-align: top;
+				/*两个inline-block的盒子，必须两个子元素都顶端对齐。*/
+				width: 200px;
+				/*height: 750px;*/
+			}
+			
+			.right {
+				box-sizing: border-box;
+				display: inline-block;
+				vertical-align: top;
+				width: -webkit-calc(100% - 200px);
+				width: calc(100% - 200px);
+				/*减号前后要有空格，否则无效，减去的宽度必须计算清楚*/
+				/*height: 750px;*/
+			}
+			
+			.test-1::-webkit-scrollbar {
+				/*滚动条整体样式*/
+				width: 7px;
+				/*高宽分别对应横竖滚动条的尺寸*/
+				height: 1px;
+			}
+			
+			.test-1::-webkit-scrollbar-thumb {
+				/*滚动条里面小方块*/
+				border-radius: 7px;
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				background: #009688;
+			}
+			
+			.test-1::-webkit-scrollbar-track {
+				/*滚动条里面轨道*/
+				-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+				border-radius: 7px;
+				background: #EDEDED;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script type="text/html" id="toolbarDemo">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="search">查询</button>
+			</div>
+		</script>
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-sm12">
+					<div class="layui-card">
+						<div class="layui-card-header">
+							住院天数异常数据
+						</div>
+						<div class="layui-card-body">
+							<div class="layui-row">
+								<table class="layui-hide" id="test" lay-filter="test"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="layui-col-sm12">
+					<div class="layui-card">
+						<div class="layui-card-header">
+							详情
+						</div>
+						<div class="layui-card-body">
+							<div class="layui-row">
+								<div class="layui-tab layui-tab-card" lay-filter="filter">
+									<ul class="layui-tab-title">
+										<li class="layui-this">基本信息</li>
+										<li>费用信息</li>
+										<li>处方明细</li>
+									</ul>
+									<div class="layui-tab-content" >
+										<div class="layui-tab-item layui-show">
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">姓名：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="Name" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">身份证号：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="IdNumber" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">性别：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="Gender" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">年龄：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="Age"  autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">人员类型：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="PersonalTypeName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">民族：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="FolkName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">就诊医院：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="InstitutionName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">医院等级：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="InstitutiongGradeName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">医院级别：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="InstitutionLevelName" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">入院日期：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="InHosDate" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">出院日期：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="OutHosDate" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">住院天数：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="InHosDay" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">疾病名称：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="DiseaseName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">补偿年度：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="CompYear" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 850px;">
+													<label class="layui-form-label" style=" width:80px;">行政区划：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="CityAreaName" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:550px;">
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="layui-tab-item">
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">总费用：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="ZFY" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">医保报销费用：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="YBBXFY" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">个人自付费用：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="GRZFFY" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">目录内费用：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="MLNFY" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">目录外费用：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="MLWFY" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">西药费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="XYF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">中药费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="ZYF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">草药费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="CYF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">蒙药费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="MYF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">检查费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="JCF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">材料费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="CLF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">特殊费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="TSF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">诊疗费费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="ZLF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">化疗费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="HLF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">手术费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="SSF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">血液费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="XUEYF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">特检费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="TJF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">特治费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="TZF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+											<div class="layui-form-item">
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">其他费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="QTF" lay-verify="required" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+												<div class="layui-inline" style=" width: 280px;">
+													<label class="layui-form-label" style=" width:80px;">靶向药费：</label>
+													<div class="layui-input-block inputform">
+														<input type="text" id="BXYF" autocomplete="off" placeholder="" class="layui-input" style="width:160px;">
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="layui-tab-item">
+											<table class="layui-hide" id="cfdetail" lay-filter="cfdetail"></table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		<script src="../../../layuiadmin/layui/layui.js"></script>
+		<script type="text/javascript">
+			layui.config({
+				base: '../../../layuiadmin/' //静态资源所在路径
+			}).extend({
+				index: 'lib/index' //主入口模块
+			}).use(['index', 'admin', 'element', 'user', 'table'], function() {
+				var $ = layui.$,
+					setter = layui.setter,
+					admin = layui.admin,
+					form = layui.form,
+					router = layui.router(),
+					element = layui.element,
+					table = layui.table;
+				var tokenvalue = 'Bearer ' + layui.data(setter.tableName)[setter.request.tokenName];
+				var alertheight = $(window).height() - 100;
+				var indexs=layer.load(3);
+				$(".layui-input").attr("disabled", "disabled");
+				//触发事件
+				element.on('tab(filter)', function(data) {
+
+				});
+               
+				//监听行单击事件（单击事件为：rowDouble）
+				table.on('row(test)', function(obj) {
+					var data = obj.data;
+					GetCFData(data.HosRegisterCode);
+					$("#Name").val(data.Name);
+					$("#IdNumber").val(data.IdNumber);
+					$("#Gender").val(data.Gender);
+					$("#Age").val(data.Age);
+					$("#PersonalTypeName").val(data.PersonalTypeName);
+					$("#FolkName").val(data.FolkName);
+					$("#InstitutionName").val(data.InstitutionName);
+					$("#InstitutiongGradeName").val(data.InstitutiongGradeName);
+					$("#InstitutionLevelName").val(data.InstitutionLevelName);
+					$("#InHosDate").val(data.InHosDate);
+					$("#OutHosDate").val(data.OutHosDate);
+					$("#InHosDay").val(data.InHosDay);
+					$("#DiseaseName").val(data.DiseaseName);
+					$("#CompYear").val(data.CompYear);
+					$("#CityAreaName").val(data.CityAreaName);
+					$("#ZFY").val(data.ZFY);
+					$("#YBBXFY").val(data.YBBXFY);
+					$("#GRZFFY").val(data.GRZFFY);
+					$("#MLNFY").val(data.MLNFY);
+					$("#MLWFY").val(data.MLWFY);
+					$("#XYF").val(data.XYF);
+					$("#ZYF").val(data.ZYF);
+					$("#CYF").val(data.CYF);
+					$("#MYF").val(data.MYF);
+					$("#JCF").val(data.JCF);
+					$("#CLF").val(data.CLF);
+					$("#TSF").val(data.TSF);
+					$("#ZLF").val(data.ZLF);
+					$("#HLF").val(data.HLF);
+					$("#SSF").val(data.SSF);
+					$("#XUEYF").val(data.XUEYF);
+					$("#TJF").val(data.TJF);
+					$("#TZF").val(data.TZF);
+					$("#QTF").val(data.QTF);
+					$("#BXYF").val(data.BXYF);
+
+					//				    layer.alert(JSON.stringify(data), {
+					//				      title: '当前行数据：'
+					//				    });				    
+					//标注选中样式
+					obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				});
+
+				GetTableData();
+
+				function GetTableData() {
+					table.render({
+						elem: '#test',
+						url: layui.setter.base_url + 'afterengine/HosDayError/GetPageListByCondition',
+						toolbar: '#toolbarDemo',
+						title: '住院天数异常表',
+						cols: [
+							[{
+									field: 'Name',
+									title: '姓名',
+									width: 150,
+									align: 'center',
+								},
+								{
+									field: 'IdNumber',
+									title: '身份证号',
+									width: 180,
+									align: 'center',
+								},
+								{
+									field: 'Gender',
+									title: '性别',
+									width: 60,
+									align: 'center',
+									templet: function(d) {
+										return d.Gender == '1' ? '男' : '女'
+									}
+								},
+								{
+									field: 'Age',
+									title: '年龄',
+									width: 60,
+									align: 'center',
+								},
+								{
+									field: 'PersonalTypeName',
+									title: '人员类型',
+									width: 135,
+									align: 'center',
+								},								
+								{
+									field: 'InHosDay',
+									title: "住院天数",
+									width: 100,
+									align: 'center',
+									templet: function(d) {
+										return "<span style=\"color: #ff0000;\">" + d.InHosDay + "</span>"
+									}
+								},
+								{
+									field: 'InstitutionName',
+									title: '就诊医院',
+									width: 200,
+									align: 'center',
+								},
+								{
+									field: 'InHosDate',
+									title: '入院日期',
+									width: 180,
+									align: 'center',
+								},
+								{
+									field: 'OutHosDate',
+									title: '出院日期',
+									width: 180,
+									align: 'center',
+								},
+								{
+									field: 'DiseaseName',
+									title: '疾病名称',
+									width: 200,
+									align: 'center',
+								},
+								{
+									field: 'CompYear',
+									title: '补偿年度',
+									width: 120,
+									align: 'center',
+								}
+							]
+						],
+						page: true,
+						id: "IDTable",
+						limit: 5, //每页显示5条
+						limits: [5, 20, 45, 60, 75, 90],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							condition: "",
+							keyword: ""
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						height: '350',
+						done: function(res) {
+							layer.close(indexs);
+
+						}
+					});
+				}
+
+				function GetCFData(code) {
+					table.render({
+						elem: '#cfdetail',
+						url: layui.setter.base_url + 'afterengine/HosDayError/GetCFDeatilListByCode',
+						title: '处方明细表',
+						cols: [
+							[{
+									field: 'ItemIndex',
+									title: '序号',
+									width: 90,
+									align: 'center',
+								},
+								{
+									field: 'ItemName',
+									title: '项目名称',
+									width: 180,
+									align: 'center',
+								},
+								{
+									field: 'HisItemName',
+									title: 'His项目名称',
+									width: 180,
+									align: 'center',
+								},
+								{
+									field: 'CollectFeesCategoryName',
+									title: '收费类别',
+									width: 90,
+									align: 'center',
+								},
+								{
+									field: 'CollectFeesProjectGradeName',
+									title: '收费项目等级',
+									width: 135,
+									align: 'center',
+								},
+								{
+									field: 'PRICE',
+									title: '单价',
+									width: 130,
+									align: 'center',
+								},
+								{
+									field: 'COUNT',
+									title: '数量',
+									width: 130,
+									align: 'center',
+								},
+								{
+									field: 'ZFY',
+									title: '总金额',
+									width: 130,
+									align: 'center',
+								},
+								{
+									field: 'CompRatio',
+									title: '报销比例',
+									width: 130,
+									align: 'center',
+								},
+								{
+									field: 'YXJE',
+									title: '有效金额',
+									width: 130,
+									align: 'center',
+								},
+								{
+									field: 'BKBXJE',
+									title: '不可报销金额',
+									width: 130,
+									align: 'center',
+								}
+							]
+						],
+						page: true,
+						id: "Table",
+						limit: 5, //每页显示5条
+						limits: [5, 20, 45, 60, 75, 90],
+						curr: 1,
+						where: {
+							token: tokenvalue,
+							hosregistercode: code,
+						},
+						headers: {
+							Authorization: tokenvalue
+						},
+						height: '300',
+						done: function(res) {
+		
+						}
+					});
+				}
+				//头工具栏事件
+				table.on('toolbar(test)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch(obj.event) {
+						case 'search':
+							var index = layer.open({
+								type: 2,
+								title: '住院天数异常查询',
+								content: 'query.html',
+								maxmin: true,
+								area: ['1100px', alertheight + 'px']
+							});
+							layer.full(index);
+							break;
+					};
+				});
+			});
+		</script>
+
+	</body>
+
+</html>
